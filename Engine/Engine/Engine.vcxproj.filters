@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\shaders">
+      <UniqueIdentifier>{f69fe3be-c2d5-449d-b8ca-009a71585296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\colored">
+      <UniqueIdentifier>{3e2485a4-90fa-4f0a-abc8-cfffa889670d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -33,6 +39,12 @@
     <ClCompile Include="src\vec2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\object.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vec.hpp">
@@ -44,5 +56,19 @@
     <ClInclude Include="src\tests.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\object.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shaders\colored\frag.glsl">
+      <Filter>Resource Files\shaders\colored</Filter>
+    </None>
+    <None Include="res\shaders\colored\vertex.glsl">
+      <Filter>Resource Files\shaders\colored</Filter>
+    </None>
   </ItemGroup>
 </Project>

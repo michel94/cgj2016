@@ -7,6 +7,14 @@
 
 using namespace std;
 
+float rand01() {
+	return (float)(rand() % 100000) / 100000;
+}
+
+Vec3 randVec3() {
+	return Vec3(rand01(), rand01(), rand01());
+}
+
 void Tests::testVec3() {
 	Vec3 v;
 	float* d = (float*)v.data();
@@ -35,9 +43,10 @@ void Tests::testVec3() {
 	assert(v2 == v3);
 
 	Vec3 v4;
-	//istringstream is(string("0.2 3.2 1.2"));
-	//is >> v4;
-	//assert(v4 == Vec3(0.2f, 3.2f, 1.2f));
+	istringstream is(string("0.2 3.2 1.2"));
+	is >> v4;
+	assert(v4 == Vec3(0.2f, 3.2f, 1.2f));
+
 	float n = Vec3(3.45f, 6.23f, -2.91f).normalize().norm() - 1;
 	assert(n < 0.001f && n > -0.001f);
 
@@ -45,22 +54,30 @@ void Tests::testVec3() {
 	v5 = v6;
 	v6.x += 2;
 	assert(v5 != v6);
-}
 
-void check(bool b) {
-	if (!b)
-		cout << "Error!" << endl;
+
+	/*Vec3::test();
+	Vec2::test();
+
+	srand((unsigned int)time(NULL));
+	int t = 10;
+	while (t--) {
+	Vec3 i = randVec3(),
+	j = randVec3(),
+	k = randVec3();
+	Vec3 v1 = i.cross(j.cross(k)),
+	v2 = j * i.dot(k) - k * i.dot(j);
+	cout << "Run " << 10 - t << ":" << endl;
+	cout << i << j << k << endl;
+	cout << v1 << v2 << endl;
+	assert(v1 == v2);
+
+	}*/
 }
 
 void Tests::testMat() {
-	/*Mat4 m1, m2;
-	Mat4 r = m1 * m2;
-	Mat4 m(Vec4(1, 0, 0, 0), Vec4(0, 1, 0, 0), Vec4(0, 0, 1, 0), Vec4(0, 0, 0, 1));*/
-	
 	Mat4 m3(Vec4(1, 2, 3, 4), Vec4(5, 6, 7, 8), Vec4(9, 10, 11, 12), Vec4(13, 14, 15, 16));
-	//m3.determinant();
 	
-	//m * 3;
 	assert(m3 * 3 == 3 * m3);											// multiplication by a scalar
 	assert(m3 - m3 == Mat4::zeros());
 	assert(Mat4::zeros() - m3 == -m3);									// negate matrix
@@ -85,28 +102,43 @@ void Tests::testMat() {
 	assert(Mat2(Vec2(1, 2), Vec2(3, 4)) * Vec2(2, 1) == Vec2(5, 8));
 	assert(Vec2(2, 1) * Mat2(Vec2(1, 2), Vec2(3, 4)) == Vec2(4, 10));
 	
-	assert(Mat4(Vec4(1, 0, 0, 0),
-		Vec4(0, 1, 0, 0),
-		Vec4(0, 0, 1, 0),
-		Vec4(3, 2, 1, 1)) == Mat4::translate(Vec3(3, 2, 1)));	// translate
+	assert(Mat4::asRows(
+			Vec4(1, 0, 0, 0),
+			Vec4(0, 1, 0, 0),
+			Vec4(0, 0, 1, 0),
+			Vec4(3, 2, 1, 1)) == Mat4::translate(Vec3(3, 2, 1)));	// translate
 
-	cout << Mat4::rotateAround(Vec3(0, 1, 0), 90.0f);
+	//cout << Mat4::rotateAround(Vec3(0, 1, 0), 90.0f);
 
-	/*
-	cout << m.determinant() << endl;
-	cout << m3[1][3] << endl;
-	Mat4 res1 = m3^100;
-	Mat4 res2 = m3;
-	for (int i = 1; i < 100; i++)
-	res2 = res2 * m3;
-	assert(res1 == res2);*/
+	assert(Mat2(Mat3(Mat4())) == Mat2());
+	assert(Mat3().determinant() == 1);
+	assert(Mat4(Mat3(Mat2())) == Mat4());
+	
+	/*Mat3 mat1 = Mat4::rotateAround(v1, 90),
+		 mat2 = Mat4::rotateAround(v2, 90),
+		 mat3 = Mat4::rotateAround(v3, 90);
+	cout << mat1 * v1 << endl;
+	cout << mat2 * v1 << endl;
+	cout << mat3 * v1 << endl;
+	cout << mat1 * v2 << endl;
+	cout << mat2 * v2 << endl;
+	cout << mat3 * v2 << endl;
+	cout << mat1 * v3 << endl;
+	cout << mat2 * v3 << endl;
+	cout << mat3 * v3 << endl;
+	*/
+	Mat3 a = Mat3::asRows(Vec3(-3, 2, -5), Vec3(-1, 0, -2), Vec3(3, -4, 1));
+	assert(a.adjoint() == Mat3::asRows(Vec3(-8, 18, -4), Vec3(-5, 12, -1), Vec3(4, -6, 2)) );
+
+	Mat3 m = Mat3::asRows(Vec3(0, 0, 1), Vec3(0, 1, 0), Vec3(1, 0, 0));
+	assert(m.inverse() == m);
 }
 
 void Tests::runTests() {
 	//cout << setprecision(10);
 
-	/*testVec2();
+	testVec2();
 	testVec3();
-	testVec4();*/
+	testVec4();
 	testMat();
 }

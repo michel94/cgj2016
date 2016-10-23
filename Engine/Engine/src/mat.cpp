@@ -10,13 +10,6 @@ const float PI = 3.14159265358979f;
 template<class Sub>
 Mat<Sub>::~Mat() {
 }
-/*template<class Sub>
-Mat<Sub>::Mat(const Mat<Sub>& other) {
-	cout << "Constructor" << endl;
-	data = new float[size*size];
-	size = other.size;
-	memcpy(data, other.data, size*size*sizeof(float));
-}*/
 template<class Sub>
 Mat<Sub>::Mat(const Sub& other) {
 	data = new float[size*size];
@@ -43,12 +36,6 @@ Mat<Sub>::Mat(vector<float*>& cols){
 template<class Sub>
 void Mat<Sub>::operator=(const Sub& other) {
 	memcpy(data, other.data, size*size*sizeof(float));
-}
-template<class Sub>
-void Mat<Sub>::operator=(int diag){
-	for (int i = 0; i < size*size; i++)
-		if (i / size == i%size)
-			data[i] = diag;
 }
 template<class Sub>
 Sub Mat<Sub>::operator+(const Sub& other){
@@ -99,11 +86,12 @@ Sub Mat<Sub>::operator*(float s) {
 
 template<class Sub>
 Sub Mat<Sub>::operator*(const Sub& other){
-	Sub m = Sub();
+	Sub m;
+	memset(m.data, 0, m.size*m.size*sizeof(float));
     for(int y=0; y<size; y++){
         for(int x=0; x<size; x++){
             for(int i=0; i<size; i++){
-                m.data[x*size+y] += data[i*size+y] * other.data[x*size+i];
+				m.data[x*size+y] += data[x*size+i] * other.data[i*size + y];
             }
         }
     }
@@ -131,7 +119,6 @@ float* Mat<Sub>::vecXMat(float* v){
 
 template<class Sub>
 void Mat<Sub>::operator*=(float s){
-	return;
 	for (int i = 0; i < size*size; i++)
 		data[i] *= s;
 }
@@ -174,21 +161,33 @@ void Mat<Sub>::copySquare(Mat& dest, Vec2 d, Mat& src, Vec2 s, Vec2 size) {
 }
 
 template<class Sub>
-Sub Mat<Sub>::inverse() {
+Sub Mat<Sub>::adjoint() {
 	Sub adj;
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			Mat m(size-1);
-			copySquare(m, Vec2(0, 0), *this, Vec2(0, 0), Vec2((float)i, (float)j));
-			copySquare(m, Vec2(i, 0), *this, Vec2(i + 1, 0), Vec2(size - i - 1, j));
-			copySquare(m, Vec2(0, j), *this, Vec2(0, j + 1), Vec2(i, size - j - 1));
-			copySquare(m, Vec2(i, j), *this, Vec2(i + 1, j + 1), Vec2(size - i - 1, size - j - 1));
-			int signal = (i + j) % 2 ? -1 : 1;
-			adj[i][j] = signal * m.determinant();
+	if (adj.size > 2) {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				Mat m(size - 1);
+				copySquare(m, Vec2(0, 0), *this, Vec2(0, 0), Vec2((float)i, (float)j));
+				copySquare(m, Vec2(i, 0), *this, Vec2(i + 1, 0), Vec2(size - i - 1, j));
+				copySquare(m, Vec2(0, j), *this, Vec2(0, j + 1), Vec2(i, size - j - 1));
+				copySquare(m, Vec2(i, j), *this, Vec2(i + 1, j + 1), Vec2(size - i - 1, size - j - 1));
+				int signal = (i + j) % 2 ? -1 : 1;
+				adj[i][j] = signal * m.determinant();
+			}
 		}
 	}
+	else if (adj.size == 2) {
+		float temp[] = { data[3], -data[2], -data[1], data[0] };
+		memcpy(adj.data, temp, sizeof(float) * 4);
+	}
 	adj.transpose();
-	adj *= 1/determinant();
+	return adj;
+}
+
+template<class Sub>
+Sub Mat<Sub>::inverse() {
+	Sub adj = adjoint();
+	adj *= 1.0f/determinant();
 	return adj;
 }
 
@@ -219,13 +218,24 @@ Sub Mat<Sub>::operator^(int n) {
 }
 
 template<class Sub>
-void Mat<Sub>::operator*=(const Sub& other) {
-	Mat m = *this * other;
-	*this = m;
+void Mat<Sub>::operator*=(const Sub& m) {
+	float* temp = new float[size*size];
+	memset(temp, 0, size*size*sizeof(float));
+	swap(temp, data);
+	for (int y = 0; y<size; y++) {
+		for (int x = 0; x<size; x++) {
+			for (int i = 0; i<size; i++) {
+				data[x*size + y] += temp[x*size + i] * m.data[i*size + y];
+			}
+		}
+	}
+	delete[] temp;
 }
 template<class Sub>
 float Mat<Sub>::determinant(){
-    if(size == 2)
+	if (size == 1)
+		return data[0];
+	else if(size == 2)
         return data[0] * data[3] - data[1] * data[2];
 	else if (size == 3) {
 		return data[0] * (data[4] * data[8] - data[5] * data[7])
@@ -267,6 +277,11 @@ Sub Mat<Sub>::rows(vector<Vec*> rows) {
 Mat2::Mat2() : Mat<Mat2>(2) {
 }
 
+Mat2::Mat2(const Mat3& m) : Mat<Mat2>(2) {
+	for (int i = 0; i < size; i++)
+		memcpy(&data[size * i], &m.data[m.size*i], size * sizeof(float));
+}
+
 Mat2::Mat2(float col1[], float col2[], float col3[]) : Mat<Mat2>(2) {
 	memcpy(&data[size * 0], col1, size * sizeof(float));
 	memcpy(&data[size * 1], col2, size * sizeof(float));
@@ -275,6 +290,9 @@ Mat2::Mat2(Vec2 v1, Vec2 v2) : Mat<Mat2>(2) {
 	memcpy(&data[size * 0], v1.data(), v1.size());
 	memcpy(&data[size * 1], v2.data(), v2.size());
 }
+void Mat2::operator=(const Mat2& other) {
+	Mat<Mat2>::operator=(other);
+}
 Mat2 Mat2::asRows(Vec2 v1, Vec2 v2) {
 	vector<Vec*> rows = { (Vec*)&v1, (Vec*)&v2};
 	return Mat2::rows(rows);
@@ -282,6 +300,16 @@ Mat2 Mat2::asRows(Vec2 v1, Vec2 v2) {
 
 
 Mat3::Mat3() : Mat<Mat3>(3) {
+}
+
+Mat3::Mat3(const Mat4& m) : Mat<Mat3>(3) {
+	for (int i = 0; i < size; i++)
+		memcpy(&data[size * i], &m.data[m.size*i], size * sizeof(float));
+}
+
+Mat3::Mat3(const Mat2 & m) : Mat<Mat3>(3) {
+	for (int i = 0; i < m.size; i++)
+		memcpy(&(data[size * i]), &(m.data[m.size * i]), sizeof(float)*m.size);
 }
 
 Mat3::Mat3(float col1[], float col2[], float col3[]) : Mat<Mat3>(3) {
@@ -293,6 +321,9 @@ Mat3::Mat3(Vec3 v1, Vec3 v2, Vec3 v3) : Mat<Mat3>(3) {
 	memcpy(&data[size * 0], v1.data(), v1.size());
 	memcpy(&data[size * 1], v2.data(), v2.size());
 	memcpy(&data[size * 2], v3.data(), v3.size());
+}
+void Mat3::operator=(const Mat3& other) {
+	Mat<Mat3>::operator=(other);
 }
 Mat3 Mat3::asRows(Vec3 v1, Vec3 v2, Vec3 v3) {
 	vector<Vec*> rows = { (Vec*)&v1, (Vec*)&v2, (Vec*)&v3};
@@ -328,9 +359,15 @@ Mat4::Mat4(Vec4 v1, Vec4 v2, Vec4 v3, Vec4 v4) : Mat<Mat4>(4) {
 	memcpy(&data[size * 3], v4.data(), v4.size());
 }
 
+void Mat4::operator=(const Mat4& other) {
+	Mat<Mat4>::operator=(other);
+}
+
 Mat4 Mat4::translate(Vec3 v) {
 	Mat4 m;
-	memcpy(m.data + 12, v.data(), v.size());
+	m.data[3] = v.x;
+	m.data[7] = v.y;
+	m.data[11] = v.z;
 	return m;
 }
 Mat4 Mat4::scale(Vec3 v) {
@@ -342,9 +379,9 @@ Mat4 Mat4::scale(Vec3 v) {
 }
 
 Mat4 Mat4::rotateAround(Vec3 v, float angle) {
-	Mat3 m, A = Mat3::dual(v);
+	Mat3 m, A = Mat3::dual(v.normalize());
 	angle = (angle / 180) * PI;
-	m += A * sin(angle) + (A*A) * (1 - cos(angle));
+	m += (A*sin(angle)) + (1 - cos(angle)) * (A*A);
 	return Mat4(m);
 }
 

@@ -9,6 +9,8 @@
 
 #include "vec.hpp"
 #include "mat.hpp"
+#include "shaders.hpp"
+#include "object.hpp"
 
 #include "tests.hpp"
 
@@ -17,8 +19,10 @@ using namespace std;
 const char CAPTION[] = "Hello Blank World";
 
 int window;
-int windowWidth = 800, windowHeight = 600;
+int windowWidth = 600, windowHeight = 600;
 int frameCount;
+Shader* shader = NULL;
+Object* triangle = NULL, *square = NULL, *parallelogram = NULL, *limits = NULL;
 
 long long now() { // milliseconds
 	static LARGE_INTEGER s_frequency;
@@ -31,6 +35,103 @@ long long now() { // milliseconds
 	else {
 		return GetTickCount();
 	}
+}
+
+#define VERTICES 0
+#define COLORS 1
+
+GLuint VertexShaderId, FragmentShaderId, ProgramId;
+GLint UniformId;
+
+/////////////////////////////////////////////////////////////////////// ERRORS
+
+
+/////////////////////////////////////////////////////////////////////// VAOs & VBOs
+
+void loadObjects() {
+	Vec4 lb = Vec4(0.0f, 0.0f, 0.0f, 1.0f),
+		 lt = Vec4(0.0f, 1.0f, 0.0f, 1.0f),
+		 rb = Vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		 rt = Vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	Vec4 t = Vec4(0.0f, 0.0f, 0.01f, 0.0f);
+	triangle = new Object(shader, {lb,rb,lt}, Vec4(0.0f, 1.0f, 0.0f, 0.0f), {0, 1, 2});
+	square = new Object(shader, {lb, rb, lt, rt}, Vec4(1.0f, 0.0f, 0.0f, 1.0f), {1, 3, 2, 0, 1, 2});
+	limits = new Object(shader, { lb+t, rb+t, lt+t, rt+t }, Vec4(1.0f, 1.0f, 1.0f, 1.0f), { 1, 3, 2, 0, 1, 2 });
+	parallelogram = new Object(shader, { lb, rb, Vec4(0.5f, 0.5f, 0.0f, 1.0f), Vec4(1.5f, 0.5f, 0.0f, 1.0f) }, 
+		Vec4(1.0f, 0.0f, 1.0f, 1.0f), { 1, 3, 2, 0, 1, 2 });
+}
+
+void destroyObjects()
+{
+	delete triangle;
+
+	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
+}
+
+/////////////////////////////////////////////////////////////////////// SCENE
+
+
+void drawScene() {
+	Mat4 world = Mat4::translate(Vec3(-1, -1, 0)) * Mat4::scale(Vec3(2, 2, 1));
+	
+	float sq2 = sqrt(2.0f);
+	//limits->draw(world);
+
+	Mat4 tr;
+	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
+	tr *= Mat4::scale(Vec3(sq2/2, sq2/2, 0.5f));
+	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 135);
+	triangle->setColor(Vec4(1.0f, 1.0f, 0.0f, 1.0f));
+	triangle->draw(world*tr);
+
+	tr = Mat4();
+	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
+	tr *= Mat4::scale(Vec3(sq2/2, sq2/2, 0.5f));
+	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 45);
+	triangle->setColor(Vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	triangle->draw(world*tr);
+
+	tr = Mat4();
+	tr *= Mat4::translate(Vec3(1.0f, 0.0f, 0.0f));
+	tr *= Mat4::scale(Vec3(0.5f, 0.5f, 0.5f));
+	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 90);
+	triangle->setColor(Vec4(1.0f, 0.5f, 0.0f, 1.0f));
+	triangle->draw(world*tr);
+
+	tr = Mat4();
+	tr *= Mat4::translate(Vec3(0.75f, 0.75f, 0.0f));
+	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1));
+	tr *= Mat4::rotateAround(Vec3(0, 0, -1), -45);
+	triangle->setColor(Vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	triangle->draw(world*tr);
+	
+	tr = Mat4();
+	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
+	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1));
+	tr *= Mat4::rotateAround(Vec3(0, 0, -1), -135);
+	triangle->setColor(Vec4(0.0f, 1.0f, 1.0f, 1.0f));
+	triangle->draw(world*tr);
+	
+	tr = Mat4();
+	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
+	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1.0f));
+	tr *= Mat4::rotateAround(Vec3(0, 0, 1), 45);
+	square->setColor(Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	square->draw(world*tr);
+
+	tr = Mat4();
+	tr *= Mat4::scale(Vec3(0.5f, 0.5f, 1.0f));
+	parallelogram->setColor(Vec4(1.0f, 0.0f, 1.0f, 1.0f));
+	parallelogram->draw(world*tr);
+	
+	checkOpenGLError("ERROR: Could not draw scene.");
+}
+
+/////////////////////////////////////////////////////////////////////// CALLBACKS
+
+void cleanup(){
+	destroyShader(shader);
+	destroyObjects();
 }
 
 void checkOpenGLInfo() {
@@ -81,16 +182,12 @@ void setupGLUT(int argc, char* argv[]) {
 		cerr << "Error: Could not create rendering window." << endl;
 		exit(EXIT_FAILURE);
 	}
-		
-}
-
-void cleanup() {
-
 }
 
 void display() {
 	++frameCount;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	drawScene();
 	glutSwapBuffers();
 }
 
@@ -126,45 +223,17 @@ void init(int argc, char* argv[]) {
 	setupGLUT(argc, argv);
 	setupGLEW();
 	setupOpenGL();
+	shader = loadShader("res/shaders/colored");
+	loadObjects();
+	
 	setupCallbacks();
 }
 
-float rand01() {
-	return (float)(rand() % 100000) / 100000;
-}
-
-Vec3 randVec3() {
-	return Vec3(rand01(), rand01(), rand01());
-}
-
-void vecTests() {
-	/*Vec3::test();
-	Vec2::test();
-
-	srand((unsigned int)time(NULL));
-	int t = 10;
-	while (t--) {
-		Vec3 i = randVec3(),
-			j = randVec3(),
-			k = randVec3();
-		Vec3 v1 = i.cross(j.cross(k)),
-			v2 = j * i.dot(k) - k * i.dot(j);
-		cout << "Run " << 10 - t << ":" << endl;
-		cout << i << j << k << endl;
-		cout << v1 << v2 << endl;
-		assert(v1 == v2);
-		//assert(v1 - v2 <= Vec3(0.00001, 0.00001, 0.00001) && v1 - v2 >= Vec3(-0.00001, -0.00001, -0.00001));
-		
-	}*/
-
-}
-
 int main(int argc, char* argv[]) {
-	//init(argc, argv);
-	//glutMainLoop();
-
 	Tests::runTests();
+	init(argc, argv);
+	glutMainLoop();
 
-	system("pause");
 	exit(EXIT_SUCCESS);
+	system("pause");
 }

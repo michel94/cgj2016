@@ -39,7 +39,6 @@ public:
 	Mat(vector<float*>& cols);
 	int size;
 	void operator=(const Sub& other);
-	void operator=(int diag);
 	virtual Sub operator+(const Sub& other);
 	virtual void operator+=(const Sub& other);
 	virtual Sub operator-(const Sub& other);
@@ -64,6 +63,7 @@ public:
 	
 	virtual void transpose();
 	virtual Sub transposed();
+	virtual Sub adjoint();
 	virtual void invert();
 	virtual Sub inverse();
 	virtual float determinant();
@@ -119,8 +119,10 @@ private:
 class Mat2 : public Mat<Mat2> {
 public:
 	Mat2();
+	Mat2(const Mat3 & m);
 	Mat2(float col1[], float col2[], float col3[]);
 	Mat2(Vec2 v1, Vec2 v2);
+	void operator=(const Mat2 & other);
 	Mat2(const Mat2& m) : Mat<Mat2>(2) {
 		memcpy(data, m.data, size*size*sizeof(float));
 	}
@@ -135,8 +137,11 @@ public:
 class Mat3 : public Mat<Mat3> {
 public:
 	Mat3();
+	Mat3(const Mat4& m);
+	Mat3(const Mat2& m);
 	Mat3(float col1[], float col2[], float col3[]);
 	Mat3(Vec3 v1, Vec3 v2, Vec3 v3);
+	void operator=(const Mat3 & other);
 	Mat3(const Mat3& m) : Mat<Mat3>(3){
 		memcpy(data, m.data, size*size*sizeof(float));
 	}
@@ -158,6 +163,7 @@ public:
 	Mat4(const Mat3& m);
     Mat4(float col1[], float col2[], float col3[], float col4[]);
 	Mat4(Vec4 v1, Vec4 v2, Vec4 v3, Vec4 v4);
+	void operator=(const Mat4& other);
 	~Mat4() {
 		delete[] data;
 	}
