@@ -33,20 +33,19 @@ Shader* loadShader(string path) {
 	glShaderSource(FragmentShaderId, 1, &FragmentSourcePointer, 0);
 	glCompileShader(FragmentShaderId);
 
+	s->loaded = checkGLSLError("vertex shader", VertexShaderId) && checkGLSLError("fragment shader", FragmentShaderId);
+
 	GLuint ProgramId = glCreateProgram();
 	glAttachShader(ProgramId, VertexShaderId);
 	glAttachShader(ProgramId, FragmentShaderId);
 
 	glBindAttribLocation(ProgramId, Shader::VERTICES, "in_Position");
-	glBindAttribLocation(ProgramId, Shader::COLORS, "in_Color");
 	glLinkProgram(ProgramId);
 
-	s->UniformId = glGetUniformLocation(ProgramId, "Matrix");
 	s->programId = ProgramId;
 	s->vsId = VertexShaderId;
 	s->fsId = FragmentShaderId;
 
-	//checkOpenGLError("ERROR: Could not create shaders.");
 	GLint count;
 
 	GLint size; // size of the variable
@@ -83,5 +82,33 @@ void destroyShader(Shader* s) {
 	glDeleteShader(s->vsId);
 	glDeleteProgram(s->programId);
 
-	//checkOpenGLError("ERROR: Could not destroy shaders.");
+	checkOpenGLError("ERROR: Could not destroy shaders.");
+}
+
+bool checkGLSLError(string location, GLuint program) {
+	const GLsizei maxLength = 100;
+	GLsizei length;
+	char message[100];
+	glGetShaderInfoLog(program, maxLength, &length, message);
+	if (length > 0)
+		cerr << "On " << location << ": "<< message << endl;
+	return length == 0;
+}
+
+bool isOpenGLError() {
+	bool isError = false;
+	GLenum errCode;
+	const GLubyte *errString;
+	while ((errCode = glGetError()) != GL_NO_ERROR) {
+		isError = true;
+		errString = gluErrorString(errCode);
+		std::cerr << "OpenGL ERROR [" << errString << "]." << std::endl;
+	}
+	return isError;
+}
+
+void checkOpenGLError(std::string error) {
+	if (isOpenGLError()) {
+		std::cerr << error << std::endl;
+	}
 }

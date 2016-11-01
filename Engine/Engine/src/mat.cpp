@@ -385,6 +385,40 @@ Mat4 Mat4::rotateAround(Vec3 v, float angle) {
 	return Mat4(m);
 }
 
+Mat4 Mat4::lookAt(Vec3 eye, Vec3 target, Vec3 up){
+	Vec3 v = target - eye;
+	v.normalized();
+	Vec3 s = v.cross(up);
+	s.normalized();
+	Vec3 u = s.cross(v);
+	return Mat4(
+		Vec4(s.x, s.y, s.z, -eye.dot(s) ),
+		Vec4(u.x, u.y, u.z, -eye.dot(u) ),
+		Vec4(-v.x, -v.y, -v.z, eye.dot(v) ),
+		Vec4(0, 0, 0, 1)
+	);
+}
+
+Mat4 Mat4::ortho(float left, float right, float bottom, float top, float near, float far){
+	return Mat4::asRows(
+		Vec4(2/(right-left), 0, 0, -(left+right)/(right-left) ), 
+		Vec4(0, 2/(top-bottom), 0, -(bottom+top)/(top-bottom) ),
+		Vec4(0, 0, -2/(far-near), -(near+far)/(far-near) ),
+		Vec4(0, 0, 0, 1)
+	);
+}
+
+Mat4 Mat4::perspective(float fovy, float aspect, float zNear, float zFar){
+	fovy = (fovy / 180) * PI;
+	float d = tan(2.0f / fovy);
+	return Mat4::asRows(
+		Vec4(d / aspect, 0, 0, 0),
+		Vec4(0, d, 0, 0),
+		Vec4(0, 0, (zFar + zNear) / (zNear - zFar), 2 * zFar * zNear / (zNear - zFar)),
+		Vec4(0, 0, -1, 0)
+	);
+}
+
 Mat4 Mat4::asRows(Vec4 v1, Vec4 v2, Vec4 v3, Vec4 v4) {
 	vector<Vec*> rows = { (Vec*)&v1, (Vec*)&v2, (Vec*)&v3, (Vec*)&v4 };
 	return Mat4::rows(rows);

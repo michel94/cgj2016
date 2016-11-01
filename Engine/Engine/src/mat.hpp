@@ -172,6 +172,10 @@ public:
 	static Mat4 translate(Vec3 v);
 	static Mat4 scale(Vec3 v);
 	static Mat4 rotateAround(Vec3 v, float angle);
+	static Mat4 lookAt(Vec3 eye, Vec3 lookTo, Vec3 up);
+	static Mat4 ortho(float left, float right, float bottom, float top, float near, float far);
+	static Mat4 perspective(float fovy, float aspect, float zNear, float zFar);
+
 	static Mat4 asRows(Vec4 v1, Vec4 v2, Vec4 v3, Vec4 v4);
 
 };

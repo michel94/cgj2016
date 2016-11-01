@@ -17,12 +17,26 @@
 using namespace std;
 
 const char CAPTION[] = "Hello Blank World";
+const double PI = 3.14159;
 
 int window;
 int windowWidth = 600, windowHeight = 600;
 int frameCount;
 Shader* shader = NULL;
 Object* triangle = NULL, *square = NULL, *parallelogram = NULL, *limits = NULL;
+bool shadersLoaded = false;
+bool perspective = false;
+Vec2 mouseAngles(3.14159, 0.0);
+Vec2 mouseDisp;
+bool controls[] = { false, false, false, false, false, false};
+Vec3 eye = Vec3(0.5, 0.5, 1);
+
+double lastTick;
+
+enum Action {
+	KEYPRESS,
+	KEYRELEASE
+};
 
 long long now() { // milliseconds
 	static LARGE_INTEGER s_frequency;
@@ -40,25 +54,20 @@ long long now() { // milliseconds
 #define VERTICES 0
 #define COLORS 1
 
-GLuint VertexShaderId, FragmentShaderId, ProgramId;
-GLint UniformId;
-
 /////////////////////////////////////////////////////////////////////// ERRORS
 
 
 /////////////////////////////////////////////////////////////////////// VAOs & VBOs
 
 void loadObjects() {
-	Vec4 lb = Vec4(0.0f, 0.0f, 0.0f, 1.0f),
-		 lt = Vec4(0.0f, 1.0f, 0.0f, 1.0f),
-		 rb = Vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		 rt = Vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	
 	Vec4 t = Vec4(0.0f, 0.0f, 0.01f, 0.0f);
-	triangle = new Object(shader, {lb,rb,lt}, Vec4(0.0f, 1.0f, 0.0f, 0.0f), {0, 1, 2});
-	square = new Object(shader, {lb, rb, lt, rt}, Vec4(1.0f, 0.0f, 0.0f, 1.0f), {1, 3, 2, 0, 1, 2});
-	limits = new Object(shader, { lb+t, rb+t, lt+t, rt+t }, Vec4(1.0f, 1.0f, 1.0f, 1.0f), { 1, 3, 2, 0, 1, 2 });
-	parallelogram = new Object(shader, { lb, rb, Vec4(0.5f, 0.5f, 0.0f, 1.0f), Vec4(1.5f, 0.5f, 0.0f, 1.0f) }, 
-		Vec4(1.0f, 0.0f, 1.0f, 1.0f), { 1, 3, 2, 0, 1, 2 });
+	
+	triangle = new Object(shader, Models::getTriangularPrism(0.3));
+	//triangle = new Object(shader, Models::getTriangle());
+	square = new Object(shader, Models::getSquare());
+	parallelogram = new Object(shader, Models::getParallelogram());
+
 }
 
 void destroyObjects()
@@ -71,60 +80,86 @@ void destroyObjects()
 /////////////////////////////////////////////////////////////////////// SCENE
 
 
-void drawScene() {
-	Mat4 world = Mat4::translate(Vec3(-1, -1, 0)) * Mat4::scale(Vec3(2, 2, 1));
+void drawScene(double dt) {
+	mouseAngles.x += mouseDisp.x;
+	mouseAngles.y += mouseDisp.y;
+	mouseDisp = Vec2(0, 0);
+	Vec3 mouseDir = Vec3(cos(mouseAngles.y)*sin(mouseAngles.x), sin(mouseAngles.y), cos(mouseAngles.y)*cos(mouseAngles.x));
+	Vec3 right = Vec3(sin(mouseAngles.x - PI / 2.0f), 0, cos(mouseAngles.x - PI / 2.0f));
+	Vec3 up = right.cross(mouseDir);
+	glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	if (controls[0]) // back
+		eye -= 10 * dt * mouseDir;
+	if (controls[1]) // forward
+		eye += 10 * dt * mouseDir;
+	if (controls[2]) // left
+		eye -= 10 * dt * right;
+	if (controls[3]) // right
+		eye += 10 * dt * right;
+	if (controls[4]) // top
+		eye -= 10 * dt * up;
+	if (controls[5]) // bottom
+		eye += 10 * dt * up;
+
+	Mat4 VP;
+	if (!perspective)
+		VP *= Mat4::ortho(-1, 1, -1, 1, 0, 10);
+	else {
+		VP *= Mat4::perspective(90, windowWidth / (float)windowHeight, 0.5f, 10.0f);
+	}
+	
+	VP *= Mat4::lookAt(eye, eye+mouseDir, Vec3(0, 1, 0));
 	
 	float sq2 = sqrt(2.0f);
-	//limits->draw(world);
-
 	Mat4 tr;
 	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
 	tr *= Mat4::scale(Vec3(sq2/2, sq2/2, 0.5f));
 	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 135);
 	triangle->setColor(Vec4(1.0f, 1.0f, 0.0f, 1.0f));
-	triangle->draw(world*tr);
+	triangle->draw(VP*tr);
 
 	tr = Mat4();
 	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
 	tr *= Mat4::scale(Vec3(sq2/2, sq2/2, 0.5f));
 	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 45);
 	triangle->setColor(Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	triangle->draw(world*tr);
+	triangle->draw(VP*tr);
 
 	tr = Mat4();
 	tr *= Mat4::translate(Vec3(1.0f, 0.0f, 0.0f));
 	tr *= Mat4::scale(Vec3(0.5f, 0.5f, 0.5f));
 	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 90);
 	triangle->setColor(Vec4(1.0f, 0.5f, 0.0f, 1.0f));
-	triangle->draw(world*tr);
+	triangle->draw(VP*tr);
 
 	tr = Mat4();
 	tr *= Mat4::translate(Vec3(0.75f, 0.75f, 0.0f));
 	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1));
 	tr *= Mat4::rotateAround(Vec3(0, 0, -1), -45);
 	triangle->setColor(Vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	triangle->draw(world*tr);
+	triangle->draw(VP*tr);
 	
 	tr = Mat4();
 	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
 	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1));
 	tr *= Mat4::rotateAround(Vec3(0, 0, -1), -135);
 	triangle->setColor(Vec4(0.0f, 1.0f, 1.0f, 1.0f));
-	triangle->draw(world*tr);
+	triangle->draw(VP*tr);
 	
 	tr = Mat4();
 	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
 	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1.0f));
 	tr *= Mat4::rotateAround(Vec3(0, 0, 1), 45);
 	square->setColor(Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	square->draw(world*tr);
+	square->draw(VP*tr);
 
 	tr = Mat4();
 	tr *= Mat4::scale(Vec3(0.5f, 0.5f, 1.0f));
 	parallelogram->setColor(Vec4(1.0f, 0.0f, 1.0f, 1.0f));
-	parallelogram->draw(world*tr);
+	parallelogram->draw(VP*tr);
 	
-	checkOpenGLError("ERROR: Could not draw scene.");
+	if(shadersLoaded)
+		checkOpenGLError("ERROR: Could not draw scene.");
 }
 
 /////////////////////////////////////////////////////////////////////// CALLBACKS
@@ -155,6 +190,9 @@ void setupOpenGL() {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
+	glDisable(GL_CULL_FACE);
+
+	glDisable(GL_BLEND);
 }
 
 void setupGLEW() {
@@ -165,6 +203,45 @@ void setupGLEW() {
 		exit(EXIT_FAILURE);
 	}
 	GLenum errCode = glGetError();
+}
+void onMouseMoved(int x, int y) {
+	Vec2 center(windowWidth / 2.0f, windowHeight / 2.0f);
+	float dx = (center.x - x) / windowWidth , dy = (center.y - y) / windowHeight;
+	mouseDisp.x += dx;
+	mouseDisp.y += dy;
+}
+void onKey(unsigned char key, int x, int y, Action action) {
+	if (key == 27)
+		glutDestroyWindow(window);
+	else if (key == 'p' && action == KEYRELEASE)
+		perspective = !perspective;
+	else if (key == 's')
+		controls[4] = action == KEYPRESS;
+	else if (key == 'w')
+		controls[5] = action == KEYPRESS;
+	else if (key == 'a')
+		controls[2] = action == KEYPRESS;
+	else if (key == 'd')
+		controls[3] = action == KEYPRESS;
+
+}
+void keyDownFunc(unsigned char key, int x, int y) {
+	onKey(key, x, y, KEYPRESS);
+}
+void keyUpFunc(unsigned char key, int x,  int y) {
+	onKey(key, x, y, KEYRELEASE);
+}
+void onSpecialKey(int key, int x, int y, Action action) {
+	if (key == GLUT_KEY_DOWN)
+		controls[0] = action == KEYPRESS;
+	else if (key == GLUT_KEY_UP)
+		controls[1] = action == KEYPRESS;
+}
+void specialKeyDownFunc(int key, int x, int y) {
+	onSpecialKey(key, x, y, KEYPRESS);
+}
+void specialKeyUpFunc(int key, int x, int y) {
+	onSpecialKey(key, x, y, KEYRELEASE);
 }
 
 void setupGLUT(int argc, char* argv[]) {
@@ -182,12 +259,29 @@ void setupGLUT(int argc, char* argv[]) {
 		cerr << "Error: Could not create rendering window." << endl;
 		exit(EXIT_FAILURE);
 	}
+
+	glutSpecialFunc(specialKeyDownFunc);
+	glutSpecialUpFunc(specialKeyUpFunc);
+	glutKeyboardFunc(keyDownFunc);
+	glutKeyboardUpFunc(keyUpFunc);
+	glutPassiveMotionFunc(onMouseMoved);
+
+	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
 void display() {
 	++frameCount;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	drawScene();
+	double curTick = now();
+	
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
+	glDepthRange(0.0, 1.0);
+	glClearDepth(1.0);
+
+	drawScene( (curTick - lastTick) / 1000 );
+	lastTick = curTick;
 	glutSwapBuffers();
 }
 
@@ -224,6 +318,10 @@ void init(int argc, char* argv[]) {
 	setupGLEW();
 	setupOpenGL();
 	shader = loadShader("res/shaders/colored");
+	shadersLoaded = shader->loaded;
+
+	glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	lastTick = now();
 	loadObjects();
 	
 	setupCallbacks();
@@ -234,6 +332,6 @@ int main(int argc, char* argv[]) {
 	init(argc, argv);
 	glutMainLoop();
 
-	exit(EXIT_SUCCESS);
 	system("pause");
+	exit(EXIT_SUCCESS);
 }

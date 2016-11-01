@@ -12,12 +12,13 @@ using namespace std;
 
 struct Shader {
 public:
-	GLuint vsId, fsId, programId, UniformId;
+	GLuint vsId, fsId, programId;
+	bool loaded = false;
 	GLuint& operator[](string name) {
 		return variables[name];
 	}
 
-	static const GLuint VERTICES = 0, COLORS = 1;
+	static const GLuint VERTICES = 0;
 
 private:
 	map<string, GLuint> variables;
@@ -26,3 +27,6 @@ private:
 Shader* loadShader(string path);
 void destroyShader(Shader*);
 
+bool isOpenGLError();
+void checkOpenGLError(std::string error);
+bool checkGLSLError(string location, GLuint program);

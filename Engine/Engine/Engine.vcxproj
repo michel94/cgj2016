@@ -144,7 +144,9 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mat.cpp" />
+    <ClCompile Include="src\models.cpp" />
     <ClCompile Include="src\object.cpp" />
+    <ClCompile Include="src\prism.cpp" />
     <ClCompile Include="src\shaders.cpp" />
     <ClCompile Include="src\tests.cpp" />
     <ClCompile Include="src\vec2.cpp" />
@@ -153,7 +155,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mat.hpp" />
+    <ClInclude Include="src\models.hpp" />
     <ClInclude Include="src\object.hpp" />
+    <ClInclude Include="src\prism.hpp" />
     <ClInclude Include="src\shaders.hpp" />
     <ClInclude Include="src\tests.hpp" />
     <ClInclude Include="src\vec.hpp" />
