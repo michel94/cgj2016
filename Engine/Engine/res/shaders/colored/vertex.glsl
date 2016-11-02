@@ -8,5 +8,6 @@ uniform mat4 Matrix;
 uniform vec4 Color;
 
 void main(void){
+	ex_Color = in_Color;
 	gl_Position = Matrix * in_Position;
 }

@@ -6,6 +6,10 @@
 
 using namespace std;
 
+class Vec2;
+class Vec3;
+class Vec4;
+
 class Vec {
 public:
 	virtual void setData(float*) = 0;
@@ -13,8 +17,6 @@ public:
 	virtual int size() const = 0;
 	virtual float operator[](int index) = 0;
 };
-
-class Vec3;
 
 class Vec2 : public Vec{
 public:
@@ -69,6 +71,7 @@ public:
 	Vec3(float x, float y, float z);
 	Vec3(const Vec2& v);
 	Vec3(const Vec3& v);
+	Vec3(const Vec4& v);
 	void* data() const;
 	virtual void setData(float* data);
 	int size() const;

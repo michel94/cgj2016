@@ -6,19 +6,20 @@ Object::Object(Shader *s, Model *m) : shader(*s), model(*m) {
 Object::~Object() {
 }
 
-void Object::setColor(Vec4 color) {
-	this->color = color;
-}
-
-void Object::draw(Mat4 m){
+void Object::draw(Mat4 wm){
 	model.bind();
 	glUseProgram(shader.programId);
-	glUniformMatrix4fv(shader["Matrix"], 1, GL_TRUE, m.data);
-	glUniform4fv(shader["Color"], 1, (float*)color.data() );
+	wm *= mat;
 	
+	glUniformMatrix4fv(shader["Matrix"], 1, GL_TRUE, wm.data);
+	//glUniform4fv(shader["Color"], 1, (float*)color.data() );
 	model.draw();
 	
 	glUseProgram(0);
 	glBindVertexArray(0);
 
+}
+
+void Object::setModelMatrix(Mat4& m) {
+	this->mat = m;
 }

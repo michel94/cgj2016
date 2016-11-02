@@ -18,8 +18,6 @@ public:
 		return variables[name];
 	}
 
-	static const GLuint VERTICES = 0;
-
 private:
 	map<string, GLuint> variables;
 };

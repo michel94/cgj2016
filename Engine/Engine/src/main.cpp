@@ -11,19 +11,19 @@
 #include "mat.hpp"
 #include "shaders.hpp"
 #include "object.hpp"
+#include "prettymodels.hpp"
 
 #include "tests.hpp"
 
 using namespace std;
 
 const char CAPTION[] = "Hello Blank World";
-const double PI = 3.14159;
+const float PI = 3.14159f;
 
 int window;
 int windowWidth = 600, windowHeight = 600;
 int frameCount;
 Shader* shader = NULL;
-Object* triangle = NULL, *square = NULL, *parallelogram = NULL, *limits = NULL;
 bool shadersLoaded = false;
 bool perspective = false;
 Vec2 mouseAngles(3.14159, 0.0);
@@ -32,27 +32,25 @@ bool controls[] = { false, false, false, false, false, false};
 Vec3 eye = Vec3(0.5, 0.5, 1);
 
 double lastTick;
+vector<Object*> objects;
 
 enum Action {
 	KEYPRESS,
 	KEYRELEASE
 };
 
-long long now() { // milliseconds
+double now() { // milliseconds
 	static LARGE_INTEGER s_frequency;
 	static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
 	if (s_use_qpc) {
 		LARGE_INTEGER now;
 		QueryPerformanceCounter(&now);
-		return (1000LL * now.QuadPart) / s_frequency.QuadPart;
+		return (double) ((1000LL * now.QuadPart) / s_frequency.QuadPart);
 	}
 	else {
-		return GetTickCount();
+		return (double)GetTickCount();
 	}
 }
-
-#define VERTICES 0
-#define COLORS 1
 
 /////////////////////////////////////////////////////////////////////// ERRORS
 
@@ -62,25 +60,76 @@ long long now() { // milliseconds
 void loadObjects() {
 	
 	Vec4 t = Vec4(0.0f, 0.0f, 0.01f, 0.0f);
+	float sq2 = sqrt(2.0f);
+	Object* square = new Object(shader, Models<PrettyModel>::getSquarePrism(Vec4(1.0f, 0.0f, 0.0f, 1.0f)));
+	square->setModelMatrix(
+		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
+		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.85f)) *
+		Mat4::rotateAround(Vec3(0, 0, 1), 45)
+	);
+	objects.push_back(square);
 	
-	triangle = new Object(shader, Models::getTriangularPrism(0.3));
-	//triangle = new Object(shader, Models::getTriangle());
-	square = new Object(shader, Models::getSquare());
-	parallelogram = new Object(shader, Models::getParallelogram());
+	Object* parallelogram = new Object(shader, Models<PrettyModel>::getParallelogramPrism(Vec4(1.0f, 0.0f, 1.0f, 1.0f)) );
+	parallelogram->setModelMatrix(
+		Mat4::scale(Vec3(0.5f, 0.5f, 0.9f))
+	);
+	objects.push_back(parallelogram);	
+
+	Object* triangle;
+
+	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(1.0f, 1.0f, 0.0f, 1.0f)));
+	triangle->setModelMatrix(
+		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
+		Mat4::scale(Vec3(sq2 / 2, sq2 / 2, 0.4f)) *
+		Mat4::rotateAround(Vec3(0, 0, -1), 135)
+	);
+	objects.push_back(triangle);
+
+	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 1.0f, 0.0f, 1.0f)));
+	triangle->setModelMatrix(
+		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) * 
+		Mat4::scale(Vec3(sq2 / 2, sq2 / 2, 0.5f)) * 
+		Mat4::rotateAround(Vec3(0, 0, -1), 45)
+	);
+	objects.push_back(triangle);
+
+	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(1.0f, 0.5f, 0.0f, 1.0f)));
+	triangle->setModelMatrix(
+		Mat4::translate(Vec3(1.0f, 0.0f, 0.0f)) *
+		Mat4::scale(Vec3(0.5f, 0.5f, 0.7f)) *
+		Mat4::rotateAround(Vec3(0, 0, -1), 90)
+	);
+	objects.push_back(triangle);
+	
+	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+	triangle->setModelMatrix(
+		Mat4::translate(Vec3(0.75f, 0.75f, 0.0f)) *
+		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.2f)) *
+		Mat4::rotateAround(Vec3(0, 0, -1), -45)
+	);
+	objects.push_back(triangle);
+
+	
+	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 1.0f, 1.0f, 1.0f)));
+	triangle->setModelMatrix(
+		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
+		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.8f)) *
+		Mat4::rotateAround(Vec3(0, 0, -1), -135)
+	);
+	objects.push_back(triangle);
 
 }
 
-void destroyObjects()
-{
-	delete triangle;
-
+void destroyObjects(){
+	for (int i = 0; i < objects.size(); i++)
+		delete objects[i];
 	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
 }
 
 /////////////////////////////////////////////////////////////////////// SCENE
 
 
-void drawScene(double dt) {
+void drawScene(float dt) {
 	mouseAngles.x += mouseDisp.x;
 	mouseAngles.y += mouseDisp.y;
 	mouseDisp = Vec2(0, 0);
@@ -89,74 +138,29 @@ void drawScene(double dt) {
 	Vec3 up = right.cross(mouseDir);
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	if (controls[0]) // back
-		eye -= 10 * dt * mouseDir;
+		eye -= 3.0f * dt * mouseDir;
 	if (controls[1]) // forward
-		eye += 10 * dt * mouseDir;
+		eye += 3.0f * dt * mouseDir;
 	if (controls[2]) // left
-		eye -= 10 * dt * right;
+		eye -= 3.0f * dt * right;
 	if (controls[3]) // right
-		eye += 10 * dt * right;
+		eye += 3.0f * dt * right;
 	if (controls[4]) // top
-		eye -= 10 * dt * up;
+		eye -= 3.0f * dt * up;
 	if (controls[5]) // bottom
-		eye += 10 * dt * up;
+		eye += 3.0f * dt * up;
 
 	Mat4 VP;
 	if (!perspective)
-		VP *= Mat4::ortho(-1, 1, -1, 1, 0, 10);
+		VP *= Mat4::ortho(-1, 1, -1, 1, 0, 5);
 	else {
-		VP *= Mat4::perspective(90, windowWidth / (float)windowHeight, 0.5f, 10.0f);
+		VP *= Mat4::perspective(90, windowWidth / (float)windowHeight, 2.0f, 10.0f);
 	}
 	
-	VP *= Mat4::lookAt(eye, eye+mouseDir, Vec3(0, 1, 0));
+	VP *= Mat4::lookAt(eye, eye+mouseDir, up);
 	
-	float sq2 = sqrt(2.0f);
-	Mat4 tr;
-	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
-	tr *= Mat4::scale(Vec3(sq2/2, sq2/2, 0.5f));
-	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 135);
-	triangle->setColor(Vec4(1.0f, 1.0f, 0.0f, 1.0f));
-	triangle->draw(VP*tr);
-
-	tr = Mat4();
-	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
-	tr *= Mat4::scale(Vec3(sq2/2, sq2/2, 0.5f));
-	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 45);
-	triangle->setColor(Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	triangle->draw(VP*tr);
-
-	tr = Mat4();
-	tr *= Mat4::translate(Vec3(1.0f, 0.0f, 0.0f));
-	tr *= Mat4::scale(Vec3(0.5f, 0.5f, 0.5f));
-	tr *= Mat4::rotateAround(Vec3(0, 0, -1), 90);
-	triangle->setColor(Vec4(1.0f, 0.5f, 0.0f, 1.0f));
-	triangle->draw(VP*tr);
-
-	tr = Mat4();
-	tr *= Mat4::translate(Vec3(0.75f, 0.75f, 0.0f));
-	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1));
-	tr *= Mat4::rotateAround(Vec3(0, 0, -1), -45);
-	triangle->setColor(Vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	triangle->draw(VP*tr);
-	
-	tr = Mat4();
-	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
-	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1));
-	tr *= Mat4::rotateAround(Vec3(0, 0, -1), -135);
-	triangle->setColor(Vec4(0.0f, 1.0f, 1.0f, 1.0f));
-	triangle->draw(VP*tr);
-	
-	tr = Mat4();
-	tr *= Mat4::translate(Vec3(0.5f, 0.5f, 0.0f));
-	tr *= Mat4::scale(Vec3(sq2/4, sq2/4, 1.0f));
-	tr *= Mat4::rotateAround(Vec3(0, 0, 1), 45);
-	square->setColor(Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	square->draw(VP*tr);
-
-	tr = Mat4();
-	tr *= Mat4::scale(Vec3(0.5f, 0.5f, 1.0f));
-	parallelogram->setColor(Vec4(1.0f, 0.0f, 1.0f, 1.0f));
-	parallelogram->draw(VP*tr);
+	for (int i = 0; i < objects.size(); i++)
+		objects[i]->draw(VP);
 	
 	if(shadersLoaded)
 		checkOpenGLError("ERROR: Could not draw scene.");
@@ -190,7 +194,6 @@ void setupOpenGL() {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	glDisable(GL_CULL_FACE);
 
 	glDisable(GL_BLEND);
 }
@@ -272,7 +275,6 @@ void setupGLUT(int argc, char* argv[]) {
 void display() {
 	++frameCount;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	double curTick = now();
 	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -280,7 +282,8 @@ void display() {
 	glDepthRange(0.0, 1.0);
 	glClearDepth(1.0);
 
-	drawScene( (curTick - lastTick) / 1000 );
+	double curTick = now();
+	drawScene( (float)(curTick - lastTick) / 1000 );
 	lastTick = curTick;
 	glutSwapBuffers();
 }
@@ -335,3 +338,8 @@ int main(int argc, char* argv[]) {
 	system("pause");
 	exit(EXIT_SUCCESS);
 }
+
+Vec4 lb = Vec4(0.0f, 0.0f, 0.0f, 1.0f),
+lt = Vec4(0.0f, 1.0f, 0.0f, 1.0f),
+rb = Vec4(1.0f, 0.0f, 0.0f, 1.0f),
+rt = Vec4(1.0f, 1.0f, 0.0f, 1.0f);

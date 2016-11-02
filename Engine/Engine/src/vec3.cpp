@@ -10,6 +10,11 @@ Vec3::Vec3(const Vec3& v) {
 	this->y = v.y;
 	this->z = v.z;
 }
+Vec3::Vec3(const Vec4& v) {
+	this->x = v.x;
+	this->y = v.y;
+	this->z = v.z;
+}
 Vec3::Vec3(float x, float y, float z){
 	this->x = x;
 	this->y = y;

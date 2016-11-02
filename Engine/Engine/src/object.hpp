@@ -13,13 +13,11 @@ public:
 	Object(Shader * s, Model* m);
 	~Object();
 	virtual void draw(Mat4);
-	virtual void setColor(Vec4);
+	void setModelMatrix(Mat4& m);
 
 protected:
-	Object(Shader*);
 	Shader &shader;
 	Model &model;
-	Vec4 color = Vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
+	Mat4 mat;
 	
 };

@@ -54,7 +54,22 @@ float Vec4::length() const {
 	return norm();
 }
 bool Vec4::operator<(const Vec4& v) const {
-	return x < v.x && y < v.y && z < v.z && w < v.w;
+	if (x < v.x)
+		return true;
+	else if (x > v.x)
+		return false;
+	if (y < v.y)
+		return true;
+	else if (y > v.y)
+		return false;
+	if (z < v.z)
+		return true;
+	else if (z > v.z)
+		return false;
+	if (w < v.w)
+		return true;
+	else
+		return false;
 }
 bool Vec4::operator<=(const Vec4& v) const {
 	return x <= v.x && y <= v.y && z <= v.z && w <= v.w;
