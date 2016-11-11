@@ -400,7 +400,7 @@ Mat4 Mat4::lookAt(Vec3 eye, Vec3 target, Vec3 up){
 }
 
 Mat4 Mat4::ortho(float left, float right, float bottom, float top, float near, float far){
-	return Mat4::asRows(
+	return Mat4(
 		Vec4(2/(right-left), 0, 0, -(left+right)/(right-left) ), 
 		Vec4(0, 2/(top-bottom), 0, -(bottom+top)/(top-bottom) ),
 		Vec4(0, 0, -2/(far-near), -(near+far)/(far-near) ),

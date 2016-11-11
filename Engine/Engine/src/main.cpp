@@ -9,6 +9,7 @@
 
 #include "vec.hpp"
 #include "mat.hpp"
+#include "quaternion.hpp"
 #include "shaders.hpp"
 #include "object.hpp"
 #include "prettymodels.hpp"
@@ -25,11 +26,14 @@ int windowWidth = 600, windowHeight = 600;
 int frameCount;
 Shader* shader = NULL;
 bool shadersLoaded = false;
-bool perspective = false;
+bool perspective = true, useQuaternions = true;
 Vec2 mouseAngles(3.14159, 0.0);
 Vec2 mouseDisp;
 bool controls[] = { false, false, false, false, false, false};
 Vec3 eye = Vec3(0.5, 0.5, 1);
+float dist=1.5;
+Qtrn rotation;
+Mat4 matRotation;
 
 double lastTick;
 vector<Object*> objects;
@@ -132,15 +136,18 @@ void destroyObjects(){
 void drawScene(float dt) {
 	mouseAngles.x += mouseDisp.x;
 	mouseAngles.y += mouseDisp.y;
-	mouseDisp = Vec2(0, 0);
 	Vec3 mouseDir = Vec3(cos(mouseAngles.y)*sin(mouseAngles.x), sin(mouseAngles.y), cos(mouseAngles.y)*cos(mouseAngles.x));
 	Vec3 right = Vec3(sin(mouseAngles.x - PI / 2.0f), 0, cos(mouseAngles.x - PI / 2.0f));
 	Vec3 up = right.cross(mouseDir);
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
-	if (controls[0]) // back
+	if (controls[0]) { // back
 		eye -= 3.0f * dt * mouseDir;
-	if (controls[1]) // forward
+		dist += 3.0f * dt;
+	}
+	if (controls[1]) { // forward
 		eye += 3.0f * dt * mouseDir;
+		dist -= 3.0f * dt;
+	}
 	if (controls[2]) // left
 		eye -= 3.0f * dt * right;
 	if (controls[3]) // right
@@ -152,12 +159,29 @@ void drawScene(float dt) {
 
 	Mat4 VP;
 	if (!perspective)
-		VP *= Mat4::ortho(-1, 1, -1, 1, 0, 5);
+		VP *= Mat4::ortho(-2, 2, -2, 2, -5, 5);
 	else {
 		VP *= Mat4::perspective(90, windowWidth / (float)windowHeight, 2.0f, 10.0f);
 	}
+
+	Mat4 V;
 	
-	VP *= Mat4::lookAt(eye, eye+mouseDir, up);
+	//V *= Mat4::lookAt(eye, eye+mouseDir, up);
+
+	rotation = rotation * Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
+	matRotation = matRotation * Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100);
+
+	mouseDisp = Vec2(0, 0);
+
+	V *= Mat4::translate(Vec3(0.0f, 0.0f, -dist));
+	if (useQuaternions)
+		V *= rotation.toMat4();
+	else
+		V *= matRotation;
+	
+	V *= Mat4::translate(Vec3(-0.5f, -0.5f, -0.4f));
+
+	VP *= V;
 	
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->draw(VP);
@@ -218,6 +242,8 @@ void onKey(unsigned char key, int x, int y, Action action) {
 		glutDestroyWindow(window);
 	else if (key == 'p' && action == KEYRELEASE)
 		perspective = !perspective;
+	else if (key == 'g' && action == KEYRELEASE)
+		useQuaternions = !useQuaternions;
 	else if (key == 's')
 		controls[4] = action == KEYPRESS;
 	else if (key == 'w')

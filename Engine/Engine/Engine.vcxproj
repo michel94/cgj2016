@@ -147,6 +147,7 @@
     <ClCompile Include="src\models.cpp" />
     <ClCompile Include="src\object.cpp" />
     <ClCompile Include="src\prettymodels.cpp" />
+    <ClCompile Include="src\quaternion.cpp" />
     <ClCompile Include="src\shaders.cpp" />
     <ClCompile Include="src\tests.cpp" />
     <ClCompile Include="src\vec2.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="src\models.hpp" />
     <ClInclude Include="src\object.hpp" />
     <ClInclude Include="src\prettymodels.hpp" />
+    <ClInclude Include="src\quaternion.hpp" />
     <ClInclude Include="src\shaders.hpp" />
     <ClInclude Include="src\tests.hpp" />
     <ClInclude Include="src\vec.hpp" />
