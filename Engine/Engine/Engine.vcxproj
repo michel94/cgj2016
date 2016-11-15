@@ -142,12 +142,14 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mat.cpp" />
     <ClCompile Include="src\models.cpp" />
-    <ClCompile Include="src\object.cpp" />
+    <ClCompile Include="src\scenenode.cpp" />
     <ClCompile Include="src\prettymodels.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
+    <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\shaders.cpp" />
     <ClCompile Include="src\tests.cpp" />
     <ClCompile Include="src\vec2.cpp" />
@@ -155,11 +157,13 @@
     <ClCompile Include="src\vec4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\mat.hpp" />
     <ClInclude Include="src\models.hpp" />
-    <ClInclude Include="src\object.hpp" />
+    <ClInclude Include="src\scenenode.hpp" />
     <ClInclude Include="src\prettymodels.hpp" />
     <ClInclude Include="src\quaternion.hpp" />
+    <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\shaders.hpp" />
     <ClInclude Include="src\tests.hpp" />
     <ClInclude Include="src\vec.hpp" />

@@ -30,6 +30,7 @@ public:
 	const Qtrn inverse();
 	Qtrn operator+(Qtrn& q1);
 	Qtrn operator*(const float s);
+	void operator*=(Qtrn& q1);
 	Qtrn operator*(Qtrn& q1);
 	const Mat4 toMat4();
 	const Qtrn lerp(Qtrn& q1, float k);

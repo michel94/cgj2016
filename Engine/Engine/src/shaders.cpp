@@ -1,5 +1,7 @@
 #include "shaders.hpp"
 
+const string SHADERS_PATH = "res/shaders/";
+
 Shader* loadShader(string path) {
 	Shader *s = new Shader();
 
@@ -24,7 +26,7 @@ Shader* loadShader(string path) {
 	
 	char const* VertexSourcePointer = VertexShaderCode.c_str();
 	char const* FragmentSourcePointer = FragmentShaderCode.c_str();
-
+	
 	GLuint VertexShaderId = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(VertexShaderId, 1, &VertexSourcePointer, 0);
 	glCompileShader(VertexShaderId);
@@ -112,4 +114,14 @@ void checkOpenGLError(std::string error) {
 	if (isOpenGLError()) {
 		std::cerr << error << std::endl;
 	}
+}
+
+map<string, Shader*> ShaderManager::shaders;
+
+Shader& ShaderManager::getShader(string name) {
+	if (ShaderManager::shaders.find(name) != ShaderManager::shaders.end())
+		return *ShaderManager::shaders[name];
+	else
+		return *(ShaderManager::shaders[name] = loadShader(SHADERS_PATH + name));
+
 }

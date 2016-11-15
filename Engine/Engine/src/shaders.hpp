@@ -17,6 +17,9 @@ public:
 	GLuint& operator[](string name) {
 		return variables[name];
 	}
+	void bind() {
+		glUseProgram(programId);
+	}
 
 private:
 	map<string, GLuint> variables;
@@ -28,3 +31,11 @@ void destroyShader(Shader*);
 bool isOpenGLError();
 void checkOpenGLError(std::string error);
 bool checkGLSLError(string location, GLuint program);
+
+
+class ShaderManager {
+private:
+	static map<string, Shader*> shaders;
+public:
+	static Shader& getShader(string name);
+};

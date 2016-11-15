@@ -11,8 +11,9 @@
 #include "mat.hpp"
 #include "quaternion.hpp"
 #include "shaders.hpp"
-#include "object.hpp"
+#include "scenenode.hpp"
 #include "prettymodels.hpp"
+#include "scene.hpp"
 
 #include "tests.hpp"
 
@@ -31,12 +32,13 @@ Vec2 mouseAngles(3.14159, 0.0);
 Vec2 mouseDisp;
 bool controls[] = { false, false, false, false, false, false};
 Vec3 eye = Vec3(0.5, 0.5, 1);
-float dist=1.5;
-Qtrn rotation;
-Mat4 matRotation;
+Scene* scene;
+SphericalCamera camera(windowWidth, windowHeight);
+//Qtrn rotation;
+//Mat4 matRotation;
 
 double lastTick;
-vector<Object*> objects;
+vector<SceneNode*> objects;
 
 enum Action {
 	KEYPRESS,
@@ -65,7 +67,7 @@ void loadObjects() {
 	
 	Vec4 t = Vec4(0.0f, 0.0f, 0.01f, 0.0f);
 	float sq2 = sqrt(2.0f);
-	Object* square = new Object(shader, Models<PrettyModel>::getSquarePrism(Vec4(1.0f, 0.0f, 0.0f, 1.0f)));
+	SceneNode* square = new SceneNode(Models<PrettyModel>::getSquarePrism(Vec4(1.0f, 0.0f, 0.0f, 1.0f)));
 	square->setModelMatrix(
 		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
 		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.85f)) *
@@ -73,15 +75,15 @@ void loadObjects() {
 	);
 	objects.push_back(square);
 	
-	Object* parallelogram = new Object(shader, Models<PrettyModel>::getParallelogramPrism(Vec4(1.0f, 0.0f, 1.0f, 1.0f)) );
+	SceneNode* parallelogram = new SceneNode(Models<PrettyModel>::getParallelogramPrism(Vec4(1.0f, 0.0f, 1.0f, 1.0f)) );
 	parallelogram->setModelMatrix(
 		Mat4::scale(Vec3(0.5f, 0.5f, 0.9f))
 	);
 	objects.push_back(parallelogram);	
 
-	Object* triangle;
+	SceneNode* triangle;
 
-	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(1.0f, 1.0f, 0.0f, 1.0f)));
+	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(1.0f, 1.0f, 0.0f, 1.0f)));
 	triangle->setModelMatrix(
 		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
 		Mat4::scale(Vec3(sq2 / 2, sq2 / 2, 0.4f)) *
@@ -89,7 +91,7 @@ void loadObjects() {
 	);
 	objects.push_back(triangle);
 
-	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 1.0f, 0.0f, 1.0f)));
+	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 1.0f, 0.0f, 1.0f)));
 	triangle->setModelMatrix(
 		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) * 
 		Mat4::scale(Vec3(sq2 / 2, sq2 / 2, 0.5f)) * 
@@ -97,7 +99,7 @@ void loadObjects() {
 	);
 	objects.push_back(triangle);
 
-	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(1.0f, 0.5f, 0.0f, 1.0f)));
+	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(1.0f, 0.5f, 0.0f, 1.0f)));
 	triangle->setModelMatrix(
 		Mat4::translate(Vec3(1.0f, 0.0f, 0.0f)) *
 		Mat4::scale(Vec3(0.5f, 0.5f, 0.7f)) *
@@ -105,7 +107,7 @@ void loadObjects() {
 	);
 	objects.push_back(triangle);
 	
-	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 0.0f, 1.0f, 1.0f)));
 	triangle->setModelMatrix(
 		Mat4::translate(Vec3(0.75f, 0.75f, 0.0f)) *
 		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.2f)) *
@@ -114,7 +116,7 @@ void loadObjects() {
 	objects.push_back(triangle);
 
 	
-	triangle = new Object(shader, Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 1.0f, 1.0f, 1.0f)));
+	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 1.0f, 1.0f, 1.0f)));
 	triangle->setModelMatrix(
 		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
 		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.8f)) *
@@ -122,6 +124,10 @@ void loadObjects() {
 	);
 	objects.push_back(triangle);
 
+	scene = new Scene();
+	scene->attachCamera(&camera);
+	SceneNode* root = scene->root();
+	root->addChildren(objects);
 }
 
 void destroyObjects(){
@@ -142,11 +148,11 @@ void drawScene(float dt) {
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	if (controls[0]) { // back
 		eye -= 3.0f * dt * mouseDir;
-		dist += 3.0f * dt;
+		camera.dist += 3.0f * dt;
 	}
 	if (controls[1]) { // forward
 		eye += 3.0f * dt * mouseDir;
-		dist -= 3.0f * dt;
+		camera.dist -= 3.0f * dt;
 	}
 	if (controls[2]) // left
 		eye -= 3.0f * dt * right;
@@ -156,35 +162,17 @@ void drawScene(float dt) {
 		eye -= 3.0f * dt * up;
 	if (controls[5]) // bottom
 		eye += 3.0f * dt * up;
-
-	Mat4 VP;
-	if (!perspective)
-		VP *= Mat4::ortho(-2, 2, -2, 2, -5, 5);
-	else {
-		VP *= Mat4::perspective(90, windowWidth / (float)windowHeight, 2.0f, 10.0f);
-	}
-
-	Mat4 V;
 	
 	//V *= Mat4::lookAt(eye, eye+mouseDir, up);
 
-	rotation = rotation * Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
-	matRotation = matRotation * Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100);
-
+	camera.rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
+	camera.matRotation = Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100) * camera.matRotation;
+	
 	mouseDisp = Vec2(0, 0);
-
-	V *= Mat4::translate(Vec3(0.0f, 0.0f, -dist));
-	if (useQuaternions)
-		V *= rotation.toMat4();
-	else
-		V *= matRotation;
 	
-	V *= Mat4::translate(Vec3(-0.5f, -0.5f, -0.4f));
-
-	VP *= V;
-	
-	for (int i = 0; i < objects.size(); i++)
-		objects[i]->draw(VP);
+	scene->render();
+	//for (int i = 0; i < objects.size(); i++)
+		//objects[i]->render(VP);
 	
 	if(shadersLoaded)
 		checkOpenGLError("ERROR: Could not draw scene.");
@@ -352,6 +340,7 @@ void init(int argc, char* argv[]) {
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	lastTick = now();
 	loadObjects();
+	camera.rotation = Qtrn::fromAngleAxis(0, Vec3(0, 1, 0));
 	
 	setupCallbacks();
 }

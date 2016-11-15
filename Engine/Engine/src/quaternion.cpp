@@ -95,6 +95,18 @@ Qtrn Qtrn::operator*(const float s){
 	return sq;
 }
 
+void Qtrn::operator*=(Qtrn & q1){
+	Qtrn q;
+	q.t = t * q1.t - x * q1.x - y * q1.y - z * q1.z;
+	q.x = t * q1.x + x * q1.t + y * q1.z - z * q1.y;
+	q.y = t * q1.y + y * q1.t + z * q1.x - x * q1.z;
+	q.z = t * q1.z + z * q1.t + x * q1.y - y * q1.x;
+	t = q.t;
+	x = q.x;
+	y = q.y;
+	z = q.z;
+}
+
 Qtrn Qtrn::operator*(Qtrn & q1){
 	Qtrn q;
 	q.t = t * q1.t - x * q1.x - y * q1.y - z * q1.z;
