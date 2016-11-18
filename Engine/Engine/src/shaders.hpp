@@ -36,6 +36,9 @@ bool checkGLSLError(string location, GLuint program);
 class ShaderManager {
 private:
 	static map<string, Shader*> shaders;
+	static bool mShadersLoaded;
 public:
 	static Shader& getShader(string name);
+	static void destroyShaders();
+	static bool shadersLoaded();
 };

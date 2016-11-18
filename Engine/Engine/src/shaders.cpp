@@ -117,11 +117,23 @@ void checkOpenGLError(std::string error) {
 }
 
 map<string, Shader*> ShaderManager::shaders;
+bool ShaderManager::mShadersLoaded = true;
 
 Shader& ShaderManager::getShader(string name) {
 	if (ShaderManager::shaders.find(name) != ShaderManager::shaders.end())
 		return *ShaderManager::shaders[name];
-	else
-		return *(ShaderManager::shaders[name] = loadShader(SHADERS_PATH + name));
+	else {
+		Shader* shader = loadShader(SHADERS_PATH + name);
+		ShaderManager::mShadersLoaded &= shader->loaded;
+		return *(ShaderManager::shaders[name] = shader);
+	}
+}
+void ShaderManager::destroyShaders() {
+	for (auto s : ShaderManager::shaders)
+		delete s.second;
 
+}
+
+bool ShaderManager::shadersLoaded() {
+	return ShaderManager::mShadersLoaded;
 }

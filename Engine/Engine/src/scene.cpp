@@ -4,6 +4,12 @@ Scene::Scene() {
 	mRoot = new SceneNode();
 }
 
+Scene::~Scene() {
+	delete mRoot;
+	if(camera)
+		delete camera;
+}
+
 void Scene::update(float dt) {
 	mRoot->update(dt);
 }

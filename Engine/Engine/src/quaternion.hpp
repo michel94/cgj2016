@@ -32,12 +32,12 @@ public:
 	Qtrn operator*(const float s);
 	void operator*=(Qtrn& q1);
 	Qtrn operator*(Qtrn& q1);
-	const Mat4 toMat4();
+	Mat4 toMat4();
 	const Qtrn lerp(Qtrn& q1, float k);
 	const Qtrn slerp(Qtrn& q1, float k);
 	const bool operator==(const Qtrn& q1);
 	friend ostream& operator<<(ostream& ostr, const Qtrn& q);
 	//const void qPrintAngleAxis(const std::string& s, const Qtrn& q);
 
-	static Qtrn fromAngleAxis(float theta, Vec4 axis);
+	static Qtrn fromAngleAxis(float theta, Vec3 axis);
 };

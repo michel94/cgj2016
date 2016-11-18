@@ -3,8 +3,8 @@
 #define DEGREES_TO_RADIANS 0.01745329251994329547
 #define RADIANS_TO_DEGREES 57.29577951308232185913
 
-Qtrn Qtrn::fromAngleAxis(float theta, Vec4 axis){
-	Vec4 axisn = axis.normalize();
+Qtrn Qtrn::fromAngleAxis(float theta, Vec3 axis){
+	Vec3 axisn = axis.normalize();
 
 	Qtrn q;
 	float a = theta * (float) DEGREES_TO_RADIANS;
@@ -13,14 +13,14 @@ Qtrn Qtrn::fromAngleAxis(float theta, Vec4 axis){
 	q.x = axisn.x * s;
 	q.y = axisn.y * s;
 	q.z = axisn.z * s;
-
+	
 	q.clean();
 	return q.normalize();
 }
 
 Qtrn::Qtrn(){
-	x = 1;
-	y = z = t = 0;
+	t = 1;
+	x = y = z = 0;
 }
 
 Qtrn::Qtrn(float t, float x, float y, float z){
@@ -116,7 +116,7 @@ Qtrn Qtrn::operator*(Qtrn & q1){
 	return q;
 }
 
-const Mat4 Qtrn::toMat4(){
+Mat4 Qtrn::toMat4(){
 	Qtrn qn = normalize();
 
 	float xx = qn.x * qn.x;

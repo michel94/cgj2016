@@ -8,6 +8,7 @@ class SceneNode;
 class Scene {
 public:
 	Scene();
+	~Scene();
 	void render();
 	void update(float dt);
 	SceneNode* root();

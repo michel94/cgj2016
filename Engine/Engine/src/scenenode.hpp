@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "mat.hpp"
-#include "models.hpp"
+#include "quaternion.hpp"
+#include "model.hpp"
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include "scene.hpp"
@@ -18,8 +18,10 @@ public:
 	SceneNode(SceneNode * parent);
 	SceneNode(Model * model, SceneNode * parent);
 	~SceneNode();
-	void setShader(string name);
-	void setModelMatrix(Mat4& m);
+	Mat4 getModelMatrix();
+	void setModelMatrix(Mat4 m);
+
+	Mat4 calcModelMatrix();
 	
 	void addChild(SceneNode* node);
 	void addChildren(vector<SceneNode*>& nodes);
@@ -28,18 +30,29 @@ public:
 	void setParent(SceneNode* parent);
 	void switchParent(SceneNode* parent);
 
-	void update(float dt);
+	virtual void update(float dt);
 	virtual void updateChildren(float dt) final;
-	void render(Mat4 tr);
-	void renderChildren(Mat4 tr);
-private:
-	//Shader& shader;
-	string shaderName;
+	virtual void render(Mat4 tr);
+	virtual void renderChildren(Mat4 tr) final;
+
+	Vec3 position, scale = Vec3(1.0f, 1.0f, 1.0f);
+	Qtrn rotation;
+
+	Mat4 mat;
+protected:
 	Scene* scene;
 	Model *model;
-	Mat4 mat;
 
 	vector<SceneNode*> children;
 	SceneNode* parent;
+
+};
+
+class ColoredNode : public SceneNode {
+public:
+	ColoredNode(Model* model, Vec4 color);
+	virtual void render(Mat4 tr);
+
+	Vec4 color;
 };
 

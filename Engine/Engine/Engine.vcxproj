@@ -89,6 +89,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\dependencies\freeglut\include;..\..\dependencies\glew\include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\..\dependencies\glew\lib\Release\x64\;..\..\dependencies\freeglut\lib\x64;</AdditionalLibraryDirectories>
@@ -122,6 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\dependencies\freeglut\include;..\..\dependencies\glew\include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -145,7 +147,8 @@
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mat.cpp" />
-    <ClCompile Include="src\models.cpp" />
+    <ClCompile Include="src\modelmanager.cpp" />
+    <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\scenenode.cpp" />
     <ClCompile Include="src\prettymodels.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
@@ -157,9 +160,12 @@
     <ClCompile Include="src\vec4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\animation.hpp" />
     <ClInclude Include="src\camera.hpp" />
+    <ClInclude Include="src\glutwrappers.h" />
     <ClInclude Include="src\mat.hpp" />
-    <ClInclude Include="src\models.hpp" />
+    <ClInclude Include="src\modelmanager.hpp" />
+    <ClInclude Include="src\model.hpp" />
     <ClInclude Include="src\scenenode.hpp" />
     <ClInclude Include="src\prettymodels.hpp" />
     <ClInclude Include="src\quaternion.hpp" />

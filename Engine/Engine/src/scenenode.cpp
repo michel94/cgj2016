@@ -25,12 +25,16 @@ SceneNode::~SceneNode(){
 		delete n;
 }
 
-void SceneNode::setShader(string name){
-	shaderName = name;
+void SceneNode::setModelMatrix(Mat4 m) {
+	mat = m; // No longer, can be renable by extending class and changing calcModelMatrix method
 }
 
-void SceneNode::setModelMatrix(Mat4& m) {
-	this->mat = m;
+Mat4 SceneNode::calcModelMatrix() {
+	return Mat4::translate(position) * Mat4::scale(scale) * rotation.toMat4();
+}
+
+Mat4 SceneNode::getModelMatrix() {
+	return calcModelMatrix();
 }
 
 void SceneNode::addChild(SceneNode * node){
@@ -39,7 +43,6 @@ void SceneNode::addChild(SceneNode * node){
 
 void SceneNode::addChildren(vector<SceneNode*>& nodes){
 	int size = children.size() + (nodes.end() - nodes.begin());
-	cout << size << endl;
 	children.reserve(size);
 
 	children.insert(children.end(), nodes.begin(), nodes.end());
@@ -85,21 +88,20 @@ void SceneNode::updateChildren(float dt) {
 
 void SceneNode::renderChildren(Mat4 tr) {
 	for (auto c : children) {
-		c->render(tr);
-		c->renderChildren(tr * mat);
+		c->render(tr * c->getModelMatrix());
+		c->renderChildren(tr * c->getModelMatrix());
 	}
 }
 
 void SceneNode::render(Mat4 tr){
 	if (model) {
+		
 		model->bind();
 		Shader& shader = ShaderManager::getShader("colored");
 		shader.bind();
-		tr *= mat;
-
+		
 		glUniformMatrix4fv(shader["Matrix"], 1, GL_TRUE, tr.data);
-		//glUniform4fv(shader["Color"], 1, (float*)color.data() );
-		model->draw();
+		model->draw(shader);
 
 		glUseProgram(0);
 		glBindVertexArray(0);
@@ -107,3 +109,23 @@ void SceneNode::render(Mat4 tr){
 	
 }
 
+ColoredNode::ColoredNode(Model* model, Vec4 color) : SceneNode(model) {
+	this->color = color;
+}
+
+void ColoredNode::render(Mat4 tr) {
+	if (model) {
+
+		model->bind();
+		Shader& shader = ShaderManager::getShader("colored");
+		shader.bind();
+
+		glUniformMatrix4fv(shader["Matrix"], 1, GL_TRUE, tr.data);
+		glUniform4fv(shader["Color"], 1, (float*)color.data());
+		model->draw(shader);
+
+		glUseProgram(0);
+		glBindVertexArray(0);
+	}
+
+}

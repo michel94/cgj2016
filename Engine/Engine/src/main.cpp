@@ -8,42 +8,31 @@
 #include <math.h>
 
 #include "vec.hpp"
-#include "mat.hpp"
 #include "quaternion.hpp"
 #include "shaders.hpp"
-#include "scenenode.hpp"
 #include "prettymodels.hpp"
+#include "modelmanager.hpp"
 #include "scene.hpp"
+#include "animation.hpp"
+#include "glutwrappers.h"
 
 #include "tests.hpp"
 
 using namespace std;
 
 const char CAPTION[] = "Hello Blank World";
-const float PI = 3.14159f;
 
 int window;
 int windowWidth = 600, windowHeight = 600;
 int frameCount;
-Shader* shader = NULL;
-bool shadersLoaded = false;
-bool perspective = true, useQuaternions = true;
-Vec2 mouseAngles(3.14159, 0.0);
 Vec2 mouseDisp;
-bool controls[] = { false, false, false, false, false, false};
-Vec3 eye = Vec3(0.5, 0.5, 1);
+bool controls[] = { false, false, false, false, false, false };
 Scene* scene;
-SphericalCamera camera(windowWidth, windowHeight);
-//Qtrn rotation;
-//Mat4 matRotation;
+SphericalCamera* camera = new SphericalCamera(windowWidth, windowHeight);
+SceneNode* ground;
 
 double lastTick;
 vector<SceneNode*> objects;
-
-enum Action {
-	KEYPRESS,
-	KEYRELEASE
-};
 
 double now() { // milliseconds
 	static LARGE_INTEGER s_frequency;
@@ -52,137 +41,175 @@ double now() { // milliseconds
 		LARGE_INTEGER now;
 		QueryPerformanceCounter(&now);
 		return (double) ((1000LL * now.QuadPart) / s_frequency.QuadPart);
-	}
-	else {
+	}else {
 		return (double)GetTickCount();
 	}
 }
 
-/////////////////////////////////////////////////////////////////////// ERRORS
+/////////////////////////////////////////////////////////////////////// SCENE SETUP
 
+SceneNode* triangle1, *triangle2, *triangle3, *triangle4, *triangle5;
+SceneNode* square, *parallelogram;
 
-/////////////////////////////////////////////////////////////////////// VAOs & VBOs
-
-void loadObjects() {
-	
-	Vec4 t = Vec4(0.0f, 0.0f, 0.01f, 0.0f);
+void loadTransformations() {
 	float sq2 = sqrt(2.0f);
-	SceneNode* square = new SceneNode(Models<PrettyModel>::getSquarePrism(Vec4(1.0f, 0.0f, 0.0f, 1.0f)));
-	square->setModelMatrix(
-		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
-		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.85f)) *
-		Mat4::rotateAround(Vec3(0, 0, 1), 45)
-	);
-	objects.push_back(square);
+
+	square->position = Vec3(0.5f, 0.5f, 0.0f);
+	square->scale = Vec3(sq2 / 8, sq2 / 8, sq2 / 8);
+	square->rotation = Qtrn::fromAngleAxis(45, Vec3(0, 0, 1));
+
+	parallelogram->scale = Vec3(0.25f, 0.25f, 0.15f);
+
+	triangle1->position = Vec3(0.5f, 0.5f, 0.0f);
+	triangle1->scale = Vec3(sq2 / 2, sq2 / 2, 0.3f);
+	triangle1->rotation = Qtrn::fromAngleAxis(135.0f, Vec3(0, 0, -1));
+
+	triangle2->position = Vec3(0.5f, 0.5f, 0.0f);
+	triangle2->scale = Vec3(sq2 / 2, sq2 / 2, 0.25f);
+	triangle2->rotation = Qtrn::fromAngleAxis(45, Vec3(0, 0, -1));
+
+	triangle3->position = Vec3(1.0f, 0.0f, 0.0f);
+	triangle3->scale = Vec3(0.5f, 0.5f, 0.3f);
+	triangle3->rotation = Qtrn::fromAngleAxis(90, Vec3(0, 0, -1));
+
+	triangle4->position = Vec3(0.75f, 0.75f, 0.0f);
+	triangle4->scale = Vec3(sq2 / 4, sq2 / 4, 0.2f);
+	triangle4->rotation = Qtrn::fromAngleAxis(-45, Vec3(0, 0, -1));
 	
-	SceneNode* parallelogram = new SceneNode(Models<PrettyModel>::getParallelogramPrism(Vec4(1.0f, 0.0f, 1.0f, 1.0f)) );
-	parallelogram->setModelMatrix(
-		Mat4::scale(Vec3(0.5f, 0.5f, 0.9f))
-	);
-	objects.push_back(parallelogram);	
-
-	SceneNode* triangle;
-
-	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(1.0f, 1.0f, 0.0f, 1.0f)));
-	triangle->setModelMatrix(
-		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
-		Mat4::scale(Vec3(sq2 / 2, sq2 / 2, 0.4f)) *
-		Mat4::rotateAround(Vec3(0, 0, -1), 135)
-	);
-	objects.push_back(triangle);
-
-	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 1.0f, 0.0f, 1.0f)));
-	triangle->setModelMatrix(
-		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) * 
-		Mat4::scale(Vec3(sq2 / 2, sq2 / 2, 0.5f)) * 
-		Mat4::rotateAround(Vec3(0, 0, -1), 45)
-	);
-	objects.push_back(triangle);
-
-	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(1.0f, 0.5f, 0.0f, 1.0f)));
-	triangle->setModelMatrix(
-		Mat4::translate(Vec3(1.0f, 0.0f, 0.0f)) *
-		Mat4::scale(Vec3(0.5f, 0.5f, 0.7f)) *
-		Mat4::rotateAround(Vec3(0, 0, -1), 90)
-	);
-	objects.push_back(triangle);
-	
-	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 0.0f, 1.0f, 1.0f)));
-	triangle->setModelMatrix(
-		Mat4::translate(Vec3(0.75f, 0.75f, 0.0f)) *
-		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.2f)) *
-		Mat4::rotateAround(Vec3(0, 0, -1), -45)
-	);
-	objects.push_back(triangle);
-
-	
-	triangle = new SceneNode(Models<PrettyModel>::getTriangularPrism(Vec4(0.0f, 1.0f, 1.0f, 1.0f)));
-	triangle->setModelMatrix(
-		Mat4::translate(Vec3(0.5f, 0.5f, 0.0f)) *
-		Mat4::scale(Vec3(sq2 / 4, sq2 / 4, 0.8f)) *
-		Mat4::rotateAround(Vec3(0, 0, -1), -135)
-	);
-	objects.push_back(triangle);
-
-	scene = new Scene();
-	scene->attachCamera(&camera);
-	SceneNode* root = scene->root();
-	root->addChildren(objects);
+	triangle5->position = Vec3(0.5f, 0.5f, 0.0f);
+	triangle5->scale = Vec3(sq2 / 4, sq2 / 4, 0.3f);
+	triangle5->rotation = Qtrn::fromAngleAxis(-135, Vec3(0, 0, -1));
 }
 
-void destroyObjects(){
-	for (int i = 0; i < objects.size(); i++)
-		delete objects[i];
-	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
+void startAnimations(bool reverse) {
+	vector<Animation*> animations = {
+		new AnimSequence({
+			new Translation(square, Vec3(0, 0, 0.5f)),
+			new Translation(square, Vec3(-0.15f, 0.375f, 0)),
+			new Translation(square, Vec3(0, 0, -0.5f)),
+		}),
+		new AnimSequence({
+			new Translation(parallelogram, Vec3(0, 0, 0.3f)),
+			new Rotation(parallelogram, Qtrn::fromAngleAxis(180.0, Vec3(1, 0, 0)), 180.0f),
+			new Rotation(parallelogram, Qtrn::fromAngleAxis(90.0, Vec3(0, 0, 1)), 90.0f),
+			new Translation(parallelogram, Vec3(0.35f, 0.9f, 0)),
+		}),
+		new AnimSequence({
+			new Translation(triangle1, Vec3(0, 0, 0.8f)),
+			new Rotation(triangle1, Qtrn::fromAngleAxis(-45.0f, Vec3(0, 0, -1)), 45.0f),
+			new Translation(triangle1, Vec3(0.0f, -0.5f, 0)),
+			new Translation(triangle1, Vec3(0, 0, -0.8f)),
+		}),
+		new AnimSequence({
+			new Translation(triangle2, Vec3(0, 0, 1.2f)),
+			new Translation(triangle2, Vec3(-0.5f, -0.3f, 0)),
+			new Translation(triangle2, Vec3(0, 0, -1.2f)),
+		}),
+		new AnimSequence({
+			new Translation(triangle3, Vec3(0, 0, 0.8f)),
+			new Rotation(triangle3, Qtrn::fromAngleAxis(45.0f, Vec3(0, 0, -1)), 45.0f),
+			new Translation(triangle3, Vec3(-0.14f, 0.35f, 0.0f)),
+			new Translation(triangle3, Vec3(0.0f, 0.0f, -0.8f)),
+		}),
+		new AnimSequence({
+			new Translation(triangle4, Vec3(-0.15f, -0.125f, 0.0f)),
+		}),
+		new AnimSequence({
+			new Translation(triangle5, Vec3(0, 0, 1.4f)),
+			new Rotation(triangle5, Qtrn::fromAngleAxis(135.0f, Vec3(0, 0, -1)), 135.0f),
+			new Translation(triangle5, Vec3(0.1f, 0.8f, 0)),
+			new Translation(triangle5, Vec3(0, 0, -1.4f)),
+		}),
+	};
+	if (reverse) {
+		for (int i = 0; i < animations.size(); i++)
+			animations[i] = animations[i]->reverse();
+	}
+
+	AnimManager::getInstance().start(animations);
+}
+
+void loadScene() {
+	Model* m = ModelManager<Model>::getObj("triangle");
+
+	float sq2 = sqrt(2.0f);
+	square = new ColoredNode(ModelManager<Model>::getObj("cube"), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	parallelogram = new ColoredNode(ModelManager<Model>::getObj("parallelogram"), Vec4(1.0f, 0.0f, 1.0f, 1.0f));
+	triangle1 = new ColoredNode(m, Vec4(1.0f, 1.0f, 0.0f, 1.0f));
+	triangle2 = new ColoredNode(m, Vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	triangle3 = new ColoredNode(m, Vec4(1.0f, 0.5f, 0.0f, 1.0f));
+	triangle4 = new ColoredNode(m, Vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	triangle5 = new ColoredNode(m, Vec4(0.0f, 1.0f, 1.0f, 1.0f));
+	
+	objects.push_back(square);		
+	objects.push_back(parallelogram);
+	objects.push_back(triangle1);
+	objects.push_back(triangle2);
+	objects.push_back(triangle3);
+	objects.push_back(triangle4);
+	objects.push_back(triangle5);
+
+	ground = new ColoredNode(ModelManager<>::getObj("plane"), Vec4(0.5, 0.5, 0.5, 1));
+	loadTransformations();
+	
+	scene = new Scene();
+	scene->attachCamera(camera);
+	SceneNode* root = scene->root();
+	root->addChild(ground);
+	ground->addChildren(objects);
+}
+
+void destroyScene(){
+	delete scene;
+	checkOpenGLError("ERROR: Could not destroy scene.");
 }
 
 /////////////////////////////////////////////////////////////////////// SCENE
 
-
-void drawScene(float dt) {
-	mouseAngles.x += mouseDisp.x;
-	mouseAngles.y += mouseDisp.y;
-	Vec3 mouseDir = Vec3(cos(mouseAngles.y)*sin(mouseAngles.x), sin(mouseAngles.y), cos(mouseAngles.y)*cos(mouseAngles.x));
-	Vec3 right = Vec3(sin(mouseAngles.x - PI / 2.0f), 0, cos(mouseAngles.x - PI / 2.0f));
-	Vec3 up = right.cross(mouseDir);
+void update(float dt) {
+	
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	Mat4 mMove;
 	if (controls[0]) { // back
-		eye -= 3.0f * dt * mouseDir;
-		camera.dist += 3.0f * dt;
+		camera->dist += 3.0f * dt;
 	}
 	if (controls[1]) { // forward
-		eye += 3.0f * dt * mouseDir;
-		camera.dist -= 3.0f * dt;
+		camera->dist -= 3.0f * dt;
 	}
-	if (controls[2]) // left
-		eye -= 3.0f * dt * right;
-	if (controls[3]) // right
-		eye += 3.0f * dt * right;
-	if (controls[4]) // top
-		eye -= 3.0f * dt * up;
-	if (controls[5]) // bottom
-		eye += 3.0f * dt * up;
-	
-	//V *= Mat4::lookAt(eye, eye+mouseDir, up);
+	if (controls[2]) { // left
+		ground->position += Vec3(3.0f, 0, 0) * dt;
+	}
+	if (controls[3]) { // right
+		ground->position += Vec3(-3.0f, 0, 0) * dt;
+	}
+	if (controls[4]) { // top
+		ground->position += Vec3(0, 3.0f, 0) * dt;
+	}
+	if (controls[5]) { // bottom
+		ground->position += Vec3(0, -3.0f, 0) * dt;
+	}
 
-	camera.rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
-	camera.matRotation = Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100) * camera.matRotation;
-	
+	AnimManager::getInstance().update(dt);
+
+	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
+	camera->matRotation = Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100) * camera->matRotation;
 	mouseDisp = Vec2(0, 0);
+
+	scene->update(dt);
 	
-	scene->render();
-	//for (int i = 0; i < objects.size(); i++)
-		//objects[i]->render(VP);
-	
-	if(shadersLoaded)
+	if(!ShaderManager::shadersLoaded())
 		checkOpenGLError("ERROR: Could not draw scene.");
+}
+
+void render() {
+	scene->render();
 }
 
 /////////////////////////////////////////////////////////////////////// CALLBACKS
 
 void cleanup(){
-	destroyShader(shader);
-	destroyObjects();
+	destroyScene();
+	ShaderManager::destroyShaders();
 }
 
 void checkOpenGLInfo() {
@@ -229,9 +256,7 @@ void onKey(unsigned char key, int x, int y, Action action) {
 	if (key == 27)
 		glutDestroyWindow(window);
 	else if (key == 'p' && action == KEYRELEASE)
-		perspective = !perspective;
-	else if (key == 'g' && action == KEYRELEASE)
-		useQuaternions = !useQuaternions;
+		camera->perspective = !camera->perspective;
 	else if (key == 's')
 		controls[4] = action == KEYPRESS;
 	else if (key == 'w')
@@ -240,25 +265,17 @@ void onKey(unsigned char key, int x, int y, Action action) {
 		controls[2] = action == KEYPRESS;
 	else if (key == 'd')
 		controls[3] = action == KEYPRESS;
+	else if (key == 'k' && action == KEYRELEASE)
+		startAnimations(false);
+	else if (key == 'l' && action == KEYRELEASE)
+		startAnimations(true);
 
-}
-void keyDownFunc(unsigned char key, int x, int y) {
-	onKey(key, x, y, KEYPRESS);
-}
-void keyUpFunc(unsigned char key, int x,  int y) {
-	onKey(key, x, y, KEYRELEASE);
 }
 void onSpecialKey(int key, int x, int y, Action action) {
 	if (key == GLUT_KEY_DOWN)
 		controls[0] = action == KEYPRESS;
 	else if (key == GLUT_KEY_UP)
 		controls[1] = action == KEYPRESS;
-}
-void specialKeyDownFunc(int key, int x, int y) {
-	onSpecialKey(key, x, y, KEYPRESS);
-}
-void specialKeyUpFunc(int key, int x, int y) {
-	onSpecialKey(key, x, y, KEYRELEASE);
 }
 
 void setupGLUT(int argc, char* argv[]) {
@@ -276,13 +293,9 @@ void setupGLUT(int argc, char* argv[]) {
 		cerr << "Error: Could not create rendering window." << endl;
 		exit(EXIT_FAILURE);
 	}
-
-	glutSpecialFunc(specialKeyDownFunc);
-	glutSpecialUpFunc(specialKeyUpFunc);
-	glutKeyboardFunc(keyDownFunc);
-	glutKeyboardUpFunc(keyUpFunc);
+	keyFunc(onKey);
+	specialKeyFunc(onSpecialKey);
 	glutPassiveMotionFunc(onMouseMoved);
-
 	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
@@ -297,7 +310,8 @@ void display() {
 	glClearDepth(1.0);
 
 	double curTick = now();
-	drawScene( (float)(curTick - lastTick) / 1000 );
+	update( (float)(curTick - lastTick) / 1000 );
+	render();
 	lastTick = curTick;
 	glutSwapBuffers();
 }
@@ -334,13 +348,11 @@ void init(int argc, char* argv[]) {
 	setupGLUT(argc, argv);
 	setupGLEW();
 	setupOpenGL();
-	shader = loadShader("res/shaders/colored");
-	shadersLoaded = shader->loaded;
 
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	lastTick = now();
-	loadObjects();
-	camera.rotation = Qtrn::fromAngleAxis(0, Vec3(0, 1, 0));
+	loadScene();
+	camera->rotation = Qtrn::fromAngleAxis(0, Vec3(0, 1, 0));
 	
 	setupCallbacks();
 }
@@ -353,8 +365,3 @@ int main(int argc, char* argv[]) {
 	system("pause");
 	exit(EXIT_SUCCESS);
 }
-
-Vec4 lb = Vec4(0.0f, 0.0f, 0.0f, 1.0f),
-lt = Vec4(0.0f, 1.0f, 0.0f, 1.0f),
-rb = Vec4(1.0f, 0.0f, 0.0f, 1.0f),
-rt = Vec4(1.0f, 1.0f, 0.0f, 1.0f);

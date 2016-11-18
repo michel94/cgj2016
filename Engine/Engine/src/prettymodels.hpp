@@ -1,5 +1,5 @@
 #pragma once
-#include "models.hpp"
+#include "model.hpp"
 #include <vector>
 
 class PrettyModel : public Model {
