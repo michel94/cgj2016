@@ -96,7 +96,7 @@ void SceneNode::renderChildren(Mat4 tr) {
 void SceneNode::render(Mat4 tr){
 	if (model) {
 		
-		model->bind();
+		
 		Shader& shader = ShaderManager::getShader("colored");
 		shader.bind();
 		
@@ -116,7 +116,6 @@ ColoredNode::ColoredNode(Model* model, Vec4 color) : SceneNode(model) {
 void ColoredNode::render(Mat4 tr) {
 	if (model) {
 
-		model->bind();
 		Shader& shader = ShaderManager::getShader("colored");
 		shader.bind();
 

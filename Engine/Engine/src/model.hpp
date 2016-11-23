@@ -19,9 +19,6 @@ public:
 
 	}
 	~Model();
-	void bind() {
-		glBindVertexArray(vaoId);
-	}
 	void draw(Shader& shader);
 	
 protected:

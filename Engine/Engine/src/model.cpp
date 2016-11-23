@@ -47,6 +47,7 @@ void Model::createBuffers(Vertex* data, int size, vector<GLubyte>& indices) {
 }
 
 void Model::draw(Shader& shader) {
+	glBindVertexArray(vaoId);
 	glBindBuffer(GL_ARRAY_BUFFER, vboId[0]);
 	
 	glEnableVertexAttribArray(COLORS);
