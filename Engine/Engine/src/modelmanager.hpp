@@ -1,23 +1,24 @@
 #pragma once
 
 #include "model.hpp"
+#include "singleton.hpp"
 
 template<typename M = Model>
-class ModelManager {
+class ModelManager : public Singleton<ModelManager<M> > {
 public:
-	static Model* getTriangle(Vec4 color);
-	static Model* getSquare(Vec4 color);
-	static Model* getParallelogram(Vec4 color);
+	Model* getTriangle(Vec4 color);
+	Model* getSquare(Vec4 color);
+	Model* getParallelogram(Vec4 color);
 
-	static Model* getPrism(vector<Vec4>& topFace, Vec4 color);
-	static Model* getTriangularPrism(Vec4 color);
-	static Model* getSquarePrism(Vec4 color);
-	static Model* getParallelogramPrism(Vec4 color);
+	Model* getPrism(vector<Vec4>& topFace, Vec4 color);
+	Model* getTriangularPrism(Vec4 color);
+	Model* getSquarePrism(Vec4 color);
+	Model* getParallelogramPrism(Vec4 color);
 
-	static Model* loadObj(string path);
-	static Model* getObj(string path);
+	Model* loadObj(string path);
+	Model* getObj(string path);
 private:
-	static map<string, Model*> models;
+	map<string, Model*> models;
 };
 
 template<typename M>
@@ -162,11 +163,11 @@ const string MODEL_DIR = "res/meshes/";
 
 template<typename M>
 Model* ModelManager<M>::getObj(string name) {
-	if (ModelManager::models.find(name) != ModelManager::models.end())
-		return ModelManager::models[name];
+	if (models.find(name) != models.end())
+		return models[name];
 	else {
-		M* model = ModelManager::loadObj(MODEL_DIR + name + ".obj");
-		return ModelManager::models[name] = model;
+		M* model = loadObj(MODEL_DIR + name + ".obj");
+		return models[name] = model;
 	}
 }
 

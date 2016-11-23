@@ -96,8 +96,7 @@ void SceneNode::renderChildren(Mat4 tr) {
 void SceneNode::render(Mat4 tr){
 	if (model) {
 		
-		
-		Shader& shader = ShaderManager::getShader("colored");
+		Shader& shader = ShaderManager::instance().getShader("colored");
 		shader.bind();
 		
 		glUniformMatrix4fv(shader["Matrix"], 1, GL_TRUE, tr.data);
@@ -116,7 +115,7 @@ ColoredNode::ColoredNode(Model* model, Vec4 color) : SceneNode(model) {
 void ColoredNode::render(Mat4 tr) {
 	if (model) {
 
-		Shader& shader = ShaderManager::getShader("colored");
+		Shader& shader = ShaderManager::instance().getShader("colored");
 		shader.bind();
 
 		glUniformMatrix4fv(shader["Matrix"], 1, GL_TRUE, tr.data);

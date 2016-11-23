@@ -3,6 +3,7 @@
 #include "quaternion.hpp"
 #include "vec.hpp"
 #include "scenenode.hpp"
+#include "singleton.hpp"
 
 const float PI = 3.14159f;
 
@@ -29,14 +30,8 @@ protected:
 	}
 };
 
-class AnimManager : public AnimController {
+class AnimManager : public Singleton<AnimManager>, public AnimController {
 public:
-	static AnimManager& getInstance()
-	{
-		static AnimManager instance; // Guaranteed to be destroyed.
-									 // Instantiated on first use.
-		return instance;
-	}
 	AnimManager() {
 
 	}

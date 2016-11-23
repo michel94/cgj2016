@@ -8,6 +8,8 @@
 #include <iostream>
 #include <map>
 
+#include "singleton.hpp"
+
 using namespace std;
 
 struct Shader {
@@ -32,13 +34,14 @@ bool isOpenGLError();
 void checkOpenGLError(std::string error);
 bool checkGLSLError(string location, GLuint program);
 
-
-class ShaderManager {
-private:
-	static map<string, Shader*> shaders;
-	static bool mShadersLoaded;
+class ShaderManager : public Singleton<ShaderManager> {
 public:
-	static Shader& getShader(string name);
-	static void destroyShaders();
-	static bool shadersLoaded();
+	~ShaderManager();
+	Shader& getShader(string name);
+	void destroyShaders();
+	bool shadersLoaded();
+private:
+	map<string, Shader*> shaders;
+	bool mShadersLoaded = true;
+	
 };

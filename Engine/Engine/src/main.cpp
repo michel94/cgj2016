@@ -126,15 +126,14 @@ void startAnimations(bool reverse) {
 			animations[i] = animations[i]->reverse();
 	}
 
-	AnimManager::getInstance().start(animations);
+	AnimManager::instance().start(animations);
 }
 
 void loadScene() {
-	Model* m = ModelManager<Model>::getObj("triangle");
-
+	Model* m = ModelManager<Model>::instance().getObj("triangle");
 	float sq2 = sqrt(2.0f);
-	square = new ColoredNode(ModelManager<Model>::getObj("cube"), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	parallelogram = new ColoredNode(ModelManager<Model>::getObj("parallelogram"), Vec4(1.0f, 0.0f, 1.0f, 1.0f));
+	square = new ColoredNode(ModelManager<Model>::instance().getObj("cube"), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	parallelogram = new ColoredNode(ModelManager<Model>::instance().getObj("parallelogram"), Vec4(1.0f, 0.0f, 1.0f, 1.0f));
 	triangle1 = new ColoredNode(m, Vec4(1.0f, 1.0f, 0.0f, 1.0f));
 	triangle2 = new ColoredNode(m, Vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	triangle3 = new ColoredNode(m, Vec4(1.0f, 0.5f, 0.0f, 1.0f));
@@ -149,7 +148,7 @@ void loadScene() {
 	objects.push_back(triangle4);
 	objects.push_back(triangle5);
 
-	ground = new ColoredNode(ModelManager<>::getObj("plane"), Vec4(0.5, 0.5, 0.5, 1));
+	ground = new ColoredNode(ModelManager<>::instance().getObj("plane"), Vec4(0.5, 0.5, 0.5, 1));
 	loadTransformations();
 	
 	scene = new Scene();
@@ -189,7 +188,7 @@ void update(float dt) {
 		ground->position += Vec3(0, -3.0f, 0) * dt;
 	}
 
-	AnimManager::getInstance().update(dt);
+	AnimManager::instance().update(dt);
 
 	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
 	camera->matRotation = Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100) * camera->matRotation;
@@ -197,7 +196,7 @@ void update(float dt) {
 
 	scene->update(dt);
 	
-	if(!ShaderManager::shadersLoaded())
+	if(!ShaderManager::instance().shadersLoaded())
 		checkOpenGLError("ERROR: Could not draw scene.");
 }
 
@@ -209,7 +208,6 @@ void render() {
 
 void cleanup(){
 	destroyScene();
-	ShaderManager::destroyShaders();
 }
 
 void checkOpenGLInfo() {
@@ -327,7 +325,7 @@ void reshape(int w, int h) {
 }
 
 void timer(int value) {
-	std::ostringstream oss;
+	ostringstream oss;
 	oss << CAPTION << ": " << frameCount << " FPS @ (" << windowWidth << " x " << windowHeight << ") " << endl;
 	string s = oss.str();
 	glutSetWindow(window);

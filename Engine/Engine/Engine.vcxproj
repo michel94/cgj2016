@@ -171,6 +171,7 @@
     <ClInclude Include="src\quaternion.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\shaders.hpp" />
+    <ClInclude Include="src\singleton.hpp" />
     <ClInclude Include="src\tests.hpp" />
     <ClInclude Include="src\vec.hpp" />
   </ItemGroup>
