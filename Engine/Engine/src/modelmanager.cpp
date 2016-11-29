@@ -58,7 +58,7 @@ Model* ModelManager::loadObj(std::string filename){
 	processMeshData();
 	
 	m->createBuffers();
-	//freeMeshData();
+	freeMeshData();
 
 	return m;
 }
@@ -139,52 +139,3 @@ void ModelManager::freeMeshData()
 	m->normalIdx.clear();
 }
 
-/*
-Model* ModelManager::getPrism(vector<Vec4>& topFace, Vec4 color) {
-	vector<Vec4> vertices;
-	vector<GLubyte> indices;
-	float h = 1;
-
-	int size = (int)topFace.size();
-	for (int i = 1; i < size - 1; i++) {
-		vertices.push_back(topFace[0]);
-		vertices.push_back(topFace[i + 1]);
-		vertices.push_back(topFace[i]);
-
-	}
-	for (int i = 1; i < size - 1; i++) {
-		vertices.push_back(topFace[0] + Vec4(0, 0, h, 0));
-		vertices.push_back(topFace[i] + Vec4(0, 0, h, 0));
-		vertices.push_back(topFace[i + 1] + Vec4(0, 0, h, 0));
-	}
-	for (int i = 0; i < size; i++) {
-		vertices.push_back(topFace[i]);
-		vertices.push_back(topFace[(i + 1) % size]);
-		vertices.push_back(topFace[(i + 1) % size] + Vec4(0, 0, h, 0));
-
-		vertices.push_back(topFace[i]);
-		vertices.push_back(topFace[(i + 1) % size] + Vec4(0, 0, h, 0));
-		vertices.push_back(topFace[i] + Vec4(0, 0, h, 0));
-
-	}
-	indices.resize(vertices.size());
-	for (int i = 0; i < indices.size(); i++)
-		indices[i] = i;
-
-	return new Model(vertices, indices, color);
-}
-
-Model* ModelManager::getTriangularPrism(Vec4 color) {
-	vector<Vec4> topFace = { lb,rb,lt };
-	return getPrism(topFace, color);
-}
-Model* ModelManager::getSquarePrism(Vec4 color) {
-	vector<Vec4> topFace = { lb, rb, rt, lt };
-	return getPrism(topFace, color);
-}
-Model* ModelManager::getParallelogramPrism(Vec4 color) {
-	vector<Vec4> topFace = { lb, rb, Vec4(1.5f, 0.5f, 0.0f, 1.0f), Vec4(0.5f, 0.5f, 0.0f, 1.0f) };
-	return getPrism(topFace, color);
-}
-
-*/
