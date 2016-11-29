@@ -7,25 +7,49 @@
 
 using namespace std;
 
+class Model;
+typedef Model Mesh;
+
 typedef struct {
-	GLfloat XYZW[4];
-	GLfloat RGBA[4];
+	GLfloat x, y, z;
 } Vertex;
+
+typedef struct {
+	GLfloat u, v;
+} Texcoord;
+
+typedef struct {
+	GLfloat nx, ny, nz;
+} Normal;
 
 class Model {
 public:
-	Model(vector<Vec4> vertices, vector<GLubyte> indices, Vec4 color);
-	Model() {
-
-	}
+	Model();
 	~Model();
-	void draw(Shader& shader);
+	virtual void draw(Shader& shader);
+	virtual void createBuffers();
 	
-protected:
-	virtual void createData(vector<Vec4>& vertices, Vec4 color);
-	virtual void createBuffers(Vertex* data, int size, vector<GLubyte>& indices);
+	const static GLuint VERTICES = 0;
+	const static GLuint TEXCOORDS = 1;
+	const static GLuint NORMALS = 2;
+	
+	std::vector<Vertex> Vertices;
+	std::vector<Texcoord> Texcoords;
+	std::vector<Normal> Normals;
+	bool TexcoordsLoaded=false, NormalsLoaded=false;
 
-	GLuint vaoId, vboId[2];
-	Vertex *data;
-	int nIndices;
+	GLuint vao_id;
+	GLuint vbo_vertices_id;
+	GLuint vbo_normals_id;
+	GLuint vbo_texcoords_id;
+	Vec4 color;
+	
+	std::vector<Vertex> vertexData;
+	std::vector<Texcoord> texcoordData;
+	std::vector<Normal> normalData;
+	std::vector <unsigned int> vertexIdx, texcoordIdx, normalIdx;
+protected:
+
+
 };
+

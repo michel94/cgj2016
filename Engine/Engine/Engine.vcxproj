@@ -150,7 +150,6 @@
     <ClCompile Include="src\modelmanager.cpp" />
     <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\scenenode.cpp" />
-    <ClCompile Include="src\prettymodels.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\shaders.cpp" />
@@ -167,7 +166,6 @@
     <ClInclude Include="src\modelmanager.hpp" />
     <ClInclude Include="src\model.hpp" />
     <ClInclude Include="src\scenenode.hpp" />
-    <ClInclude Include="src\prettymodels.hpp" />
     <ClInclude Include="src\quaternion.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\shaders.hpp" />

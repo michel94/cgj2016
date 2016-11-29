@@ -10,7 +10,6 @@
 #include "vec.hpp"
 #include "quaternion.hpp"
 #include "shaders.hpp"
-#include "prettymodels.hpp"
 #include "modelmanager.hpp"
 #include "scene.hpp"
 #include "animation.hpp"
@@ -130,17 +129,17 @@ void startAnimations(bool reverse) {
 }
 
 void loadScene() {
-	Model* m = ModelManager<Model>::instance().getObj("triangle");
+	Mesh* m = ModelManager::instance().getObj("triangle");
 	float sq2 = sqrt(2.0f);
-	square = new ColoredNode(ModelManager<Model>::instance().getObj("cube"), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	parallelogram = new ColoredNode(ModelManager<Model>::instance().getObj("parallelogram"), Vec4(1.0f, 0.0f, 1.0f, 1.0f));
+	square = new ColoredNode(ModelManager::instance().getObj("cube"), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	parallelogram = new ColoredNode(ModelManager::instance().getObj("parallelogram"), Vec4(1.0f, 0.0f, 1.0f, 1.0f));
 	triangle1 = new ColoredNode(m, Vec4(1.0f, 1.0f, 0.0f, 1.0f));
 	triangle2 = new ColoredNode(m, Vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	triangle3 = new ColoredNode(m, Vec4(1.0f, 0.5f, 0.0f, 1.0f));
 	triangle4 = new ColoredNode(m, Vec4(0.0f, 0.0f, 1.0f, 1.0f));
 	triangle5 = new ColoredNode(m, Vec4(0.0f, 1.0f, 1.0f, 1.0f));
 	
-	objects.push_back(square);		
+	objects.push_back(square);
 	objects.push_back(parallelogram);
 	objects.push_back(triangle1);
 	objects.push_back(triangle2);
@@ -148,7 +147,10 @@ void loadScene() {
 	objects.push_back(triangle4);
 	objects.push_back(triangle5);
 
-	ground = new ColoredNode(ModelManager<>::instance().getObj("plane"), Vec4(0.5, 0.5, 0.5, 1));
+	ground = new SceneNode();
+	SceneNode* plane  = new ColoredNode(ModelManager::instance().getSquare(), Vec4(0.5, 0.5, 0.5, 1));
+	plane->position = Vec3(-2, -2, 0);
+	plane->scale = Vec3(4.0f, 4.0f, 4.0f);
 	loadTransformations();
 	
 	scene = new Scene();
@@ -156,6 +158,7 @@ void loadScene() {
 	SceneNode* root = scene->root();
 	root->addChild(ground);
 	ground->addChildren(objects);
+	ground->addChild(plane);
 }
 
 void destroyScene(){
@@ -244,12 +247,14 @@ void setupGLEW() {
 	}
 	GLenum errCode = glGetError();
 }
+
 void onMouseMoved(int x, int y) {
 	Vec2 center(windowWidth / 2.0f, windowHeight / 2.0f);
 	float dx = (center.x - x) / windowWidth , dy = (center.y - y) / windowHeight;
 	mouseDisp.x += dx;
 	mouseDisp.y += dy;
 }
+
 void onKey(unsigned char key, int x, int y, Action action) {
 	if (key == 27)
 		glutDestroyWindow(window);
@@ -269,6 +274,7 @@ void onKey(unsigned char key, int x, int y, Action action) {
 		startAnimations(true);
 
 }
+
 void onSpecialKey(int key, int x, int y, Action action) {
 	if (key == GLUT_KEY_DOWN)
 		controls[0] = action == KEYPRESS;

@@ -72,7 +72,7 @@ Shader* loadShader(string path) {
 		GLuint r = glGetUniformLocation(s->programId, name);
 		(*s)[string(name)] = r;
 	}
-
+	
 	return s;
 }
 
