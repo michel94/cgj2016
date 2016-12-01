@@ -1,4 +1,7 @@
 #include "modelmanager.hpp"
+
+const string MODEL_DIR = "res/meshes/";
+
 Vertex lb = { 0.0f, 0.0f, 0.0f},
 	lt = {0.0f, 1.0f, 0.0f},
 	rb = {1.0f, 0.0f, 0.0f},

@@ -138,7 +138,8 @@ void loadScene() {
 	SceneNode* cube = new SceneNode(m, root);
 	Shader* shader = ShaderManager::instance().getShader("colored");
 	cube->setShader(shader);
-	Texture* texture = new Texture();
+	Texture* texture = TextureManager::instance().getTexture("sample.png");
+
 	cube->setTexture(texture);
 	root->addChild(cube);
 

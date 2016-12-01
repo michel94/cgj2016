@@ -17,7 +17,7 @@ Mat4 SphericalCamera::toMat4() {
 	V *= Mat4::translate(Vec3(0.0f, 0.0f, -dist));
 	V *= rotation.toMat4();
 	
-	//V *= Mat4::translate(Vec3(-0.5f, -0.5f, -0.4f));
+	V *= Mat4::translate(Vec3(-1.0f, -1.0f, -1.0f));
 
 	VP *= V;
 
