@@ -88,3 +88,5 @@ Engine/Engine/obj/
 Engine/Engine.VC.opendb
 Engine/.vs
 *.log
+*.tlog
+Engine/Engine/Debug/vc140.idb
