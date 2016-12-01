@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
+#include "SOIL.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -363,6 +364,13 @@ void init(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
 	Tests::runTests();
+
+	int width, height;
+	unsigned char* image =
+		SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGB);
+
+	SOIL_free_image_data(image);
+
 	init(argc, argv);
 	glutMainLoop();
 
