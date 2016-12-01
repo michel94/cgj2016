@@ -23,7 +23,7 @@ using namespace std;
 const char CAPTION[] = "Hello Blank World";
 
 int window;
-int windowWidth = 600, windowHeight = 600;
+int windowWidth = 640, windowHeight = 480;
 int frameCount;
 Vec2 mouseDisp;
 bool controls[] = { false, false, false, false, false, false };
@@ -191,12 +191,12 @@ void update(float dt) {
 	
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	//Mat4 mMove;
-	//if (controls[0]) { // back
-	//	camera->dist += 3.0f * dt;
-	//}
-	//if (controls[1]) { // forward
-	//	camera->dist -= 3.0f * dt;
-	//}
+	if (controls[0]) { // back
+		camera->dist += 3.0f * dt;
+	}
+	if (controls[1]) { // forward
+		camera->dist -= 3.0f * dt;
+	}
 	//if (controls[2]) { // left
 	//	ground->position += Vec3(3.0f, 0, 0) * dt;
 	//}

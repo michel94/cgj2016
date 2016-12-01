@@ -18,7 +18,7 @@ public:
 
 	Qtrn rotation;
 	Mat4 matRotation;
-	float dist=1.5f;
+	float dist=4.0f;
 
 	int windowWidth, windowHeight;
 	bool perspective = true, useQuaternions=true;
