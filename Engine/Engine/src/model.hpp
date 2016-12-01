@@ -30,8 +30,8 @@ public:
 	virtual void createBuffers();
 	
 	const static GLuint VERTICES = 0;
-	const static GLuint TEXCOORDS = 1;
-	const static GLuint NORMALS = 2;
+	const static GLuint TEXCOORDS = 2;
+	const static GLuint NORMALS = 3;
 	
 	std::vector<Vertex> Vertices;
 	std::vector<Texcoord> Texcoords;

@@ -130,38 +130,55 @@ void startAnimations(bool reverse) {
 }
 
 void loadScene() {
-	Mesh* m = ModelManager::instance().getObj("triangle");
-	float sq2 = sqrt(2.0f);
-	square = new ColoredNode(ModelManager::instance().getObj("cube"), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	parallelogram = new ColoredNode(ModelManager::instance().getObj("parallelogram"), Vec4(1.0f, 0.0f, 1.0f, 1.0f));
-	triangle1 = new ColoredNode(m, Vec4(1.0f, 1.0f, 0.0f, 1.0f));
-	triangle2 = new ColoredNode(m, Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	triangle3 = new ColoredNode(m, Vec4(1.0f, 0.5f, 0.0f, 1.0f));
-	triangle4 = new ColoredNode(m, Vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	triangle5 = new ColoredNode(m, Vec4(0.0f, 1.0f, 1.0f, 1.0f));
-	
-	objects.push_back(square);
-	objects.push_back(parallelogram);
-	objects.push_back(triangle1);
-	objects.push_back(triangle2);
-	objects.push_back(triangle3);
-	objects.push_back(triangle4);
-	objects.push_back(triangle5);
-
-	SceneNode* plane = new ColoredNode(ModelManager::instance().getSquare(), Vec4(0.5, 0.5, 0.5, 1));
-	plane->position = Vec3(-2, -2, 0);
-	plane->scale = Vec3(4.0f, 4.0f, 4.0f);
-	loadTransformations();
-	
-	scene = new Scene();
+	Mesh* m = ModelManager::instance().getObj("cube");
+	 scene = new Scene();
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
 	SceneNode* root = scene->root();
-	ground = new SceneNode();
-	root->addChild(ground);
-	ground->addChildren(objects);
-	ground->addChild(plane);
+	SceneNode* cube = new SceneNode(m, root);
+	Shader* shader = ShaderManager::instance().getShader("colored");
+	cube->setShader(shader);
+	Texture* texture = new Texture();
+	cube->setTexture(texture);
+	root->addChild(cube);
+
+
+	
 }
+
+//void loadScene() {
+//	Mesh* m = ModelManager::instance().getObj("triangle");
+//	float sq2 = sqrt(2.0f);
+//	square = new ColoredNode(ModelManager::instance().getObj("cube"), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+//	parallelogram = new ColoredNode(ModelManager::instance().getObj("parallelogram"), Vec4(1.0f, 0.0f, 1.0f, 1.0f));
+//	triangle1 = new ColoredNode(m, Vec4(1.0f, 1.0f, 0.0f, 1.0f));
+//	triangle2 = new ColoredNode(m, Vec4(0.0f, 1.0f, 0.0f, 1.0f));
+//	triangle3 = new ColoredNode(m, Vec4(1.0f, 0.5f, 0.0f, 1.0f));
+//	triangle4 = new ColoredNode(m, Vec4(0.0f, 0.0f, 1.0f, 1.0f));
+//	triangle5 = new ColoredNode(m, Vec4(0.0f, 1.0f, 1.0f, 1.0f));
+//	
+//	objects.push_back(square);
+//	objects.push_back(parallelogram);
+//	objects.push_back(triangle1);
+//	objects.push_back(triangle2);
+//	objects.push_back(triangle3);
+//	objects.push_back(triangle4);
+//	objects.push_back(triangle5);
+//
+//	SceneNode* plane = new ColoredNode(ModelManager::instance().getSquare(), Vec4(0.5, 0.5, 0.5, 1));
+//	plane->position = Vec3(-2, -2, 0);
+//	plane->scale = Vec3(4.0f, 4.0f, 4.0f);
+//	loadTransformations();
+//	
+//	scene = new Scene();
+//	camera = new SphericalCamera(windowWidth, windowHeight);
+//	scene->attachCamera(camera);
+//	SceneNode* root = scene->root();
+//	ground = new SceneNode();
+//	root->addChild(ground);
+//	ground->addChildren(objects);
+//	ground->addChild(plane);
+//}
 
 void destroyScene(){
 	delete scene;
@@ -173,25 +190,25 @@ void destroyScene(){
 void update(float dt) {
 	
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
-	Mat4 mMove;
-	if (controls[0]) { // back
-		camera->dist += 3.0f * dt;
-	}
-	if (controls[1]) { // forward
-		camera->dist -= 3.0f * dt;
-	}
-	if (controls[2]) { // left
-		ground->position += Vec3(3.0f, 0, 0) * dt;
-	}
-	if (controls[3]) { // right
-		ground->position += Vec3(-3.0f, 0, 0) * dt;
-	}
-	if (controls[4]) { // top
-		ground->position += Vec3(0, 3.0f, 0) * dt;
-	}
-	if (controls[5]) { // bottom
-		ground->position += Vec3(0, -3.0f, 0) * dt;
-	}
+	//Mat4 mMove;
+	//if (controls[0]) { // back
+	//	camera->dist += 3.0f * dt;
+	//}
+	//if (controls[1]) { // forward
+	//	camera->dist -= 3.0f * dt;
+	//}
+	//if (controls[2]) { // left
+	//	ground->position += Vec3(3.0f, 0, 0) * dt;
+	//}
+	//if (controls[3]) { // right
+	//	ground->position += Vec3(-3.0f, 0, 0) * dt;
+	//}
+	//if (controls[4]) { // top
+	//	ground->position += Vec3(0, 3.0f, 0) * dt;
+	//}
+	//if (controls[5]) { // bottom
+	//	ground->position += Vec3(0, -3.0f, 0) * dt;
+	//}
 
 	AnimManager::instance().update(dt);
 
@@ -201,7 +218,7 @@ void update(float dt) {
 
 	scene->update(dt);
 	
-	if(!ShaderManager::instance().shadersLoaded())
+	if(ShaderManager::instance().shadersLoaded())
 		checkOpenGLError("ERROR: Could not draw scene.");
 }
 
@@ -366,11 +383,11 @@ void init(int argc, char* argv[]) {
 int main(int argc, char* argv[]) {
 	Tests::runTests();
 
-	int width, height;
-	unsigned char* image =
-		SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGB);
+	//int width, height;
+	//unsigned char* image =
+	//	SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGB);
 
-	SOIL_free_image_data(image);
+	//SOIL_free_image_data(image);
 
 	init(argc, argv);
 	glutMainLoop();
