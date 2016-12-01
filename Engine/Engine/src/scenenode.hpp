@@ -5,11 +5,10 @@
 #include "model.hpp"
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include "scene.hpp"
-
-using namespace std;
 
 class Scene;
+
+using namespace std;
 
 class SceneNode {
 public:
@@ -18,6 +17,7 @@ public:
 	SceneNode(SceneNode * parent);
 	SceneNode(Model * model, SceneNode * parent);
 	~SceneNode();
+	void setShader(Shader* s);
 	Mat4 getModelMatrix();
 	void setModelMatrix(Mat4 m);
 
@@ -45,7 +45,7 @@ protected:
 
 	vector<SceneNode*> children;
 	SceneNode* parent;
-
+	Shader* shader = ShaderManager::instance().getDefaultShader();
 };
 
 class ColoredNode : public SceneNode {

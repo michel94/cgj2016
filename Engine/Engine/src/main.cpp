@@ -7,11 +7,11 @@
 #include <sstream>
 #include <math.h>
 
+#include "scene.hpp"
 #include "vec.hpp"
 #include "quaternion.hpp"
 #include "shaders.hpp"
 #include "modelmanager.hpp"
-#include "scene.hpp"
 #include "animation.hpp"
 #include "glutwrappers.h"
 
@@ -27,7 +27,7 @@ int frameCount;
 Vec2 mouseDisp;
 bool controls[] = { false, false, false, false, false, false };
 Scene* scene;
-SphericalCamera* camera = new SphericalCamera(windowWidth, windowHeight);
+SphericalCamera* camera;
 SceneNode* ground;
 
 double lastTick;
@@ -147,15 +147,16 @@ void loadScene() {
 	objects.push_back(triangle4);
 	objects.push_back(triangle5);
 
-	ground = new SceneNode();
-	SceneNode* plane  = new ColoredNode(ModelManager::instance().getSquare(), Vec4(0.5, 0.5, 0.5, 1));
+	SceneNode* plane = new ColoredNode(ModelManager::instance().getSquare(), Vec4(0.5, 0.5, 0.5, 1));
 	plane->position = Vec3(-2, -2, 0);
 	plane->scale = Vec3(4.0f, 4.0f, 4.0f);
 	loadTransformations();
 	
 	scene = new Scene();
+	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
 	SceneNode* root = scene->root();
+	ground = new SceneNode();
 	root->addChild(ground);
 	ground->addChildren(objects);
 	ground->addChild(plane);
