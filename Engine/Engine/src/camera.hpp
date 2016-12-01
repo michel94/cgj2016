@@ -1,8 +1,12 @@
 #pragma once
+
 #include "mat.hpp"
 #include "quaternion.hpp"
 
-class Camera {
+#include "scene.hpp"
+#include "scenenode.hpp"
+
+class Camera : public SceneNode{
 public:
 	virtual Mat4 toMat4() = 0;
 };

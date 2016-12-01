@@ -26,7 +26,7 @@ class Model {
 public:
 	Model();
 	~Model();
-	virtual void draw(Shader& shader);
+	virtual void draw();
 	virtual void createBuffers();
 	
 	const static GLuint VERTICES = 0;

@@ -1,9 +1,9 @@
 #pragma once
-
 #include "scenenode.hpp"
 #include "camera.hpp"
 
 class SceneNode;
+class Camera;
 
 class Scene {
 public:
@@ -17,3 +17,4 @@ private:
 	Camera* camera;
 	SceneNode* mRoot;
 };
+

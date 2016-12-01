@@ -19,9 +19,8 @@ public:
 	GLuint& operator[](string name) {
 		return variables[name];
 	}
-	void bind() {
-		glUseProgram(programId);
-	}
+	void bind();
+	void unbind();
 
 private:
 	map<string, GLuint> variables;
@@ -37,7 +36,8 @@ bool checkGLSLError(string location, GLuint program);
 class ShaderManager : public Singleton<ShaderManager> {
 public:
 	~ShaderManager();
-	Shader& getShader(string name);
+	Shader* getShader(string name);
+	Shader* getDefaultShader();
 	void destroyShaders();
 	bool shadersLoaded();
 private:

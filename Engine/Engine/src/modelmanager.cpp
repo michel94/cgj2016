@@ -12,8 +12,6 @@ Model* ModelManager::getTriangle(Vec4 color) {
 		models["triangle"] = m;
 	}
 	return models["triangle"];
-	
-
 }
 Model* ModelManager::getSquare() {
 	if (models.find("square") == models.end()) {
@@ -36,13 +34,8 @@ Model* ModelManager::getParallelogram(Vec4 color) {
 }
 
 Model* ModelManager::getObj(string name) {
-	if (models.find(name) == models.end()) {
-		Model* model = loadObj(MODEL_DIR + name + ".obj");
-		models[name] = model;
-	}
-	return models[name];
+	return getItem(MODEL_DIR + name + ".obj");
 }
-
 
 Model* ModelManager::loadObj(std::string filename){
 	m = new Model();

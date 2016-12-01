@@ -2,6 +2,14 @@
 
 const string SHADERS_PATH = "res/shaders/";
 
+void Shader::bind() {
+	glUseProgram(programId);
+}
+
+void Shader::unbind() {
+	glUseProgram(0);
+}
+
 Shader* loadShader(string path) {
 	Shader *s = new Shader();
 
@@ -120,19 +128,22 @@ ShaderManager::~ShaderManager() {
 	destroyShaders();
 }
 
-Shader& ShaderManager::getShader(string name) {
+Shader* ShaderManager::getShader(string name) {
 	if (shaders.find(name) != shaders.end())
-		return *shaders[name];
+		return shaders[name];
 	else {
 		Shader* shader = loadShader(SHADERS_PATH + name);
 		mShadersLoaded &= shader->loaded;
-		return *(shaders[name] = shader);
+		return (shaders[name] = shader);
 	}
 }
+Shader* ShaderManager::getDefaultShader() {
+	return getShader("colored");
+}
+
 void ShaderManager::destroyShaders() {
 	for (auto s : shaders)
 		delete s.second;
-
 }
 
 bool ShaderManager::shadersLoaded() {

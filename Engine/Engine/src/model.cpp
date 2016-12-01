@@ -22,7 +22,6 @@ void Model::createBuffers() {
 	{
 		glGenBuffers(1, &vbo_vertices_id);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices_id);
-		cout << "vertices: " << Vertices.size() << endl;
 		glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(Vertex), &Vertices[0], GL_STATIC_DRAW);
 		glEnableVertexAttribArray(VERTICES);
 		glVertexAttribPointer(VERTICES, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
@@ -47,9 +46,9 @@ void Model::createBuffers() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Model::draw(Shader& shader) {
+void Model::draw() {
 	glBindVertexArray(vao_id);
-	glDrawArrays(GL_TRIANGLES, 0, Vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, (int)Vertices.size());
 	glBindVertexArray(0);
 }
 
