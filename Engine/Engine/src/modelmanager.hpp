@@ -35,6 +35,6 @@ typedef struct {
 } Face;
 
 
-const string MODEL_DIR = "res/meshes/";
+
 
 //static Vec4 lb, lt, rb, rt;
