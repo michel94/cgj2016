@@ -143,7 +143,6 @@ void loadScene() {
 	cube->setTexture(texture);
 	root->addChild(cube);
 
-
 	
 }
 
