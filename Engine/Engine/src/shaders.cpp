@@ -1,4 +1,5 @@
 #include "shaders.hpp"
+#include "model.hpp"
 
 const string SHADERS_PATH = "res/shaders/";
 
@@ -51,6 +52,10 @@ Shader* loadShader(string path) {
 
 	glBindAttribLocation(ProgramId, 0, "in_Position");
 	glBindAttribLocation(ProgramId, 1, "in_Color");
+
+	glBindAttribLocation(ProgramId, Model::TEXCOORDS, "inTexcoord");
+	glBindAttribLocation(ProgramId, Model::NORMALS, "inNormal");
+
 	glLinkProgram(ProgramId);
 
 	s->programId = ProgramId;

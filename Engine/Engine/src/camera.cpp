@@ -10,14 +10,14 @@ Mat4 SphericalCamera::toMat4() {
 	if (!perspective)
 		VP *= Mat4::ortho(-2, 2, -2, 2, -5, 5);
 	else {
-		VP *= Mat4::perspective(90, windowWidth / (float)windowHeight, 2.0f, 10.0f);
+		VP *= Mat4::perspective(30, windowWidth / (float)windowHeight, 0.5f, 10.0f);
 	}
 
 	Mat4 V;
 	V *= Mat4::translate(Vec3(0.0f, 0.0f, -dist));
 	V *= rotation.toMat4();
 	
-	V *= Mat4::translate(Vec3(-0.5f, -0.5f, -0.4f));
+	//V *= Mat4::translate(Vec3(-0.5f, -0.5f, -0.4f));
 
 	VP *= V;
 

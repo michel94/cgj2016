@@ -3,8 +3,10 @@
 #include <vector>
 #include "quaternion.hpp"
 #include "model.hpp"
+#include "texture.hpp"
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+
 
 class Scene;
 
@@ -30,6 +32,8 @@ public:
 	void setParent(SceneNode* parent);
 	void switchParent(SceneNode* parent);
 
+	void setTexture(Texture* texture);
+
 	virtual void update(float dt);
 	virtual void updateChildren(float dt) final;
 	virtual void render(Mat4 tr);
@@ -46,6 +50,7 @@ protected:
 	vector<SceneNode*> children;
 	SceneNode* parent;
 	Shader* shader = ShaderManager::instance().getDefaultShader();
+	Texture * texture = nullptr;
 };
 
 class ColoredNode : public SceneNode {
