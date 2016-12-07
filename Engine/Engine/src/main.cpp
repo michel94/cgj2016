@@ -46,88 +46,15 @@ double now() { // milliseconds
 	}
 }
 
+double fRand(double fMin, double fMax)
+{
+	double f = (double)rand() / RAND_MAX;
+	return fMin + f * (fMax - fMin);
+}
+
 /////////////////////////////////////////////////////////////////////// SCENE SETUP
 
-SceneNode* triangle1, *triangle2, *triangle3, *triangle4, *triangle5;
-SceneNode* square, *parallelogram;
 
-void loadTransformations() {
-	float sq2 = sqrt(2.0f);
-
-	square->position = Vec3(0.5f, 0.5f, 0.0f);
-	square->scale = Vec3(sq2 / 8, sq2 / 8, sq2 / 8);
-	square->rotation = Qtrn::fromAngleAxis(45, Vec3(0, 0, 1));
-
-	parallelogram->scale = Vec3(0.25f, 0.25f, 0.15f);
-
-	triangle1->position = Vec3(0.5f, 0.5f, 0.0f);
-	triangle1->scale = Vec3(sq2 / 2, sq2 / 2, 0.3f);
-	triangle1->rotation = Qtrn::fromAngleAxis(135.0f, Vec3(0, 0, -1));
-
-	triangle2->position = Vec3(0.5f, 0.5f, 0.0f);
-	triangle2->scale = Vec3(sq2 / 2, sq2 / 2, 0.25f);
-	triangle2->rotation = Qtrn::fromAngleAxis(45, Vec3(0, 0, -1));
-
-	triangle3->position = Vec3(1.0f, 0.0f, 0.0f);
-	triangle3->scale = Vec3(0.5f, 0.5f, 0.3f);
-	triangle3->rotation = Qtrn::fromAngleAxis(90, Vec3(0, 0, -1));
-
-	triangle4->position = Vec3(0.75f, 0.75f, 0.0f);
-	triangle4->scale = Vec3(sq2 / 4, sq2 / 4, 0.2f);
-	triangle4->rotation = Qtrn::fromAngleAxis(-45, Vec3(0, 0, -1));
-	
-	triangle5->position = Vec3(0.5f, 0.5f, 0.0f);
-	triangle5->scale = Vec3(sq2 / 4, sq2 / 4, 0.3f);
-	triangle5->rotation = Qtrn::fromAngleAxis(-135, Vec3(0, 0, -1));
-}
-
-void startAnimations(bool reverse) {
-	vector<Animation*> animations = {
-		new AnimSequence({
-			new Translation(square, Vec3(0, 0, 0.5f)),
-			new Translation(square, Vec3(-0.15f, 0.375f, 0)),
-			new Translation(square, Vec3(0, 0, -0.5f)),
-		}),
-		new AnimSequence({
-			new Translation(parallelogram, Vec3(0, 0, 0.3f)),
-			new Rotation(parallelogram, Qtrn::fromAngleAxis(180.0, Vec3(1, 0, 0)), 180.0f),
-			new Rotation(parallelogram, Qtrn::fromAngleAxis(90.0, Vec3(0, 0, 1)), 90.0f),
-			new Translation(parallelogram, Vec3(0.35f, 0.9f, 0)),
-		}),
-		new AnimSequence({
-			new Translation(triangle1, Vec3(0, 0, 0.8f)),
-			new Rotation(triangle1, Qtrn::fromAngleAxis(-45.0f, Vec3(0, 0, -1)), 45.0f),
-			new Translation(triangle1, Vec3(0.0f, -0.5f, 0)),
-			new Translation(triangle1, Vec3(0, 0, -0.8f)),
-		}),
-		new AnimSequence({
-			new Translation(triangle2, Vec3(0, 0, 1.2f)),
-			new Translation(triangle2, Vec3(-0.5f, -0.3f, 0)),
-			new Translation(triangle2, Vec3(0, 0, -1.2f)),
-		}),
-		new AnimSequence({
-			new Translation(triangle3, Vec3(0, 0, 0.8f)),
-			new Rotation(triangle3, Qtrn::fromAngleAxis(45.0f, Vec3(0, 0, -1)), 45.0f),
-			new Translation(triangle3, Vec3(-0.14f, 0.35f, 0.0f)),
-			new Translation(triangle3, Vec3(0.0f, 0.0f, -0.8f)),
-		}),
-		new AnimSequence({
-			new Translation(triangle4, Vec3(-0.15f, -0.125f, 0.0f)),
-		}),
-		new AnimSequence({
-			new Translation(triangle5, Vec3(0, 0, 1.4f)),
-			new Rotation(triangle5, Qtrn::fromAngleAxis(135.0f, Vec3(0, 0, -1)), 135.0f),
-			new Translation(triangle5, Vec3(0.1f, 0.8f, 0)),
-			new Translation(triangle5, Vec3(0, 0, -1.4f)),
-		}),
-	};
-	if (reverse) {
-		for (int i = 0; i < animations.size(); i++)
-			animations[i] = animations[i]->reverse();
-	}
-
-	AnimManager::instance().start(animations);
-}
 
 void loadScene() {
 	Mesh* m = ModelManager::instance().getObj("cube");
@@ -135,50 +62,29 @@ void loadScene() {
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
 	SceneNode* root = scene->root();
-	SceneNode* cube = new SceneNode(m, root);
 	Shader* shader = ShaderManager::instance().getShader("colored");
-	cube->setShader(shader);
 	Texture* texture = TextureManager::instance().getTexture("sample.png");
 
-	cube->setTexture(texture);
-	root->addChild(cube);
 
+	SceneNode* rain = new SceneNode(root);
+	root->addChild(rain);
+
+	for (size_t i = 0; i < 1000; i++)
+	{
+		SceneNode* droplet = new SceneNode(m, rain);
+		float randomX = fRand(-5.0f, 5.0f);
+		float randomY = fRand(-5.0f, 5.0f);
+		droplet->position.x = randomX;
+		droplet->position.y = randomY;
+		droplet->scale.x = 0.01;
+		droplet->scale.y = 0.06;
+		droplet->scale.z = 0;
+		droplet->setShader(shader);
+		rain->addChild(droplet);
+	}
 	
 }
 
-//void loadScene() {
-//	Mesh* m = ModelManager::instance().getObj("triangle");
-//	float sq2 = sqrt(2.0f);
-//	square = new ColoredNode(ModelManager::instance().getObj("cube"), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-//	parallelogram = new ColoredNode(ModelManager::instance().getObj("parallelogram"), Vec4(1.0f, 0.0f, 1.0f, 1.0f));
-//	triangle1 = new ColoredNode(m, Vec4(1.0f, 1.0f, 0.0f, 1.0f));
-//	triangle2 = new ColoredNode(m, Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-//	triangle3 = new ColoredNode(m, Vec4(1.0f, 0.5f, 0.0f, 1.0f));
-//	triangle4 = new ColoredNode(m, Vec4(0.0f, 0.0f, 1.0f, 1.0f));
-//	triangle5 = new ColoredNode(m, Vec4(0.0f, 1.0f, 1.0f, 1.0f));
-//	
-//	objects.push_back(square);
-//	objects.push_back(parallelogram);
-//	objects.push_back(triangle1);
-//	objects.push_back(triangle2);
-//	objects.push_back(triangle3);
-//	objects.push_back(triangle4);
-//	objects.push_back(triangle5);
-//
-//	SceneNode* plane = new ColoredNode(ModelManager::instance().getSquare(), Vec4(0.5, 0.5, 0.5, 1));
-//	plane->position = Vec3(-2, -2, 0);
-//	plane->scale = Vec3(4.0f, 4.0f, 4.0f);
-//	loadTransformations();
-//	
-//	scene = new Scene();
-//	camera = new SphericalCamera(windowWidth, windowHeight);
-//	scene->attachCamera(camera);
-//	SceneNode* root = scene->root();
-//	ground = new SceneNode();
-//	root->addChild(ground);
-//	ground->addChildren(objects);
-//	ground->addChild(plane);
-//}
 
 void destroyScene(){
 	delete scene;
@@ -197,18 +103,6 @@ void update(float dt) {
 	if (controls[1]) { // forward
 		camera->dist -= 3.0f * dt;
 	}
-	//if (controls[2]) { // left
-	//	ground->position += Vec3(3.0f, 0, 0) * dt;
-	//}
-	//if (controls[3]) { // right
-	//	ground->position += Vec3(-3.0f, 0, 0) * dt;
-	//}
-	//if (controls[4]) { // top
-	//	ground->position += Vec3(0, 3.0f, 0) * dt;
-	//}
-	//if (controls[5]) { // bottom
-	//	ground->position += Vec3(0, -3.0f, 0) * dt;
-	//}
 
 	AnimManager::instance().update(dt);
 
@@ -287,10 +181,6 @@ void onKey(unsigned char key, int x, int y, Action action) {
 		controls[2] = action == KEYPRESS;
 	else if (key == 'd')
 		controls[3] = action == KEYPRESS;
-	else if (key == 'k' && action == KEYRELEASE)
-		startAnimations(false);
-	else if (key == 'l' && action == KEYRELEASE)
-		startAnimations(true);
 
 }
 
