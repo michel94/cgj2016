@@ -109,18 +109,15 @@ void SceneNode::render(Mat4 tr){
 		if (texture) {
 			glActiveTexture(GL_TEXTURE0);
 			texture->bind();
-
 			glUniform1i(s["tex"], 0);
 		}
 		glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
 		model->draw();
 
-		if (texture) {
+		if (texture)
 			texture->unbind();
-		}
-
-		s.unbind();
 		
+		s.unbind();
 		glBindVertexArray(0);
 	}
 	

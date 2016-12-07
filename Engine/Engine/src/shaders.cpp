@@ -1,7 +1,5 @@
-#include "shaders.hpp"
+﻿#include "shaders.hpp"
 #include "model.hpp"
-
-const string SHADERS_PATH = "res/shaders/";
 
 void Shader::bind() {
 	glUseProgram(programId);
@@ -44,7 +42,7 @@ Shader* loadShader(string path) {
 	glShaderSource(FragmentShaderId, 1, &FragmentSourcePointer, 0);
 	glCompileShader(FragmentShaderId);
 
-	s->loaded = checkGLSLError("vertex shader", VertexShaderId) && checkGLSLError("fragment shader", FragmentShaderId);
+	s->loaded = checkGLSLError(path, "vertex shader", VertexShaderId) && checkGLSLError(path, "fragment shader", FragmentShaderId);
 
 	GLuint ProgramId = glCreateProgram();
 	glAttachShader(ProgramId, VertexShaderId);
@@ -77,16 +75,31 @@ Shader* loadShader(string path) {
 		glGetActiveAttrib(s->programId, (GLuint)i, bufSize, &length, &size, &type, name);
 		(*s)[string(name)] = glGetAttribLocation(s->programId, name);
 	}
-
-	glGetProgramiv(s->programId, GL_ACTIVE_UNIFORMS, &count);
 	
+	glGetProgramiv(s->programId, GL_ACTIVE_UNIFORMS, &count);
 	for (int i = 0; i < count; i++) {
 		glGetActiveUniform(s->programId, (GLuint)i, bufSize, &length, &size, &type, name);
 		GLuint r = glGetUniformLocation(s->programId, name);
 		(*s)[string(name)] = r;
 	}
+
+	cout << "Uniform Blocks:" << endl;
+	glGetProgramiv(s->programId, GL_ACTIVE_UNIFORM_BLOCKS, &count);
+	for (int i = 0; i < count; i++) {
+		int nameLength;
+		glGetActiveUniformBlockiv(s->programId, (GLuint)i, GL_UNIFORM_BLOCK_NAME_LENGTH, &nameLength);
+		char* blockName = new char[nameLength + 2];
+		glGetActiveUniformBlockName(s->programId, i, nameLength, NULL, &blockName[0]);
+		GLuint bindPoint = ShaderManager::instance().getBlockBindingId(s, blockName);
+		cout << blockName << ": " << bindPoint << endl;
+		s->blocks()[string(name)] = bindPoint;
+	}
 	
 	return s;
+}
+
+map<string, GLuint>& Shader::blocks() {
+	return uniformBlocks;
 }
 
 void destroyShader(Shader* s) {
@@ -101,13 +114,16 @@ void destroyShader(Shader* s) {
 	checkOpenGLError("ERROR: Could not destroy shaders.");
 }
 
-bool checkGLSLError(string location, GLuint program) {
+bool checkGLSLError(string path, string location, GLuint program) {
 	const GLsizei maxLength = 100;
 	GLsizei length;
 	char message[100];
 	glGetShaderInfoLog(program, maxLength, &length, message);
-	if (length > 0)
-		cerr << "On " << location << ": "<< message << endl;
+	if (length > 0) {
+		cerr << "Error while loading shader " << path << ": ";
+		cerr << "On " << location << ": " << message << endl;
+	}
+		
 	return length == 0;
 }
 
@@ -127,30 +143,4 @@ void checkOpenGLError(std::string error) {
 	if (isOpenGLError()) {
 		std::cerr << error << std::endl;
 	}
-}
-
-ShaderManager::~ShaderManager() {
-	destroyShaders();
-}
-
-Shader* ShaderManager::getShader(string name) {
-	if (shaders.find(name) != shaders.end())
-		return shaders[name];
-	else {
-		Shader* shader = loadShader(SHADERS_PATH + name);
-		mShadersLoaded &= shader->loaded;
-		return (shaders[name] = shader);
-	}
-}
-Shader* ShaderManager::getDefaultShader() {
-	return getShader("colored");
-}
-
-void ShaderManager::destroyShaders() {
-	for (auto s : shaders)
-		delete s.second;
-}
-
-bool ShaderManager::shadersLoaded() {
-	return mShadersLoaded;
 }

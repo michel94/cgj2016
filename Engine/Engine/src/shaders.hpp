@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <vector>
 
 #include "singleton.hpp"
 
@@ -21,9 +22,11 @@ public:
 	}
 	void bind();
 	void unbind();
+	map<string, GLuint>& blocks();
 
 private:
 	map<string, GLuint> variables;
+	map<string, GLuint> uniformBlocks;
 };
 
 Shader* loadShader(string path);
@@ -31,7 +34,7 @@ void destroyShader(Shader*);
 
 bool isOpenGLError();
 void checkOpenGLError(std::string error);
-bool checkGLSLError(string location, GLuint program);
+bool checkGLSLError(string path, string location, GLuint program);
 
 class ShaderManager : public Singleton<ShaderManager> {
 public:
@@ -40,8 +43,10 @@ public:
 	Shader* getDefaultShader();
 	void destroyShaders();
 	bool shadersLoaded();
+	GLuint getBlockBindingId(Shader* shader, string name);
 private:
 	map<string, Shader*> shaders;
 	bool mShadersLoaded = true;
-	
+	map<string, GLuint> blocks;
+	vector<GLubyte*> blockData;
 };

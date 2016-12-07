@@ -9,17 +9,17 @@ out vec2 ex_Texcoord;
 in vec4 in_Color;
 out vec4 ex_Color;
 
-uniform CameraBlock{
-	mat4 ViewMatrix;
-	mat4 ProjMatrix;
-};
-
-uniform LightBlock{
+layout(std140) uniform LightBlock{
 	vec3 lightDir;
 };
 
 uniform RandomBlock{
 	vec3 uselessVar;
+};
+
+uniform CameraBlock{
+	mat4 ViewMatrix;
+	mat4 ProjMatrix;
 };
 
 uniform mat4 Matrix;

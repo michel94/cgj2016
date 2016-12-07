@@ -171,11 +171,13 @@
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mat.cpp" />
+    <ClCompile Include="src\materialnode.cpp" />
     <ClCompile Include="src\modelmanager.cpp" />
     <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\scenenode.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
     <ClCompile Include="src\scene.cpp" />
+    <ClCompile Include="src\shadermanager.cpp" />
     <ClCompile Include="src\shaders.cpp" />
     <ClCompile Include="src\tests.cpp" />
     <ClCompile Include="src\vec2.cpp" />
@@ -188,6 +190,7 @@
     <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\glutwrappers.h" />
     <ClInclude Include="src\mat.hpp" />
+    <ClInclude Include="src\materialnode.h" />
     <ClInclude Include="src\modelmanager.hpp" />
     <ClInclude Include="src\model.hpp" />
     <ClInclude Include="src\scenenode.hpp" />
@@ -202,6 +205,8 @@
   <ItemGroup>
     <None Include="res\shaders\colored\frag.glsl" />
     <None Include="res\shaders\colored\vertex.glsl" />
+    <None Include="res\shaders\normalmapping\frag.glsl" />
+    <None Include="res\shaders\normalmapping\vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
