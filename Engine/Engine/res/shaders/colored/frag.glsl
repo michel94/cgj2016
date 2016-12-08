@@ -11,7 +11,7 @@ uniform sampler2D tex;
 
 void main(void){
 	//out_Color = ex_Color;
-	out_Color = vec4(0.2, 0.2, 0.8, 1);
+	out_Color = vec4(0.75, 0.80, 0.90, 1);
 	//out_Color = vec4(ex_Texcoord, 1, 1);
 	//out_Color = vec4(0.5,0.5,0.5,1);
 }

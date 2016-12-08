@@ -53,8 +53,8 @@ double fRand(double fMin, double fMax)
 }
 
 /////////////////////////////////////////////////////////////////////// SCENE SETUP
-
-
+#define DROPLETS_SZ 1000
+SceneNode* droplets[DROPLETS_SZ];
 
 void loadScene() {
 	Mesh* m = ModelManager::instance().getObj("cube");
@@ -69,15 +69,16 @@ void loadScene() {
 	SceneNode* rain = new SceneNode(root);
 	root->addChild(rain);
 
-	for (size_t i = 0; i < 1000; i++)
+	for (size_t i = 0; i < DROPLETS_SZ; i++)
 	{
 		SceneNode* droplet = new SceneNode(m, rain);
+		droplets[i] = droplet;
 		float randomX = fRand(-5.0f, 5.0f);
 		float randomY = fRand(-5.0f, 5.0f);
 		droplet->position.x = randomX;
 		droplet->position.y = randomY;
 		droplet->scale.x = 0.01;
-		droplet->scale.y = 0.06;
+		droplet->scale.y = fRand(0.02, 0.06);
 		droplet->scale.z = 0;
 		droplet->setShader(shader);
 		rain->addChild(droplet);
@@ -102,6 +103,15 @@ void update(float dt) {
 	}
 	if (controls[1]) { // forward
 		camera->dist -= 3.0f * dt;
+	}
+	
+	for (size_t i = 0; i < DROPLETS_SZ; i++)
+	{
+		if (droplets[i]->position.y < -5) {
+			droplets[i]->position.y = 5;
+		}
+		droplets[i]->position.y -= fRand(0.01, 0.03);
+		
 	}
 
 	AnimManager::instance().update(dt);
