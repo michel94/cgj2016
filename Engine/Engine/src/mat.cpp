@@ -91,7 +91,7 @@ Sub Mat<Sub>::operator*(const Sub& other){
     for(int y=0; y<size; y++){
         for(int x=0; x<size; x++){
             for(int i=0; i<size; i++){
-				m.data[x*size+y] += data[x*size+i] * other.data[i*size + y];
+				m.data[y*size+x] += data[y*size+i] * other.data[i*size + x];
             }
         }
     }

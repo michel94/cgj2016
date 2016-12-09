@@ -11,8 +11,5 @@ uniform sampler2D tex;
 uniform sampler2D normalTex;
 
 void main(void){
-	//out_Color = ex_Color;
 	out_Color = mix(texture(tex, ex_Texcoord), texture(normalTex, ex_Texcoord), 0.5);
-	//out_Color = vec4(ex_Texcoord, 1, 1);
-	//out_Color = vec4(0.5,0.5,0.5,1);
 }

@@ -8,10 +8,48 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <cassert>
 
 #include "singleton.hpp"
 
 using namespace std;
+
+class Block {
+public:
+	Block(string name) {
+		this->name = name;
+	}
+	Block(string name, GLuint buffer, GLubyte* data, int blockSize) {
+		this->name = name;
+		this->buffer = buffer;
+		this->data = data;
+		this->blockSize = blockSize;
+	}
+	void putUniform(string uniName, int offset) {
+		uniforms[uniName] = offset;
+	}
+	int getOffset(string uniName) {
+		assert(uniforms.find(uniName) != uniforms.end());
+		return uniforms[uniName];
+	}
+	size_t nUniforms() {
+		return uniforms.size();
+	}
+	void bind() {
+		glBindBuffer(GL_UNIFORM_BUFFER,	buffer);
+	}
+	void putData(string name, GLubyte* data, int size) {
+		glBufferSubData(GL_UNIFORM_BUFFER, uniforms[name], size, data);
+	}
+
+	string name;
+	GLuint buffer;
+	GLubyte* data;
+	int blockSize;
+	int bindPoint;
+private:
+	map<string, int> uniforms; // name -> offset
+};
 
 struct Shader {
 public:
@@ -22,11 +60,11 @@ public:
 	}
 	void bind();
 	void unbind();
-	map<string, GLuint>& blocks();
+	map<string, Block*>& blocks();
 
 private:
 	map<string, GLuint> variables;
-	map<string, GLuint> uniformBlocks;
+	map<string, Block*> uniformBlocks;
 };
 
 Shader* loadShader(string path);
@@ -43,10 +81,17 @@ public:
 	Shader* getDefaultShader();
 	void destroyShaders();
 	bool shadersLoaded();
-	GLuint getBlockBindingId(Shader* shader, string name);
+	Block* bindBlock(Shader* shader, string name);
+	//GLubyte* getBlockData(string name);
+	//GLuint getBlockBuffer(string name);
+
+	Block* getUniformBlock(string name);
 private:
 	map<string, Shader*> shaders;
 	bool mShadersLoaded = true;
 	map<string, GLuint> blocks;
-	vector<GLubyte*> blockData;
+	//vector<GLubyte*> blockData;
+	//vector<GLuint> blockBuffers;
+
+	vector<Block*> blockData;
 };

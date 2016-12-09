@@ -56,6 +56,8 @@ Shader* loadShader(string path) {
 
 	glLinkProgram(ProgramId);
 
+	s->loaded &= checkGLSLError(path, "linking shaders", VertexShaderId);
+
 	s->programId = ProgramId;
 	s->vsId = VertexShaderId;
 	s->fsId = FragmentShaderId;
@@ -83,22 +85,22 @@ Shader* loadShader(string path) {
 		(*s)[string(name)] = r;
 	}
 
-	cout << "Uniform Blocks:" << endl;
 	glGetProgramiv(s->programId, GL_ACTIVE_UNIFORM_BLOCKS, &count);
 	for (int i = 0; i < count; i++) {
 		int nameLength;
 		glGetActiveUniformBlockiv(s->programId, (GLuint)i, GL_UNIFORM_BLOCK_NAME_LENGTH, &nameLength);
 		char* blockName = new char[nameLength + 2];
 		glGetActiveUniformBlockName(s->programId, i, nameLength, NULL, &blockName[0]);
-		GLuint bindPoint = ShaderManager::instance().getBlockBindingId(s, blockName);
-		cout << blockName << ": " << bindPoint << endl;
-		s->blocks()[string(name)] = bindPoint;
+		Block* block = ShaderManager::instance().bindBlock(s, blockName);
+		s->blocks()[string(blockName)] = block;
 	}
+
+	s->loaded &= checkGLSLError(path, "global shader error", VertexShaderId);
 	
 	return s;
 }
 
-map<string, GLuint>& Shader::blocks() {
+map<string, Block*>& Shader::blocks() {
 	return uniformBlocks;
 }
 
