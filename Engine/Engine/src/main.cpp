@@ -53,11 +53,11 @@ double fRand(double fMin, double fMax)
 }
 
 /////////////////////////////////////////////////////////////////////// SCENE SETUP
-#define DROPLETS_SZ 1000
+#define DROPLETS_SZ 100
 SceneNode* droplets[DROPLETS_SZ];
 
 void loadScene() {
-	Mesh* m = ModelManager::instance().getObj("cube");
+	Mesh* m = ModelManager::instance().getObj("plane");
 	 scene = new Scene();
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
@@ -77,8 +77,8 @@ void loadScene() {
 		float randomY = fRand(-5.0f, 5.0f);
 		droplet->position.x = randomX;
 		droplet->position.y = randomY;
-		droplet->scale.x = 0.01;
-		droplet->scale.y = fRand(0.02, 0.06);
+		droplet->scale.x = 0.005;
+		droplet->scale.y = fRand(0.01, 0.03);
 		droplet->scale.z = 0;
 		droplet->setShader(shader);
 		rain->addChild(droplet);
