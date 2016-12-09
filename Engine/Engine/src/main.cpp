@@ -15,6 +15,7 @@
 #include "modelmanager.hpp"
 #include "animation.hpp"
 #include "glutwrappers.h"
+#include "materialnode.h"
 
 #include "tests.hpp"
 
@@ -134,16 +135,16 @@ void loadScene() {
 	 scene = new Scene();
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
+
 	SceneNode* root = scene->root();
-	SceneNode* cube = new SceneNode(m, root);
-	Shader* shader = ShaderManager::instance().getShader("colored");
-	cube->setShader(shader);
+	SceneNode* cube = new MaterialNode(m, root, "sample");
+	//Shader* shader = ShaderManager::instance().getShader("colored");
+	//cube->setShader(shader);
 	Texture* texture = TextureManager::instance().getTexture("sample.png");
 
 	cube->setTexture(texture);
 	root->addChild(cube);
 
-	
 }
 
 //void loadScene() {
@@ -382,12 +383,6 @@ void init(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
 	Tests::runTests();
-
-	//int width, height;
-	//unsigned char* image =
-	//	SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGB);
-
-	//SOIL_free_image_data(image);
 
 	init(argc, argv);
 	glutMainLoop();
