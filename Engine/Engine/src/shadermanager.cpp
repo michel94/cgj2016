@@ -36,7 +36,6 @@ Block* ShaderManager::bindBlock(Shader* shader, string name) {
 	if (blocks.find(name) == blocks.end()) {
 		blocks[name] = nBlocks;
 		createBuffer = true;
-		
 	}
 	
 	GLuint blockIndex = glGetUniformBlockIndex(shader->programId, name.c_str());

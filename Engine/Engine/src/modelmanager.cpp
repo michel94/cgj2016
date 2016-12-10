@@ -51,14 +51,84 @@ Model* ModelManager::loadObj(std::string filename){
 	}
 	m->TexcoordsLoaded = (m->texcoordIdx.size() > 0);
 	m->NormalsLoaded = (m->normalIdx.size() > 0);
+	if (m->NormalsLoaded && m->TexcoordsLoaded) {
+		m->TangentsLoaded = true;
+		generateTangents();
+	}
 	processMeshData();
 	
 	m->createBuffers();
+	cout << m->Normals.size() << " " << m->Texcoords.size() << " " << m->Vertices.size() << endl;
+	cout << m->normalData.size() << " " << m->texcoordData.size() << " " << m->vertexData.size() << endl;
+	
 	freeMeshData();
 
 	return m;
 }
 
+Vec3 toVec3(Normal& v) {
+	return Vec3(v.nx, v.ny, v.nz);
+}
+
+Vec3 toVec3(Vertex& v) {
+	return Vec3(v.x, v.y, v.z);
+}
+Vec2 toVec2(Texcoord& v) {
+	return Vec2(v.u, v.v);
+}
+
+void ModelManager::getPointData(int i, unsigned int& vi, Vec3& p, Vec2& t){
+	vi = m->vertexIdx[i] - 1;
+	p = toVec3(m->vertexData[vi]);
+	unsigned int ti = m->texcoordIdx[i]-1;
+	t = toVec2(m->texcoordData[ti]);
+	//unsigned int ni = m->normalIdx[i]-1;
+	//n = toVec3(m->normalData[ni]);
+}
+
+void ModelManager::generateTangents(){
+	vector<Vec3> tangents;
+	tangents.resize(m->vertexData.size());
+
+	for (unsigned int i = 0; i < m->vertexIdx.size(); i+=3) {
+		unsigned int i0, i1, i2;
+		Vec3 p0, p1, p2;
+		Vec2 t0, t1, t2;
+		getPointData(i, i0, p0, t0);
+		getPointData(i+1, i1, p1, t1);
+		getPointData(i+2, i2, p2, t2);
+		
+		Vec3 Edge1 = p1 - p0;
+		Vec3 Edge2 = p2 - p0;
+
+		Vec2 Delta1 = t1 - t0;
+		Vec2 Delta2 = t2 - t0;
+
+		float f = 1.0f / (Delta1.x * Delta2.y - Delta2.x * Delta1.y);
+
+		Vec3 Tangent, Bitangent;
+
+		Tangent.x = f * (Delta2.y * Edge1.x - Delta1.y * Edge2.x);
+		Tangent.y = f * (Delta2.y * Edge1.y - Delta1.y * Edge2.y);
+		Tangent.z = f * (Delta2.y * Edge1.z - Delta1.y * Edge2.z);
+
+		Bitangent.x = f * (-Delta2.x * Edge1.x - Delta1.x * Edge2.x);
+		Bitangent.y = f * (-Delta2.x * Edge1.y - Delta1.x * Edge2.y);
+		Bitangent.z = f * (-Delta2.x * Edge1.z - Delta1.x * Edge2.z);
+
+		tangents[i0] += Tangent;
+		tangents[i1] += Tangent;
+		tangents[i2] += Tangent;
+	}
+
+	m->tangentsData.resize(tangents.size());
+	cout << "Tangents:" << endl;
+	for (unsigned int i = 0 ; i < tangents.size() ; i++) {
+		tangents[i].normalized();
+		cout << tangents[i] << endl;
+		m->tangentsData[i] = {tangents[i].x, tangents[i].y, tangents[i].z};
+	}
+}
 
 void ModelManager::parseVertex(std::stringstream& sin)
 {
@@ -121,6 +191,10 @@ void ModelManager::processMeshData()
 			unsigned int ni = m->normalIdx[i];
 			Normal n = m->normalData[ni - 1];
 			m->Normals.push_back(n);
+		}
+		if (m->TangentsLoaded) {
+			Vertex v = m->tangentsData[vi - 1];
+			m->Tangents.push_back(v);
 		}
 	}
 }

@@ -27,13 +27,6 @@ void MaterialNode::render(Mat4 tr) {
 			glUniform1i(s["normalTex"], 1);
 		}
 		glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
-		/*float* d = (float*) ShaderManager::instance().getBlockData("CameraBlock");
-		for (int i = 0; i < 32; i++) {
-			cout << d[i] << " ";
-		}
-		cout << endl;*/
-
-		//glBindBuffer(GL_UNIFORM_BUFFER, ShaderManager::instance().getBlockBuffer("CameraBlock"));
 		model->draw();
 
 		if (texture)

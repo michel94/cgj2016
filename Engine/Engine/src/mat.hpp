@@ -60,7 +60,7 @@ public:
 	
 	//virtual float* operator*(const Vec& v);
 	//friend float* operator*(const Vec& v, const Sub& other);
-	virtual int byteSize() {
+	virtual int byteSize() const {
 		return size * size * sizeof(float);
 	}
 	virtual void transpose();

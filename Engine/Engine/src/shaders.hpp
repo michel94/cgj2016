@@ -11,6 +11,7 @@
 #include <cassert>
 
 #include "singleton.hpp"
+#include "mat.hpp"
 
 using namespace std;
 
@@ -40,6 +41,9 @@ public:
 	}
 	void putData(string name, GLubyte* data, int size) {
 		glBufferSubData(GL_UNIFORM_BUFFER, uniforms[name], size, data);
+	}
+	void putMat4(string name, const Mat4& m) {
+		glBufferSubData(GL_UNIFORM_BUFFER, uniforms[name], m.byteSize(), m.data);
 	}
 
 	string name;

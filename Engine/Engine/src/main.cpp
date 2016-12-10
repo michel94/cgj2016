@@ -57,7 +57,7 @@ void loadScene() {
 	scene->attachCamera(camera);
 
 	SceneNode* root = scene->root();
-	SceneNode* cube = new SceneNode(m, root);
+	SceneNode* cube = new MaterialNode(m, root, "sample");
 	Texture* texture = TextureManager::instance().getTexture("sample.png");
 
 	cube->setTexture(texture);
@@ -81,18 +81,6 @@ void update(float dt) {
 	if (controls[1]) { // forward
 		camera->dist -= 3.0f * dt;
 	}
-	//if (controls[2]) { // left
-	//	ground->position += Vec3(3.0f, 0, 0) * dt;
-	//}
-	//if (controls[3]) { // right
-	//	ground->position += Vec3(-3.0f, 0, 0) * dt;
-	//}
-	//if (controls[4]) { // top
-	//	ground->position += Vec3(0, 3.0f, 0) * dt;
-	//}
-	//if (controls[5]) { // bottom
-	//	ground->position += Vec3(0, -3.0f, 0) * dt;
-	//}
 
 	AnimManager::instance().update(dt);
 

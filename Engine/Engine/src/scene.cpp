@@ -22,8 +22,8 @@ void Scene::render() {
 	Mat4 proj = camera->getProjection();
 	Mat4 view = camera->getView();
 	view.transpose();
-	block->putData("ProjMatrix", (GLubyte*) proj.data, proj.byteSize());
-	block->putData("ViewMatrix", (GLubyte*) view.data, view.byteSize());
+	block->putMat4("ProjMatrix", proj);
+	block->putMat4("ViewMatrix", view);
 	
 	Mat4 VP;
 

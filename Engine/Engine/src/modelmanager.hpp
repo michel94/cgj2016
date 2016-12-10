@@ -14,7 +14,8 @@ public:
 	virtual Model* loadItem(string path) {
 		return loadObj(path);
 	}
-
+	
+	void generateTangents();
 	void parseVertex(std::stringstream& sin);
 	void parseTexcoord(std::stringstream& sin);
 	void parseNormal(std::stringstream& sin);
@@ -26,6 +27,7 @@ public:
 	Model* m;
 private:
 	map<string, Model*> models;
+	void getPointData(int i, unsigned int& vi, Vec3& p, Vec2& t);
 };
 
 typedef struct {
@@ -34,7 +36,3 @@ typedef struct {
 	GLint n_index[3];
 } Face;
 
-
-
-
-//static Vec4 lb, lt, rb, rt;
