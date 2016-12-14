@@ -41,7 +41,7 @@ public:
 
 	Vec3 position, scale = Vec3(1.0f, 1.0f, 1.0f);
 	Qtrn rotation;
-
+    Shader* shader = ShaderManager::instance().getDefaultShader();
 	Mat4 mat;
 protected:
 	Scene* scene;
@@ -49,7 +49,7 @@ protected:
 
 	vector<SceneNode*> children;
 	SceneNode* parent;
-	Shader* shader = ShaderManager::instance().getDefaultShader();
+	
 	Texture * texture = nullptr;
 };
 

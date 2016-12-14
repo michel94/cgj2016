@@ -58,10 +58,12 @@ void loadScene() {
 
 	SceneNode* root = scene->root();
 	SceneNode* cube = new SceneNode(m, root);
-	Texture* texture = TextureManager::instance().getTexture("sample.png");
+	Texture* texture = TextureManager::instance().getTexture("sample_normal.png");
 
 	cube->setTexture(texture);
 	root->addChild(cube);
+	
+
 }
 
 void destroyScene(){
@@ -99,7 +101,6 @@ void update(float dt) {
 	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
 	camera->matRotation = Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100) * camera->matRotation;
 	mouseDisp = Vec2(0, 0);
-
 	scene->update(dt);
 	
 	if(ShaderManager::instance().shadersLoaded())
