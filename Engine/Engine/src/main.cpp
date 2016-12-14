@@ -15,6 +15,7 @@
 #include "modelmanager.hpp"
 #include "animation.hpp"
 #include "glutwrappers.h"
+#include "materialnode.h"
 
 #include "tests.hpp"
 
@@ -59,10 +60,12 @@ SceneNode* droplets[DROPLETS_SZ];
 void loadScene() {
 	Mesh* m = ModelManager::instance().getObj("plane");
 	 scene = new Scene();
+
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
+
 	SceneNode* root = scene->root();
-	Shader* shader = ShaderManager::instance().getShader("colored");
+	Shader* shader = ShaderManager::instance().getShader("rain");
 	Texture* texture = TextureManager::instance().getTexture("sample.png");
 
 
@@ -85,7 +88,6 @@ void loadScene() {
 	}
 	
 }
-
 
 void destroyScene(){
 	delete scene;
@@ -204,7 +206,7 @@ void onSpecialKey(int key, int x, int y, Action action) {
 void setupGLUT(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 
-	glutInitContextVersion(4, 5);
+	glutInitContextVersion(3, 3);
 	glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 
@@ -282,12 +284,6 @@ void init(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
 	Tests::runTests();
-
-	//int width, height;
-	//unsigned char* image =
-	//	SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGB);
-
-	//SOIL_free_image_data(image);
 
 	init(argc, argv);
 	glutMainLoop();

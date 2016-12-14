@@ -35,7 +35,7 @@ void SceneNode::setTexture(Texture* texture) {
 }
 
 void SceneNode::setModelMatrix(Mat4 m) {
-	mat = m; // No longer, can be renable by extending class and changing calcModelMatrix method
+	mat = m; // No longer used, can be renabled by extending class and changing calcModelMatrix method
 }
 
 Mat4 SceneNode::calcModelMatrix() {
@@ -109,18 +109,16 @@ void SceneNode::render(Mat4 tr){
 		if (texture) {
 			glActiveTexture(GL_TEXTURE0);
 			texture->bind();
-
 			glUniform1i(s["tex"], 0);
 		}
 		glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
 		model->draw();
 
-		if (texture) {
-			texture->unbind();
-		}
 
-		s.unbind();
+		if (texture)
+			texture->unbind();
 		
+		s.unbind();
 		glBindVertexArray(0);
 	}
 	
