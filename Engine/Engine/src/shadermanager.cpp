@@ -38,8 +38,8 @@ Block* ShaderManager::bindBlock(Shader* shader, string name) {
 		createBuffer = true;
 	}
 	
-	GLuint blockIndex = glGetUniformBlockIndex(shader->programId, name.c_str());
-	glUniformBlockBinding(shader->programId, blockIndex, blocks[name]);
+	GLuint blockIndex = glGetUniformBlockIndex(shader->programId, name.c_str()); 		// get block index in shader
+	glUniformBlockBinding(shader->programId, blockIndex, blocks[name]);					// bind shader block to global binding point
 
 	if (createBuffer) {
 		Block& ub = *new Block(name);
@@ -73,8 +73,8 @@ Block* ShaderManager::bindBlock(Shader* shader, string name) {
 		GLchar uniformName[bufSize]; // variable name in GLSL
 		
 		for (int i = 0; i < nElements; i++) {
-			glGetActiveUniformName(shader->programId, indices[i], bufSize, &length, uniformName);
-			ub.putUniform(uniformName, offsets[i]);
+			glGetActiveUniformName(shader->programId, indices[i], bufSize, &length, uniformName);	// get uniform name
+			ub.setOffset(uniformName, offsets[i]);													// set offset of uniform
 		}
 		
 		glGenBuffers(1, &ub.buffer);

@@ -26,7 +26,7 @@ public:
 		this->data = data;
 		this->blockSize = blockSize;
 	}
-	void putUniform(string uniName, int offset) {
+	void setOffset(string uniName, int offset) {
 		uniforms[uniName] = offset;
 	}
 	int getOffset(string uniName) {
@@ -40,10 +40,12 @@ public:
 		glBindBuffer(GL_UNIFORM_BUFFER,	buffer);
 	}
 	void putData(string name, GLubyte* data, int size) {
+		bind();
+		assert(uniforms.find(name) != uniforms.end());
 		glBufferSubData(GL_UNIFORM_BUFFER, uniforms[name], size, data);
 	}
 	void putMat4(string name, const Mat4& m) {
-		glBufferSubData(GL_UNIFORM_BUFFER, uniforms[name], m.byteSize(), m.data);
+		putData(name, (GLubyte*) m.data, m.byteSize());
 	}
 
 	string name;

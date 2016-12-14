@@ -8,8 +8,7 @@ Scene::~Scene() {
 	delete mRoot;
 	if(camera)
 		delete camera;
-
-	ShaderManager::instance().getShader("CameraBlock");
+	
 }
 
 void Scene::update(float dt) {
@@ -18,16 +17,14 @@ void Scene::update(float dt) {
 
 void Scene::render() {
 	Block* block = ShaderManager::instance().getUniformBlock("CameraBlock");
-	block->bind();
 	Mat4 proj = camera->getProjection();
 	Mat4 view = camera->getView();
 	view.transpose();
 	block->putMat4("ProjMatrix", proj);
 	block->putMat4("ViewMatrix", view);
 	
-	Mat4 VP;
-
-	mRoot->renderChildren(VP);
+	Mat4 M;
+	mRoot->renderChildren(M);
 }
 
 SceneNode* Scene::root() {
