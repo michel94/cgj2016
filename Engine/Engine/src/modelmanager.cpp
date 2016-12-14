@@ -58,9 +58,6 @@ Model* ModelManager::loadObj(std::string filename){
 	processMeshData();
 	
 	m->createBuffers();
-	cout << m->Normals.size() << " " << m->Texcoords.size() << " " << m->Vertices.size() << endl;
-	cout << m->normalData.size() << " " << m->texcoordData.size() << " " << m->vertexData.size() << endl;
-	
 	freeMeshData();
 
 	return m;
@@ -122,10 +119,8 @@ void ModelManager::generateTangents(){
 	}
 
 	m->tangentsData.resize(tangents.size());
-	cout << "Tangents:" << endl;
 	for (unsigned int i = 0 ; i < tangents.size() ; i++) {
 		tangents[i].normalized();
-		cout << tangents[i] << endl;
 		m->tangentsData[i] = {tangents[i].x, tangents[i].y, tangents[i].z};
 	}
 }

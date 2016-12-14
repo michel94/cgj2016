@@ -22,7 +22,8 @@ void Scene::render() {
 	view.transpose();
 	block->putMat4("ProjMatrix", proj);
 	block->putMat4("ViewMatrix", view);
-	
+	block->putData("CameraPosition", (GLubyte*)camera->position.data(), camera->position.size());
+
 	Mat4 M;
 	mRoot->renderChildren(M);
 }

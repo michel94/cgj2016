@@ -16,5 +16,6 @@ public:
 private:
 	Camera* camera;
 	SceneNode* mRoot;
+	float* pos;
 };
 
