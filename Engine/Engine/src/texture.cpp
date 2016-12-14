@@ -28,7 +28,6 @@ Texture* TextureManager::loadTexture(std::string filename) {
 	GLuint id;
 	glGenTextures(1, &id);
 	int width, height;
-	cout << filename << endl;
 	unsigned char* image =
 		SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 
