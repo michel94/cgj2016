@@ -168,6 +168,7 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mat.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ParticleSystem.hpp" />
     <ClInclude Include="src\animation.hpp" />
     <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\glutwrappers.h" />
