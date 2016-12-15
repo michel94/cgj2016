@@ -86,6 +86,8 @@ void ModelManager::getPointData(int i, unsigned int& vi, Vec3& p, Vec2& t){
 void ModelManager::generateTangents(){
 	vector<Vec3> tangents;
 	tangents.resize(m->vertexData.size());
+	vector<Vec3> bitangents;
+	bitangents.resize(m->vertexData.size());
 
 	for (unsigned int i = 0; i < m->vertexIdx.size(); i+=3) {
 		unsigned int i0, i1, i2;
@@ -105,6 +107,7 @@ void ModelManager::generateTangents(){
 
 		Vec3 Tangent, Bitangent;
 
+
 		Tangent.x = f * (Delta2.y * Edge1.x - Delta1.y * Edge2.x);
 		Tangent.y = f * (Delta2.y * Edge1.y - Delta1.y * Edge2.y);
 		Tangent.z = f * (Delta2.y * Edge1.z - Delta1.y * Edge2.z);
@@ -116,12 +119,23 @@ void ModelManager::generateTangents(){
 		tangents[i0] += Tangent;
 		tangents[i1] += Tangent;
 		tangents[i2] += Tangent;
+		bitangents[i0] += Bitangent;
+		bitangents[i1] += Bitangent;
+		bitangents[i2] += Bitangent;
 	}
 
 	m->tangentsData.resize(tangents.size());
-	for (unsigned int i = 0 ; i < tangents.size() ; i++) {
+	m->bitangentsData.resize(bitangents.size());
+	for (unsigned int i = 0 ; i < tangents.size(); i++) {
 		tangents[i].normalized();
+		bitangents[i].normalized();
 		m->tangentsData[i] = {tangents[i].x, tangents[i].y, tangents[i].z};
+		m->bitangentsData[i] = { bitangents[i].x, bitangents[i].y, bitangents[i].z };
+		cout << "Vertex " << i << ": " << toVec3(m->vertexData[i]) << endl;
+		cout << "Tangent " << tangents[i] << endl;
+		cout << "Bitangent " << bitangents[i] << endl;
+		cout << tangents[i].dot(bitangents[i]) << endl;
+
 	}
 }
 

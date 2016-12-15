@@ -33,6 +33,7 @@ public:
 	const static GLuint TEXCOORDS = 2;
 	const static GLuint NORMALS = 3;
 	const static GLuint TANGENTS = 4;
+	const static GLuint BITANGENTS = 5;
 	
 	std::vector<Vertex> Vertices;
 	std::vector<Texcoord> Texcoords;
@@ -51,6 +52,7 @@ public:
 	std::vector<Texcoord> texcoordData;
 	std::vector<Normal> normalData;
 	std::vector<Vertex> tangentsData;
+	std::vector<Vertex> bitangentsData;
 	std::vector <unsigned int> vertexIdx, texcoordIdx, normalIdx;
 protected:
 

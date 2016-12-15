@@ -31,6 +31,7 @@ bool controls[] = { false, false, false, false, false, false };
 Scene* scene;
 SphericalCamera* camera;
 SceneNode* ground;
+SceneNode* cube;
 
 double lastTick;
 vector<SceneNode*> objects;
@@ -51,17 +52,23 @@ double now() { // milliseconds
 
 
 void loadScene() {
-	Mesh* m = ModelManager::instance().getObj("cube");
+	Mesh* m = ModelManager::instance().getObj("plane");
 	scene = new Scene();
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
 
 	SceneNode* root = scene->root();
-	SceneNode* cube = new MaterialNode(m, root, "sample");
+	//SceneNode* cube = new MaterialNode(m, root, "stone");
+	cube = new MaterialNode(m, root, "stone");
+	//SceneNode* sun = new SceneNode(m, root);
+	//sun->setTexture(TextureManager::instance().getTexture("brick.png"));
+	//sun->position = Vec3(2, 4, 0);
+	//root->addChild(sun);
 	//Texture* texture = TextureManager::instance().getTexture("sample.png");
 /*
 	SceneNode* cube = new SceneNode(m, root);
-	Texture* texture = TextureManager::instance().getTexture("sample_normal.png");
+	Texture* texture = TextureManager::instance().get
+	Texture("sample_normal.png");
 	cube->setTexture(texture);
 */
 	
@@ -80,18 +87,33 @@ void destroyScene(){
 void update(float dt) {
 	
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
-	//Mat4 mMove;
+	
 	if (controls[0]) { // back
-		camera->dist += 3.0f * dt;
+		camera->position += camera->rotation.toMat4() * Vec3(0.0f, 0.0f, 3.0f) * dt;
 	}
 	if (controls[1]) { // forward
-		camera->dist -= 3.0f * dt;
+		camera->position -= camera->rotation.toMat4() * Vec3(0.0f, 0.0f, 3.0f) * dt;
 	}
+	if (controls[2]) { // right
+		camera->position -= Vec3(3.0f, 0, 0) * dt;
+	}
+	if (controls[3]) { // left
+		camera->position += Vec3(3.0f, 0, 0) * dt;
+	}
+	if (controls[4]) { // up
+		camera->position -= Vec3(0, 3.0f, 0) * dt;
+	}
+	if (controls[5]) { // down
+		camera->position += Vec3(0, 3.0f, 0) * dt;
+	}
+	cout << camera->position << endl;
 
 	AnimManager::instance().update(dt);
 
-	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
-	camera->matRotation = Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100) * camera->matRotation;
+	
+	//camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
+	cube->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
+	//camera->matRotation *= Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100) * camera->matRotation;
 	mouseDisp = Vec2(0, 0);
 	scene->update(dt);
 	
@@ -133,6 +155,7 @@ void setupOpenGL() {
 
 	glDisable(GL_BLEND);
 }
+
 
 void setupGLEW() {
 	glewExperimental = GL_TRUE;
@@ -249,6 +272,7 @@ void init(int argc, char* argv[]) {
 	lastTick = now();
 	loadScene();
 	camera->rotation = Qtrn::fromAngleAxis(0, Vec3(0, 1, 0));
+	camera->position = Vec3(0, 2, 2);
 	
 	setupCallbacks();
 }

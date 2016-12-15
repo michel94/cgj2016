@@ -15,10 +15,16 @@ Mat4 SphericalCamera::toMat4() {
 
 Mat4 SphericalCamera::getView() {
 	Mat4 V;
-	V *= Mat4::translate(Vec3(0.0f, 0.0f, -dist));
+	//V *= Mat4::translate(position);
+	V *= Mat4::translate(-position);
 	V *= rotation.toMat4();
+	
+	//V *= Mat4::translate(Vec3(0.0f, 0.0f, -dist));
+	
+	/*Mat4 T = V.inverse();
+	position = Vec3(V[3][0], V[3][1], V[3][2]);
+	cout << position << endl;*/
 
-	V *= Mat4::translate(Vec3(-1.0f, -1.0f, -1.0f));
 	return V;
 }
 

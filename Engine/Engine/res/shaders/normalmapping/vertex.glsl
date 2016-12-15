@@ -1,58 +1,77 @@
 
 #version 330
 
-in vec4 in_Position;
+in vec4 inPosition;
 in vec2 inTexcoord;
 in vec3 inNormal;
 in vec3 inTangent;
-in vec4 in_Color;
+in vec3 inBitangent;
 
-out vec2 ex_Texcoord;
-out vec4 ex_Color;
-out mat3 TBN;
-
-out vec3 ex_Normal;
+/*out vec2 ex_Texcoord;
 out vec3 eyeDir;
 out vec3 lightDir;
+out vec3 position;*/
+
+out VS_OUT {
+    vec3 FragPos;
+    vec2 TexCoords;
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} vs_out;
 
 uniform CameraBlock{
 	mat4 ProjMatrix;
 	mat4 ViewMatrix;
+	vec3 CameraPosition;
 };
 
 uniform mat4 Matrix;
-uniform vec4 Color;
 
 void main(void){
-	mat4 MV = ViewMatrix * Matrix;
-	vec3 normalViewSpace = inNormal;
+	/*vec3 normalViewSpace = inNormal;
 	vec3 tangentViewSpace = inTangent;
-	vec3 bitangentViewSpace = cross(inNormal, inTangent);
-	TBN = transpose(mat3(
+	vec3 bitangentViewSpace = inBitangent;
+	mat4 TBN = mat4(transpose(mat3(
 		tangentViewSpace,
 		bitangentViewSpace,
 		normalViewSpace
-	));
-	TBN = inverse(TBN);
+	)));
 
 	ex_Normal = inNormal;
-	ex_Texcoord = inTexcoord;
+	
 
-	vec3 lightPos = vec3(0.0f, 1.0f, 5.0f);
-
-	ex_Color = in_Color;
 	ex_Texcoord = inTexcoord;
-	mat4 ModelView = Matrix*ViewMatrix;
+	mat4 ModelView = Matrix * ViewMatrix;
 
 	mat4 normalMatrix = transpose(inverse(ModelView));
 	ex_Normal = (normalMatrix * vec4(inNormal, 0.0f)).xyz;
 
-	vec3 vertexInCamSpace = (ModelView * in_Position).xyz;
+	vec3 vertexInCamSpace = (TBN * ModelView * in_Position).xyz;
 	eyeDir = -vertexInCamSpace.xyz;
+	eyeDir = normalize(eyeDir);
 
-	vec3 lightInCamSpace = (ModelView * vec4(lightPos, 1.0f)).xyz;
+	vec3 lightInCamSpace = (TBN * ModelView * vec4(lightPos, 1.0f)).xyz;
 	lightDir = vec3(lightInCamSpace - vertexInCamSpace).xyz;
+	lightDir = normalize(lightDir);
 
-	gl_Position = ProjMatrix * ViewMatrix * Matrix * in_Position;
+	gl_Position = position = ProjMatrix * ViewMatrix * Matrix * in_Position;*/
+	vec3 lightPos = vec3(2.0f, 2.0f, 2.0f);
+
+	gl_Position = ProjMatrix * ViewMatrix * Matrix * inPosition;
+	vs_out.FragPos = vec3(Matrix * inPosition);
+    vs_out.TexCoords = inTexcoord;
+    
+    mat3 normalMatrix = transpose(inverse(mat3(Matrix)));
+    vec3 T = normalize(normalMatrix * inTangent);
+    vec3 B = normalize(normalMatrix * inBitangent);
+    vec3 N = normalize(normalMatrix * inNormal);
+    
+    //vec3 viewPos = vec3(0, 0, 0);
+    mat3 TBN = transpose(mat3(T, B, N));
+    vs_out.TangentLightPos = lightPos; // multiply by TBN
+    vs_out.TangentViewPos  = CameraPosition; // multiply by TBN
+    vs_out.TangentFragPos  = vs_out.FragPos; // multiply by TBN
 
 }
+

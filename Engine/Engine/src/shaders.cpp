@@ -48,12 +48,13 @@ Shader* loadShader(string path) {
 	glAttachShader(ProgramId, VertexShaderId);
 	glAttachShader(ProgramId, FragmentShaderId);
 
-	glBindAttribLocation(ProgramId, Model::VERTICES, "in_Position");
-	glBindAttribLocation(ProgramId, 1, "in_Color");
+	glBindAttribLocation(ProgramId, Model::VERTICES, "inPosition");
+	glBindAttribLocation(ProgramId, 1, "inColor");
 
 	glBindAttribLocation(ProgramId, Model::TEXCOORDS, "inTexcoord");
 	glBindAttribLocation(ProgramId, Model::NORMALS, "inNormal");
 	glBindAttribLocation(ProgramId, Model::TANGENTS, "inTangent");
+	glBindAttribLocation(ProgramId, Model::BITANGENTS, "inBitangent");
 
 	glLinkProgram(ProgramId);
 
