@@ -59,8 +59,14 @@ void loadScene() {
 	scene->attachCamera(camera);
 
 	SceneNode* root = scene->root();
-	Texture* texture = TextureManager::instance().getTexture("sample.png");
 
+	Mesh* m = ModelManager::instance().getObj("cube");
+	SceneNode* cube = new SceneNode(m, root);
+	Texture* texture = TextureManager::instance().getTexture("sample.png");
+	cube->position.z -= 5;
+
+	cube->setTexture(texture);
+	root->addChild(cube);
 
 	ParticleSystem* rain = new ParticleSystem(root, DROPLETS_SZ, 5);
 	root->addChild(rain);

@@ -187,6 +187,7 @@
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\particle.h" />
     <ClInclude Include="src\ParticleSystem.hpp" />
     <ClInclude Include="src\animation.hpp" />
     <ClInclude Include="src\camera.hpp" />
