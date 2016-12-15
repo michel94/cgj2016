@@ -20,19 +20,24 @@ uniform CameraBlock{
 	vec3 CameraPosition;
 };
 
+uniform Light{
+	vec3 LightPosition[3];
+	vec3 LightColor[3];
+};
+
 uniform mat4 Matrix;
 
 void main(void){
-	vec3 lightPos = vec3(0.0f, -2.0f, 2.0f);
+	vec3 lightPos = vec3(-0.5f, -2.0f, 2.0f);
 
 	gl_Position = ProjMatrix * ViewMatrix * Matrix * inPosition;
-	vs_out.FragPos = vec3(ViewMatrix * Matrix * inPosition);
+	vs_out.FragPos = vec3(Matrix * inPosition);
     vs_out.TexCoords = inTexcoord;
     
     mat3 normalMatrix = transpose(inverse(mat3(Matrix)));
-    vec3 T = normalize(mat3(Matrix) * inTangent);
-    vec3 B = normalize(mat3(Matrix) * inBitangent);
-    vec3 N = normalize(mat3(Matrix) * inNormal);
+    vec3 T = normalize(normalMatrix * inTangent);
+    vec3 B = normalize(normalMatrix * inBitangent);
+    vec3 N = normalize(normalMatrix * inNormal);
     
     mat3 TBN = transpose(mat3(T, B, N));
     vs_out.TangentLightPos = TBN * lightPos;

@@ -129,11 +129,6 @@ void ModelManager::generateTangents(){
 		bitangents[i].normalized();
 		m->tangentsData[i] = {tangents[i].x, tangents[i].y, tangents[i].z};
 		m->bitangentsData[i] = {bitangents[i].x, bitangents[i].y, bitangents[i].z};
-		cout << "Vertex " << i << ": " << toVec3(m->vertexData[i]) << endl;
-		cout << "Tangent " << tangents[i] << endl;
-		cout << "Bitangent " << bitangents[i] << endl;
-		cout << tangents[i].dot(bitangents[i]) << endl;
-
 	}
 }
 

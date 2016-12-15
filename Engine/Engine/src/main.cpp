@@ -75,6 +75,8 @@ void loadScene() {
 	root->addChild(cube);
 	
 
+
+
 }
 
 void destroyScene(){
@@ -128,6 +130,7 @@ void cleanup(){
 }
 
 void checkOpenGLInfo() {
+
 	const GLubyte *renderer = glGetString(GL_RENDERER);
 	const GLubyte *vendor = glGetString(GL_VENDOR);
 	const GLubyte *version = glGetString(GL_VERSION);
