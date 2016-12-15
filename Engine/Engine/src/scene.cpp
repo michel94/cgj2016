@@ -22,7 +22,7 @@ void Scene::render() {
 	view.transpose();
 	block->putMat4("ProjMatrix", proj);
 	block->putMat4("ViewMatrix", view);
-	Vec3 pos = camera->getView() * camera->position; // NOT WORKING
+	Vec3 pos = camera->position;
 	cout << pos << endl;
 	block->putData("CameraPosition", (GLubyte*)pos.data(), pos.size());
 

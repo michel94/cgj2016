@@ -52,11 +52,11 @@ double now() { // milliseconds
 
 
 void loadScene() {
-	Mesh* m = ModelManager::instance().getObj("plane");
+	Mesh* m = ModelManager::instance().getObj("cube");
 	scene = new Scene();
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
-
+	
 	SceneNode* root = scene->root();
 	//SceneNode* cube = new MaterialNode(m, root, "stone");
 	cube = new MaterialNode(m, root, "stone");
@@ -89,31 +89,27 @@ void update(float dt) {
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	
 	if (controls[0]) { // back
-		camera->position += camera->rotation.toMat4() * Vec3(0.0f, 0.0f, 3.0f) * dt;
-	}
-	if (controls[1]) { // forward
 		camera->position -= camera->rotation.toMat4() * Vec3(0.0f, 0.0f, 3.0f) * dt;
 	}
+	if (controls[1]) { // forward
+		camera->position += camera->rotation.toMat4() * Vec3(0.0f, 0.0f, 3.0f) * dt;
+	}
 	if (controls[2]) { // right
-		camera->position -= Vec3(3.0f, 0, 0) * dt;
+		camera->position += camera->rotation.toMat4() * Vec3(3.0f, 0, 0) * dt;
 	}
 	if (controls[3]) { // left
-		camera->position += Vec3(3.0f, 0, 0) * dt;
+		camera->position -= camera->rotation.toMat4() * Vec3(3.0f, 0, 0) * dt;
 	}
 	if (controls[4]) { // up
-		camera->position -= Vec3(0, 3.0f, 0) * dt;
+		camera->position -= camera->rotation.toMat4() * Vec3(0, 3.0f, 0) * dt;
 	}
 	if (controls[5]) { // down
-		camera->position += Vec3(0, 3.0f, 0) * dt;
+		camera->position += camera->rotation.toMat4() * Vec3(0, 3.0f, 0) * dt;
 	}
-	cout << camera->position << endl;
-
+	
 	AnimManager::instance().update(dt);
 
-	
-	//camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
-	cube->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
-	//camera->matRotation *= Mat4::rotateAround(Vec3(0, 1, 0), mouseDisp.x * 100) * Mat4::rotateAround(Vec3(1, 0, 0), mouseDisp.y * 100) * camera->matRotation;
+	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(-mouseDisp.y * 100, Vec3(1, 0, 0));
 	mouseDisp = Vec2(0, 0);
 	scene->update(dt);
 	
@@ -271,7 +267,8 @@ void init(int argc, char* argv[]) {
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	lastTick = now();
 	loadScene();
-	camera->rotation = Qtrn::fromAngleAxis(0, Vec3(0, 1, 0));
+	//camera->rotation = Qtrn::fromAngleAxis(0, Vec3(0, 1, 0));
+	camera->rotation = Qtrn::fromAngleAxis(135, Vec3(1, 0, 0));
 	camera->position = Vec3(0, 2, 2);
 	
 	setupCallbacks();

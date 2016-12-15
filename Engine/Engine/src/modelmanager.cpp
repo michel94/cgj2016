@@ -93,7 +93,7 @@ void ModelManager::generateTangents(){
 		unsigned int i0, i1, i2;
 		Vec3 p0, p1, p2;
 		Vec2 t0, t1, t2;
-		getPointData(i, i0, p0, t0);
+		getPointData(i+0, i0, p0, t0);
 		getPointData(i+1, i1, p1, t1);
 		getPointData(i+2, i2, p2, t2);
 		
@@ -106,8 +106,6 @@ void ModelManager::generateTangents(){
 		float f = 1.0f / (Delta1.x * Delta2.y - Delta2.x * Delta1.y);
 
 		Vec3 Tangent, Bitangent;
-
-
 		Tangent.x = f * (Delta2.y * Edge1.x - Delta1.y * Edge2.x);
 		Tangent.y = f * (Delta2.y * Edge1.y - Delta1.y * Edge2.y);
 		Tangent.z = f * (Delta2.y * Edge1.z - Delta1.y * Edge2.z);
@@ -130,7 +128,7 @@ void ModelManager::generateTangents(){
 		tangents[i].normalized();
 		bitangents[i].normalized();
 		m->tangentsData[i] = {tangents[i].x, tangents[i].y, tangents[i].z};
-		m->bitangentsData[i] = { bitangents[i].x, bitangents[i].y, bitangents[i].z };
+		m->bitangentsData[i] = {bitangents[i].x, bitangents[i].y, bitangents[i].z};
 		cout << "Vertex " << i << ": " << toVec3(m->vertexData[i]) << endl;
 		cout << "Tangent " << tangents[i] << endl;
 		cout << "Bitangent " << bitangents[i] << endl;
@@ -202,8 +200,10 @@ void ModelManager::processMeshData()
 			m->Normals.push_back(n);
 		}
 		if (m->TangentsLoaded) {
-			Vertex v = m->tangentsData[vi - 1];
-			m->Tangents.push_back(v);
+			Vertex t = m->tangentsData[vi - 1];
+			m->Tangents.push_back(t);
+			Vertex bt = m->bitangentsData[vi - 1];
+			m->Bitangents.push_back(bt);
 		}
 	}
 }

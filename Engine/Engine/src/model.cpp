@@ -46,6 +46,12 @@ void Model::createBuffers() {
 			glBufferData(GL_ARRAY_BUFFER, Tangents.size() * sizeof(Vertex), &Tangents[0], GL_STATIC_DRAW);
 			glEnableVertexAttribArray(TANGENTS);
 			glVertexAttribPointer(TANGENTS, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
+			glGenBuffers(1, &vbo_bitangents_id);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo_bitangents_id);
+			glBufferData(GL_ARRAY_BUFFER, Bitangents.size() * sizeof(Vertex), &Bitangents[0], GL_STATIC_DRAW);
+			glEnableVertexAttribArray(BITANGENTS);
+			glVertexAttribPointer(BITANGENTS, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 		}
 	}
 	

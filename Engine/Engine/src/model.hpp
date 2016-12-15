@@ -39,6 +39,7 @@ public:
 	std::vector<Texcoord> Texcoords;
 	std::vector<Normal> Normals;
 	std::vector<Vertex> Tangents;
+	std::vector<Vertex> Bitangents;
 	bool TexcoordsLoaded=false, NormalsLoaded=false, TangentsLoaded=false;
 
 	GLuint vao_id;
@@ -46,6 +47,7 @@ public:
 	GLuint vbo_normals_id;
 	GLuint vbo_texcoords_id;
 	GLuint vbo_tangents_id;
+	GLuint vbo_bitangents_id;
 	Vec4 color;
 	
 	std::vector<Vertex> vertexData;

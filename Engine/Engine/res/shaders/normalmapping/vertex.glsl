@@ -54,24 +54,24 @@ void main(void){
 	vec3 lightInCamSpace = (TBN * ModelView * vec4(lightPos, 1.0f)).xyz;
 	lightDir = vec3(lightInCamSpace - vertexInCamSpace).xyz;
 	lightDir = normalize(lightDir);
-
+	
 	gl_Position = position = ProjMatrix * ViewMatrix * Matrix * in_Position;*/
-	vec3 lightPos = vec3(2.0f, 2.0f, 2.0f);
+	vec3 lightPos = vec3(0.0f, -2.0f, 2.0f);
 
 	gl_Position = ProjMatrix * ViewMatrix * Matrix * inPosition;
-	vs_out.FragPos = vec3(Matrix * inPosition);
+	vs_out.FragPos = vec3(ViewMatrix * Matrix * inPosition);
     vs_out.TexCoords = inTexcoord;
     
     mat3 normalMatrix = transpose(inverse(mat3(Matrix)));
-    vec3 T = normalize(normalMatrix * inTangent);
-    vec3 B = normalize(normalMatrix * inBitangent);
-    vec3 N = normalize(normalMatrix * inNormal);
+    vec3 T = normalize(mat3(Matrix) * inTangent);
+    vec3 B = normalize(mat3(Matrix) * inBitangent);
+    vec3 N = normalize(mat3(Matrix) * inNormal);
     
     //vec3 viewPos = vec3(0, 0, 0);
     mat3 TBN = transpose(mat3(T, B, N));
-    vs_out.TangentLightPos = lightPos; // multiply by TBN
-    vs_out.TangentViewPos  = CameraPosition; // multiply by TBN
-    vs_out.TangentFragPos  = vs_out.FragPos; // multiply by TBN
+    vs_out.TangentLightPos = TBN * lightPos; // multiply by TBN
+    vs_out.TangentViewPos  = TBN * CameraPosition; // multiply by TBN
+    vs_out.TangentFragPos  = TBN * vs_out.FragPos; // multiply by TBN
 
 }
 
