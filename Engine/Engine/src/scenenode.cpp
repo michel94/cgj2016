@@ -86,6 +86,7 @@ void SceneNode::switchParent(SceneNode * p){
 
 void SceneNode::update(float dt){
 	// SceneNodes with animations need to extend this function
+	updateChildren(dt);
 }
 
 void SceneNode::updateChildren(float dt) {

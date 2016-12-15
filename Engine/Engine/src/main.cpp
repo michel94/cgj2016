@@ -16,6 +16,7 @@
 #include "animation.hpp"
 #include "glutwrappers.h"
 #include "materialnode.h"
+#include "ParticleSystem.hpp"
 
 #include "tests.hpp"
 
@@ -47,45 +48,23 @@ double now() { // milliseconds
 	}
 }
 
-double fRand(double fMin, double fMax)
-{
-	double f = (double)rand() / RAND_MAX;
-	return fMin + f * (fMax - fMin);
-}
-
 /////////////////////////////////////////////////////////////////////// SCENE SETUP
-#define DROPLETS_SZ 100
-SceneNode* droplets[DROPLETS_SZ];
+#define DROPLETS_SZ 200
 
 void loadScene() {
-	Mesh* m = ModelManager::instance().getObj("plane");
+	
 	 scene = new Scene();
 
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
 
 	SceneNode* root = scene->root();
-	Shader* shader = ShaderManager::instance().getShader("rain");
 	Texture* texture = TextureManager::instance().getTexture("sample.png");
 
 
-	SceneNode* rain = new SceneNode(root);
+	ParticleSystem* rain = new ParticleSystem(root, DROPLETS_SZ, 5);
 	root->addChild(rain);
 
-	for (size_t i = 0; i < DROPLETS_SZ; i++)
-	{
-		SceneNode* droplet = new SceneNode(m, rain);
-		droplets[i] = droplet;
-		float randomX = fRand(-5.0f, 5.0f);
-		float randomY = fRand(-5.0f, 5.0f);
-		droplet->position.x = randomX;
-		droplet->position.y = randomY;
-		droplet->scale.x = 0.005;
-		droplet->scale.y = fRand(0.01, 0.03);
-		droplet->scale.z = 0;
-		droplet->setShader(shader);
-		rain->addChild(droplet);
-	}
 	
 }
 
@@ -107,15 +86,6 @@ void update(float dt) {
 		camera->dist -= 3.0f * dt;
 	}
 	
-	for (size_t i = 0; i < DROPLETS_SZ; i++)
-	{
-		if (droplets[i]->position.y < -5) {
-			droplets[i]->position.y = 5;
-		}
-		droplets[i]->position.y -= fRand(0.01, 0.03);
-		
-	}
-
 	AnimManager::instance().update(dt);
 
 	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(mouseDisp.y * 100, Vec3(1, 0, 0));
