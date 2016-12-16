@@ -20,12 +20,13 @@ out vec4 out_Color;
 
 void main(void){
 	int nLights = fs_in.nLights;
-	fs_in.TexCoords *= 4;
-	vec3 normal = texture(normalTex, fs_in.TexCoords).rgb;
+	
+	vec2 TexCoords = fs_in.TexCoords * 4;
+	vec3 normal = texture(normalTex, TexCoords).rgb;
     // Transform normal vector to range [-1,1]
     normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
     // Get diffuse color
-    vec3 color = texture(tex, fs_in.TexCoords).rgb;
+    vec3 color = texture(tex, TexCoords).rgb;
     // Ambient
     vec3 ambient = vec3(0.3);
     vec3 diffuse;

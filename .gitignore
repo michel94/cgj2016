@@ -83,7 +83,7 @@ downloads
 backup
 
 # Builds
-Engine/Engine/bin/
+Engine/Engine/bin/*/*/res
 Engine/Engine/obj/
 Engine/Engine.VC.opendb
 Engine/.vs
