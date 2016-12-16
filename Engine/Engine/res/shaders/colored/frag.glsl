@@ -24,7 +24,7 @@ void main(void){
 	float ambientStrength = 0.5f;
     vec3 ambient = ambientStrength * lightColor;
 
-	//difuse
+	//diffuse
 	float diff = max(dot(L, N), 0.0);
 	vec3 diffuse = diff * lightColor;
 
@@ -33,8 +33,5 @@ void main(void){
 	float spec = pow(max(dot(H, N), 0.0), 32);
 	vec3 specular = specularStrength * spec * lightColor; 
 
-	//out_Color = ex_Color;
 	out_Color = (vec4(ambient, 1.0f) + vec4(diffuse, 1.0f) + vec4(specular, 1.0f)) * texture(tex, ex_Texcoord);
-	//out_Color = vec4(ex_Texcoord, 1, 1);
-	//out_Color = vec4(0.5,0.5,0.5,1);
 }

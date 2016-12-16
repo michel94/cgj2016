@@ -16,6 +16,7 @@
 #include "animation.hpp"
 #include "glutwrappers.h"
 #include "materialnode.h"
+#include "ParticleSystem.hpp"
 
 #include "tests.hpp"
 
@@ -49,34 +50,22 @@ double now() { // milliseconds
 }
 
 /////////////////////////////////////////////////////////////////////// SCENE SETUP
-
+#define DROPLETS_SZ 200
 
 void loadScene() {
-	Mesh* m = ModelManager::instance().getObj("cube");
-	scene = new Scene();
+	
+	 scene = new Scene();
+
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
 	
 	SceneNode* root = scene->root();
-	//SceneNode* cube = new MaterialNode(m, root, "stone");
-	cube = new MaterialNode(m, root, "stone");
-	//SceneNode* sun = new SceneNode(m, root);
-	//sun->setTexture(TextureManager::instance().getTexture("brick.png"));
-	//sun->position = Vec3(2, 4, 0);
-	//root->addChild(sun);
-	//Texture* texture = TextureManager::instance().getTexture("sample.png");
-/*
-	SceneNode* cube = new SceneNode(m, root);
-	Texture* texture = TextureManager::instance().get
-	Texture("sample_normal.png");
-	cube->setTexture(texture);
-*/
+	cube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
 	
 	root->addChild(cube);
 	
-
-
-
+	ParticleSystem* rain = new ParticleSystem(root, DROPLETS_SZ, 5);
+	root->addChild(rain);
 }
 
 void destroyScene(){

@@ -90,3 +90,5 @@ Engine/.vs
 *.log
 *.tlog
 Engine/Engine/Debug/vc140.idb
+Engine/Engine.sdf
+Engine/Engine.opensdf

@@ -168,6 +168,7 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mat.cpp" />
@@ -186,6 +187,8 @@
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\particle.h" />
+    <ClInclude Include="src\ParticleSystem.hpp" />
     <ClInclude Include="src\animation.hpp" />
     <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\glutwrappers.h" />
@@ -207,6 +210,8 @@
     <None Include="res\shaders\colored\vertex.glsl" />
     <None Include="res\shaders\normalmapping\frag.glsl" />
     <None Include="res\shaders\normalmapping\vertex.glsl" />
+    <None Include="res\shaders\rain\frag.glsl" />
+    <None Include="res\shaders\rain\vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
