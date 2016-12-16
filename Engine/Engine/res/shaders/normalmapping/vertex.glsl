@@ -28,7 +28,7 @@ uniform Light{
 uniform mat4 Matrix;
 
 void main(void){
-	vec3 lightPos = vec3(-0.5f, -2.0f, 2.0f);
+	vec3 lightPos = vec3(0.5f, 0.0f, 2.0f);
 
 	gl_Position = ProjMatrix * ViewMatrix * Matrix * inPosition;
 	vs_out.FragPos = vec3(Matrix * inPosition);

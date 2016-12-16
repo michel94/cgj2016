@@ -50,21 +50,19 @@ double now() { // milliseconds
 }
 
 /////////////////////////////////////////////////////////////////////// SCENE SETUP
-#define DROPLETS_SZ 200
 
 void loadScene() {
-	
-	 scene = new Scene();
+	scene = new Scene();
 
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
 	
 	SceneNode* root = scene->root();
 	cube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
-	
+	cube->position.y = -5;
 	root->addChild(cube);
 	
-	ParticleSystem* rain = new ParticleSystem(root, DROPLETS_SZ, 5);
+	ParticleSystem* rain = new ParticleSystem(root, 1000, 5);
 	root->addChild(rain);
 }
 
@@ -143,7 +141,6 @@ void setupOpenGL() {
 
 	glDisable(GL_BLEND);
 }
-
 
 void setupGLEW() {
 	glewExperimental = GL_TRUE;
@@ -259,9 +256,8 @@ void init(int argc, char* argv[]) {
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	lastTick = now();
 	loadScene();
-	//camera->rotation = Qtrn::fromAngleAxis(0, Vec3(0, 1, 0));
-	camera->rotation = Qtrn::fromAngleAxis(135, Vec3(1, 0, 0));
-	camera->position = Vec3(0, 2, 2);
+	camera->rotation = Qtrn::fromAngleAxis(180, Vec3(0, 1, 0));
+	camera->position = Vec3(0, -2, 2);
 	
 	setupCallbacks();
 }

@@ -13,10 +13,10 @@ void createParticles(SceneNode* node, int particles) {
 	for (size_t i = 0; i < particles; i++)
 	{
 		SceneNode* droplet = new SceneNode(m, node);
-		float randomX = fRand(-5.0f, 5.0f);
+		float randomX = fRand(-2.0f, 2.0f);
 		float randomY = fRand(-5.0f, 5.0f);
-		droplet->position.x = randomX;
-		droplet->position.y = randomY;
+		float randomZ = fRand(-2.0f, 2.0f);
+		droplet->position = Vec3(randomX, randomY, randomZ);
 		droplet->scale.x = 0.005;
 		droplet->scale.y = fRand(0.01, 0.03);
 		droplet->scale.z = 0;
@@ -25,7 +25,6 @@ void createParticles(SceneNode* node, int particles) {
 		node->addChild(droplet);
 	}
 }
-
 
 ParticleSystem::ParticleSystem(SceneNode * parent, int particles, int lifetime) : SceneNode(parent) {
 	particles_ = particles;
@@ -38,7 +37,7 @@ ParticleSystem::ParticleSystem(SceneNode * parent, int particles, int lifetime) 
 void ParticleSystem::update(float dt) {
 	for (size_t i = 0; i < particles_; i++)
 	{
-		if (children[i]->position.y < -5) {
+		if (children[i]->position.y < -4) {
 			children[i]->position.y = 5;
 		}
 		children[i]->position.y -= fRand(0.04, 0.05);
