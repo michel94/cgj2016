@@ -62,8 +62,17 @@ void loadScene() {
 	cube->position.y = -5;
 	root->addChild(cube);
 	
-	ParticleSystem* rain = new ParticleSystem(root, 1000, 5);
+	ParticleSystem* rain = new ParticleSystem(root, 300, 5);
 	root->addChild(rain);
+
+	Light* light = new Light(Vec3(0.5f, 0.0f, 2.0f), Light::WHITE);
+	scene->addLight(light);
+
+	light = new Light(Vec3(-2.0f, -4.0f, -2.0f), Light::BLUE);
+	scene->addLight(light);
+
+	light = new Light(Vec3(2.0f, -3.5f, -2.0f), Light::RED);
+	scene->addLight(light);
 }
 
 void destroyScene(){
@@ -125,6 +134,9 @@ void checkOpenGLInfo() {
 	cerr << "OpenGL Renderer: " << renderer << " (" << vendor << ")" << endl;
 	cerr << "OpenGL Version: " << version << endl;
 	cerr << "OpenGL Renderer: " << glslVersion << endl;
+	int size;
+	glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &size);
+	cerr << "Max block size: " << size << endl;
 }
 
 void setupOpenGL() {
@@ -185,7 +197,7 @@ void onSpecialKey(int key, int x, int y, Action action) {
 void setupGLUT(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 
-	glutInitContextVersion(3, 3);
+	glutInitContextVersion(4, 3);
 	glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 

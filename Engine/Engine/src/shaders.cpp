@@ -88,6 +88,7 @@ Shader* loadShader(string path) {
 	}
 
 	glGetProgramiv(s->programId, GL_ACTIVE_UNIFORM_BLOCKS, &count);
+	cout << "Uniform blocks " << "(" << path << ")" << count << endl;
 	for (int i = 0; i < count; i++) {
 		int nameLength;
 		glGetActiveUniformBlockiv(s->programId, (GLuint)i, GL_UNIFORM_BLOCK_NAME_LENGTH, &nameLength);

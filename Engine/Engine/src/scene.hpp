@@ -1,6 +1,7 @@
 #pragma once
 #include "scenenode.hpp"
 #include "camera.hpp"
+#include "light.hpp"
 
 class SceneNode;
 class Camera;
@@ -12,10 +13,13 @@ public:
 	void render();
 	void update(float dt);
 	SceneNode* root();
+	void addLight(Light* light);
+	void removeLight(Light* light);
 	void attachCamera(Camera* camera);
 private:
 	Camera* camera;
 	SceneNode* mRoot;
 	float* pos;
+	vector<Light*> lights;
 };
 

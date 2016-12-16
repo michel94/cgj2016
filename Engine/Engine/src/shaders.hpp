@@ -44,6 +44,16 @@ public:
 		assert(uniforms.find(name) != uniforms.end());
 		glBufferSubData(GL_UNIFORM_BUFFER, uniforms[name], size, data);
 	}
+	void putVec(string name, Vec* v) {
+		putData(name, (GLubyte*)v->data(), v->size());
+	}
+	void putInt(string name, int i) {
+		putData(name, (GLubyte*)&i, sizeof(int));
+	}
+	void putFloat(string name, float f) {
+		putData(name, (GLubyte*)&f, sizeof(float));
+	}
+	
 	void putMat4(string name, const Mat4& m) {
 		putData(name, (GLubyte*) m.data, m.byteSize());
 	}

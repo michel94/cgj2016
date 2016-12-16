@@ -1,4 +1,6 @@
-#version 330
+#version 430
+
+const int MAX_LIGHTS=8;
 
 in vec4 inPosition;
 in vec2 inTexcoord;
@@ -9,9 +11,11 @@ in vec3 inBitangent;
 out VS_OUT {
     vec3 FragPos;
     vec2 TexCoords;
-    vec3 TangentLightPos;
+    vec3 TangentLightPos[MAX_LIGHTS];
+    vec3 LightColor[MAX_LIGHTS];
     vec3 TangentViewPos;
     vec3 TangentFragPos;
+    flat int nLights;
 } vs_out;
 
 uniform CameraBlock{
@@ -20,16 +24,16 @@ uniform CameraBlock{
 	vec3 CameraPosition;
 };
 
-uniform Light{
-	vec3 LightPosition[3];
-	vec3 LightColor[3];
+uniform LightBlock{
+	vec3 LightPosition[MAX_LIGHTS];
+	vec3 LightColor[MAX_LIGHTS];
+	int nLights;
 };
 
 uniform mat4 Matrix;
 
 void main(void){
-	vec3 lightPos = vec3(0.5f, 0.0f, 2.0f);
-
+	vs_out.nLights = nLights;
 	gl_Position = ProjMatrix * ViewMatrix * Matrix * inPosition;
 	vs_out.FragPos = vec3(Matrix * inPosition);
     vs_out.TexCoords = inTexcoord;
@@ -40,8 +44,11 @@ void main(void){
     vec3 N = normalize(normalMatrix * inNormal);
     
     mat3 TBN = transpose(mat3(T, B, N));
-    vs_out.TangentLightPos = TBN * lightPos;
     vs_out.TangentViewPos  = TBN * CameraPosition;
     vs_out.TangentFragPos  = TBN * vs_out.FragPos;
+    for(int i=0; i<nLights; i++){
+        vs_out.TangentLightPos[i] = TBN * LightPosition[i];
+        vs_out.LightColor[i] = LightColor[i];
+    }
 
 }
