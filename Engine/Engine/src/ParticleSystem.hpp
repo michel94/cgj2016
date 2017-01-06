@@ -9,5 +9,7 @@ public:
 private:
 	int particles_;
 	int lifetime_;
+
+	void createParticles(int particles);
 };
 

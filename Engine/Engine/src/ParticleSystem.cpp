@@ -6,13 +6,23 @@ double fRand(double fMin, double fMax)
 	return fMin + f * (fMax - fMin);
 }
 
-void createParticles(SceneNode* node, int particles) {
+
+
+ParticleSystem::ParticleSystem(SceneNode * parent, int particles, int lifetime) : SceneNode(parent) {
+	particles_ = particles;
+	lifetime_ = lifetime;
+	shader = ShaderManager::instance().getShader("rain");
+	std::cout << "ctor";
+	createParticles(particles);
+}
+
+void ParticleSystem::createParticles(int particles) {
 	Mesh* m = ModelManager::instance().getObj("plane");
 	Shader* shader = ShaderManager::instance().getShader("rain");
 
 	for (size_t i = 0; i < particles; i++)
 	{
-		SceneNode* droplet = new SceneNode(m, node);
+		SceneNode* droplet = new SceneNode(m, this);
 		float randomX = fRand(-2.0f, 2.0f);
 		float randomY = fRand(-5.0f, 5.0f);
 		float randomZ = fRand(-2.0f, 2.0f);
@@ -22,16 +32,8 @@ void createParticles(SceneNode* node, int particles) {
 		droplet->scale.z = 0;
 
 		droplet->setShader(shader);
-		node->addChild(droplet);
+		addChild(droplet);
 	}
-}
-
-ParticleSystem::ParticleSystem(SceneNode * parent, int particles, int lifetime) : SceneNode(parent) {
-	particles_ = particles;
-	lifetime_ = lifetime;
-	shader = ShaderManager::instance().getShader("rain");
-	
-	createParticles(this, particles);
 }
 
 void ParticleSystem::update(float dt) {

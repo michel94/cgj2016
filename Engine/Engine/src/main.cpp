@@ -197,7 +197,7 @@ void onSpecialKey(int key, int x, int y, Action action) {
 void setupGLUT(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 
-	glutInitContextVersion(4, 3);
+	glutInitContextVersion(4, 2);
 	glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 
