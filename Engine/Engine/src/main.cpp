@@ -16,7 +16,7 @@
 #include "animation.hpp"
 #include "glutwrappers.h"
 #include "materialnode.h"
-#include "ParticleSystem.hpp"
+#include "RainParticleSystem.hpp"
 
 #include "tests.hpp"
 
@@ -62,7 +62,7 @@ void loadScene() {
 	cube->position.y = -5;
 	root->addChild(cube);
 	
-	ParticleSystem* rain = new ParticleSystem(root, 300, 5);
+	RainParticleSystem* rain = new RainParticleSystem(root);
 	root->addChild(rain);
 
 	Light* light = new Light(Vec3(0.5f, 0.0f, 2.0f), Light::WHITE);
