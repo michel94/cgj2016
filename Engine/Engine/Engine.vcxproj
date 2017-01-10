@@ -198,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\RainParticleSystem.hpp" />
+    <ClInclude Include="src\DirectionalLight.hpp" />
     <ClInclude Include="src\light.hpp" />
     <ClInclude Include="src\particle.h" />
     <ClInclude Include="src\ParticleSystem.hpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="src\materialnode.h" />
     <ClInclude Include="src\modelmanager.hpp" />
     <ClInclude Include="src\model.hpp" />
+    <ClInclude Include="src\PointLight.hpp" />
     <ClInclude Include="src\scenenode.hpp" />
     <ClInclude Include="src\quaternion.hpp" />
     <ClInclude Include="src\scene.hpp" />

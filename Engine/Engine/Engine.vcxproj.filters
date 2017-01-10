@@ -138,6 +138,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\RainParticleSystem.hpp">
+    <ClInclude Include="src\DirectionalLight.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PointLight.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
