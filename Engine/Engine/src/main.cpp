@@ -29,13 +29,16 @@ int windowWidth = 640, windowHeight = 480;
 int frameCount;
 Vec2 mouseDisp;
 bool controls[] = { false, false, false, false, false, false };
+bool controls2[] = { false, false, false, false };
 Scene* scene;
 SphericalCamera* camera;
 SceneNode* ground;
 SceneNode* cube;
+SceneNode* Lightcube;
 
 double lastTick;
 vector<SceneNode*> objects;
+SceneNode* root;
 
 double now() { // milliseconds
 	static LARGE_INTEGER s_frequency;
@@ -56,23 +59,29 @@ void loadScene() {
 
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
+	root = scene->root();
 	
-	SceneNode* root = scene->root();
 	cube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
-	cube->position.y = -5;
+	cube->position.y = 0;
 	root->addChild(cube);
+
+	//lightcube
+	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
+	Lightcube->scale = Vec3(0.05f, 0.05f, 0.05f);
+	Lightcube->position = Vec3(0.0f, 0.0f, 1.2f);
+	root->addChild(Lightcube);
 	
 	ParticleSystem* rain = new ParticleSystem(root, 300, 5);
 	root->addChild(rain);
 
-	Light* light = new Light(Vec3(0.5f, 0.0f, 2.0f), Light::WHITE);
+	DirectionalLight* light = new DirectionalLight(Vec3(-1.0f, 0.0f, 0.0f), Light::WHITE);
 	scene->addLight(light);
 
-	light = new Light(Vec3(-2.0f, -4.0f, -2.0f), Light::BLUE);
-	scene->addLight(light);
+	PointLight* Pointlight = new PointLight(Vec3(0.0f, -1.2f, 0.0f), Light::BLUE);
+	scene->addLight(Pointlight);
 
-	light = new Light(Vec3(2.0f, -3.5f, -2.0f), Light::RED);
-	scene->addLight(light);
+	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
+	//scene->addLight(light);
 }
 
 void destroyScene(){
@@ -103,6 +112,22 @@ void update(float dt) {
 	}
 	if (controls[5]) { // down
 		camera->position += camera->rotation.toMat4() * Vec3(0, 3.0f, 0) * dt;
+	}
+	if (controls2[0]) { //u
+		root->children[1]->position.y += 5 * dt;
+		scene->lights[0]->position.y += 5 * dt;
+	}
+	if (controls2[1]) {//h
+		root->children[1]->position.x -= 5 * dt;
+		scene->lights[0]->position.x -= 5*dt;
+	}
+	if (controls2[2]) {//j
+		root->children[1]->position.y -= 5 * dt;
+		scene->lights[0]->position.y -= 5*dt;
+	}
+	if (controls2[3]) {//k
+		root->children[1]->position.x += 5 * dt;
+		scene->lights[0]->position.x += 5*dt;
 	}
 	
 	AnimManager::instance().update(dt);
@@ -184,6 +209,14 @@ void onKey(unsigned char key, int x, int y, Action action) {
 		controls[2] = action == KEYPRESS;
 	else if (key == 'd')
 		controls[3] = action == KEYPRESS;
+	else if (key == 'u')
+		controls2[0] = action == KEYPRESS;
+	else if(key == 'h')
+		controls2[1] = action == KEYPRESS;
+	else if(key == 'j')
+		controls2[2] = action == KEYPRESS;
+	else if(key == 'k')
+		controls2[3] = action == KEYPRESS;
 
 }
 

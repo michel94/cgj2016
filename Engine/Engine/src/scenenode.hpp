@@ -43,11 +43,12 @@ public:
 	Qtrn rotation;
     Shader* shader = ShaderManager::instance().getDefaultShader();
 	Mat4 mat;
+	vector<SceneNode*> children;
 protected:
 	Scene* scene;
 	Model *model;
 
-	vector<SceneNode*> children;
+	
 	SceneNode* parent;
 	
 	Texture * texture = nullptr;
