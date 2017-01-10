@@ -16,7 +16,7 @@
 #include "animation.hpp"
 #include "glutwrappers.h"
 #include "materialnode.h"
-#include "ParticleSystem.hpp"
+#include "RainParticleSystem.hpp"
 
 #include "tests.hpp"
 
@@ -71,7 +71,7 @@ void loadScene() {
 	Lightcube->position = Vec3(0.0f, 0.0f, 1.2f);
 	root->addChild(Lightcube);
 	
-	ParticleSystem* rain = new ParticleSystem(root, 300, 5);
+	RainParticleSystem* rain = new RainParticleSystem(root);
 	root->addChild(rain);
 
 	DirectionalLight* light = new DirectionalLight(Vec3(-1.0f, 0.0f, 0.0f), Light::WHITE);
@@ -230,7 +230,7 @@ void onSpecialKey(int key, int x, int y, Action action) {
 void setupGLUT(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 
-	glutInitContextVersion(4, 3);
+	glutInitContextVersion(4, 2);
 	glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 
