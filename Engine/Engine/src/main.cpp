@@ -16,7 +16,7 @@
 #include "animation.hpp"
 #include "glutwrappers.h"
 #include "materialnode.h"
-#include "ParticleSystem.hpp"
+#include "fire.hpp"
 
 #include "tests.hpp"
 
@@ -62,8 +62,13 @@ void loadScene() {
 	cube->position.y = -5;
 	root->addChild(cube);
 	
-	ParticleSystem* rain = new ParticleSystem(root, 300, 5);
-	root->addChild(rain);
+	//ParticleSystem* rain = new ParticleSystem(root, 300, 5);
+	//root->addChild(rain);
+
+	ParticleSystem* fire = new Fire(root, 3, 1.1);
+	fire->scale *= 0.5;
+	root->addChild(fire);
+	fire->position.y = -3;
 
 	Light* light = new Light(Vec3(0.5f, 0.0f, 2.0f), Light::WHITE);
 	scene->addLight(light);
@@ -73,6 +78,15 @@ void loadScene() {
 
 	light = new Light(Vec3(2.0f, -3.5f, -2.0f), Light::RED);
 	scene->addLight(light);
+
+	ColoredNode* square = new ColoredNode(ModelManager::instance().getObj("cube"), Vec4(0, 1, 0, 0.3));
+	square->scale *= 0.25;
+	root->addChild(square);
+
+	square = new ColoredNode(ModelManager::instance().getObj("cube"), Vec4(0, 0, 1, 0.3));
+	square->scale *= 0.2;
+	square->position.x += 0.6;
+	root->addChild(square);
 }
 
 void destroyScene(){
@@ -151,7 +165,8 @@ void setupOpenGL() {
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
-	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void setupGLEW() {

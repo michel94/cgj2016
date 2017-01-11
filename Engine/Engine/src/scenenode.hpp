@@ -29,7 +29,7 @@ public:
 	void addChildren(vector<SceneNode*>& nodes);
 	bool removeChild(SceneNode* node);
 	void removeChildren();
-	void setParent(SceneNode* parent);
+	Scene* getScene();
 	void switchParent(SceneNode* parent);
 
 	void setTexture(Texture* texture);
@@ -43,12 +43,12 @@ public:
 	Qtrn rotation;
     Shader* shader = ShaderManager::instance().getDefaultShader();
 	Mat4 mat;
+	SceneNode* parent;
+	Scene* scene = NULL;
 protected:
-	Scene* scene;
 	Model *model;
 
 	vector<SceneNode*> children;
-	SceneNode* parent;
 	
 	Texture * texture = nullptr;
 };

@@ -4,8 +4,13 @@
 
 struct Particle {
 	Vec3 position, speed;
-	float weight;
 	Vec4 color;
-	float life;
+	float life, age = 0;
 	
+	Particle(Vec3 position, Vec3 speed, Vec4 color, float life) {
+		this->position = position;
+		this->speed = speed;
+		this->color = color;
+		this->life = life;
+	}
 };

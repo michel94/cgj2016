@@ -12,6 +12,7 @@ out vec4 ex_Color;
 uniform CameraBlock{
 	mat4 ProjMatrix;
 	mat4 ViewMatrix;
+	vec3 CameraPosition;
 };
 
 uniform mat4 Matrix;

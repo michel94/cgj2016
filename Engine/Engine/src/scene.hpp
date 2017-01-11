@@ -16,6 +16,7 @@ public:
 	void addLight(Light* light);
 	void removeLight(Light* light);
 	void attachCamera(Camera* camera);
+	Camera* getCamera();
 private:
 	Camera* camera;
 	SceneNode* mRoot;

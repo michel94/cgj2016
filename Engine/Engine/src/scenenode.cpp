@@ -48,6 +48,7 @@ Mat4 SceneNode::getModelMatrix() {
 
 void SceneNode::addChild(SceneNode * node){
 	children.push_back(node);
+	node->parent = this;
 }
 
 void SceneNode::addChildren(vector<SceneNode*>& nodes){
@@ -72,9 +73,11 @@ void SceneNode::removeChildren(){
 	children.clear();
 }
 
-void SceneNode::setParent(SceneNode * p){
-	p->addChild(this);
-	this->parent = p;
+Scene* SceneNode::getScene(){
+	if (scene != NULL)
+		return scene;
+	else
+		return parent->getScene();
 }
 
 void SceneNode::switchParent(SceneNode * p){

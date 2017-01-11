@@ -176,6 +176,7 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\fire.cpp" />
     <ClCompile Include="src\light.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\camera.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\fire.hpp" />
     <ClInclude Include="src\light.hpp" />
     <ClInclude Include="src\particle.h" />
     <ClInclude Include="src\ParticleSystem.hpp" />
