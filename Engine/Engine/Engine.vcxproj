@@ -191,6 +191,7 @@
     <ClCompile Include="src\shadermanager.cpp" />
     <ClCompile Include="src\shaders.cpp" />
     <ClCompile Include="src\tests.cpp" />
+    <ClCompile Include="src\utils.cpp" />
     <ClCompile Include="src\vec2.cpp" />
     <ClCompile Include="src\vec3.cpp" />
     <ClCompile Include="src\vec4.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="src\shaders.hpp" />
     <ClInclude Include="src\singleton.hpp" />
     <ClInclude Include="src\tests.hpp" />
+    <ClInclude Include="src\utils.hpp" />
     <ClInclude Include="src\vec.hpp" />
     <ClInclude Include="src\texture.hpp" />
   </ItemGroup>

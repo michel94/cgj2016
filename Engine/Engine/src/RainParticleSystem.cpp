@@ -1,10 +1,5 @@
 #include "RainParticleSystem.hpp"
-
-double fRand(double fMin, double fMax)
-{
-	double f = (double)rand() / RAND_MAX;
-	return fMin + f * (fMax - fMin);
-}
+#include "utils.hpp"
 
 #define MAX_PARTICLES 200
 

@@ -16,27 +16,31 @@ uniform mat4 Matrix;
 uniform vec4 Color;
 
 void main(void){
+	float threshold = 0.9999;
+
 	ex_Texcoord = inTexcoord;
 
-	mat4 MatrixCopy = Matrix;
+	float posX = Matrix[0][3];
+	float posY = Matrix[1][3];
+	float posZ = Matrix[2][3];
 
-	float x = MatrixCopy.x;
-	float y = MatrixCopy.y;
-	float z = MatrixCopy.z;
+	vec3 quadPosition = vec3(posX, posY, posZ);
 
-//	float d = sqrt( x * x * x + y * x * x + z * x * x);
+	vec3 objToCamProj = normalize(vec3(CameraPosition.x - posX, 0, CameraPosition.z - posZ));
 
-//	MatrixCopy[0][0] = d;
-	//MatrixCopy[0][1] = 0;
-//	MatrixCopy[0][2] = 0;
+	vec3 lookAt = vec3(0,0,1);
+	//objToCamProj = (objToCamProj);
+
+	vec3 upAux = vec3(0, 1, 0);
+
+	upAux = cross(lookAt, objToCamProj);
+
+	float angleCosine = dot(lookAt, objToCamProj);
 	
-	//MatrixCopy[1][0] = 0;
-	//MatrixCopy[1][1] = d;
-	//MatrixCopy[1][2] = 0;
+	if(angleCosine < threshold && angleCosine > -threshold){
+			
+	}
 
-	//MatrixCopy[2][0] = 0;
-	//MatrixCopy[2][1] = 0;
-	//MatrixCopy[2][2] = d;
-
-	gl_Position = ProjMatrix * ViewMatrix * MatrixCopy * in_Position;
+	gl_Position = ProjMatrix * ViewMatrix * Matrix * in_Position;
 }
+
