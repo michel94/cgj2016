@@ -32,7 +32,7 @@ double gaussianRandom(double mu, double sigma){
 	return z0 * sigma + mu;
 }
 
-Fire::Fire(SceneNode* parent, int nTargets, float height) : ParticleSystem(parent) {
+Fire::Fire(int nParticles, int nTargets, float height) : ParticleSystem(nParticles) {
 	h = height;
 	dest = source + Vec3(0, h, 0);
 	float a = h / 5;
@@ -48,7 +48,7 @@ Fire::Fire(SceneNode* parent, int nTargets, float height) : ParticleSystem(paren
 }
 
 Particle* Fire::createParticle(float& timeSinceLast) {
-	float step = 0.0001;
+	float step = 0.00005;
 	if (timeSinceLast > step) {
 		timeSinceLast -= step;
 		Vec2 randPos = randVec2(0.01);

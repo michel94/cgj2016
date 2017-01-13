@@ -39,7 +39,7 @@ public:
 
 class Fire : public ParticleSystem {
 public:
-	Fire(SceneNode* parent, int nTargets, float height);
+	Fire(int nParticles, int nTargets, float height);
 	virtual Particle* createParticle(float& timeSinceLast);
 	virtual void updateParticle(Particle* particle, float dt);
 	virtual void update(float dt);

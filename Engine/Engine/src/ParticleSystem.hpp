@@ -5,12 +5,25 @@
 
 double fRand(double fMin, double fMax);
 
+class DynamicModel : public Model {
+public:
+	DynamicModel(int);
+	~DynamicModel();
+	void createBuffers();
+
+	int maxVertices;
+	GLuint vbo_colors_id;
+	vector<Color> Colors;
+};
+
 class ParticleSystem : public SceneNode {
 public:
-	ParticleSystem(SceneNode * parent);
+	ParticleSystem(int nParticles);
 	virtual void update(float dt);
 	virtual Particle* createParticle(float& timeSinceLast) = 0;
 	virtual void updateParticle(Particle* particle, float dt) = 0;
+	virtual void render(Mat4 tr);
+	virtual void renderChildren(Mat4 tr);
 private:
 	SceneNode* getParticleNode();
 
@@ -24,5 +37,8 @@ private:
 		}
 		Vec3& ref;
 	};
+
+protected:
+	int MAX_PARTICLES;
 };
 

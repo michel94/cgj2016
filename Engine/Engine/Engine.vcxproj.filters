@@ -149,5 +149,7 @@
     <None Include="res\shaders\normalmapping\vertex.glsl" />
     <None Include="res\shaders\rain\frag.glsl" />
     <None Include="res\shaders\rain\vertex.glsl" />
+    <None Include="res\shaders\particle\frag.glsl" />
+    <None Include="res\shaders\particle\vertex.glsl" />
   </ItemGroup>
 </Project>

@@ -11,6 +11,10 @@ class Model;
 typedef Model Mesh;
 
 typedef struct {
+	GLfloat r, g, b, a;
+} Color;
+
+typedef struct {
 	GLfloat x, y, z;
 } Vertex;
 
@@ -34,6 +38,7 @@ public:
 	const static GLuint NORMALS = 3;
 	const static GLuint TANGENTS = 4;
 	const static GLuint BITANGENTS = 5;
+	const static GLuint COLORS = 6;
 	
 	std::vector<Vertex> Vertices;
 	std::vector<Texcoord> Texcoords;
