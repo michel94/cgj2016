@@ -39,6 +39,7 @@ public:
 	const static GLuint TANGENTS = 4;
 	const static GLuint BITANGENTS = 5;
 	const static GLuint COLORS = 6;
+	const static GLuint PSIZES = 7;
 	
 	std::vector<Vertex> Vertices;
 	std::vector<Texcoord> Texcoords;

@@ -42,11 +42,40 @@ Shader* loadShader(string path) {
 	glShaderSource(FragmentShaderId, 1, &FragmentSourcePointer, 0);
 	glCompileShader(FragmentShaderId);
 
-	s->loaded = checkGLSLError(path, "vertex shader", VertexShaderId) && checkGLSLError(path, "fragment shader", FragmentShaderId);
+	GLuint GeometryShaderId;
+
+	bool geometryShaderAvailable = false;
+
+	string GeometryShaderCode;
+	ifstream GeometryShaderStream(path + "/geom.glsl", std::ios::in);
+	if (GeometryShaderStream.is_open()) {
+		geometryShaderAvailable = true;
+		std::string Line = "";
+		while (getline(GeometryShaderStream, Line)) {
+			GeometryShaderCode += "\n" + Line;
+		}
+		GeometryShaderStream.close();
+		char const* GeometrySourcePointer = GeometryShaderCode.c_str();
+
+		GeometryShaderId = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(GeometryShaderId, 1, &GeometrySourcePointer, 0);
+		glCompileShader(GeometryShaderId);
+
+		s->loaded = checkGLSLError(path, "geometry shader", GeometryShaderId);
+
+		cout << "Geometry Shader: " << path << endl;
+		cout << "Ok: " << s->loaded << endl;
+	}
+
+	s->loaded &= checkGLSLError(path, "vertex shader", VertexShaderId) && checkGLSLError(path, "fragment shader", FragmentShaderId);
 
 	GLuint ProgramId = glCreateProgram();
 	glAttachShader(ProgramId, VertexShaderId);
 	glAttachShader(ProgramId, FragmentShaderId);
+
+	
+	if(geometryShaderAvailable)
+		glAttachShader(ProgramId, GeometryShaderId);
 
 	glBindAttribLocation(ProgramId, Model::VERTICES, "in_Position");
 	glBindAttribLocation(ProgramId, 1, "inColor");
@@ -57,6 +86,7 @@ Shader* loadShader(string path) {
 	glBindAttribLocation(ProgramId, Model::BITANGENTS, "inBitangent");
 
 	glBindAttribLocation(ProgramId, Model::COLORS, "inColor");
+	glBindAttribLocation(ProgramId, Model::PSIZES, "inPsizes");
 
 	glLinkProgram(ProgramId);
 

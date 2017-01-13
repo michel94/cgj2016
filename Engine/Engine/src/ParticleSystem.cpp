@@ -33,15 +33,21 @@ void DynamicModel::createBuffers() {
 	{
 		glGenBuffers(1, &vbo_vertices_id);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices_id);
-		glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(Vertex), &Vertices[0], GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(Vertex), &Vertices[0], GL_STREAM_DRAW);
 		glEnableVertexAttribArray(VERTICES);
 		glVertexAttribPointer(VERTICES, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 
 		glGenBuffers(1, &vbo_colors_id);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_colors_id);
-		glBufferData(GL_ARRAY_BUFFER, Colors.size() * sizeof(Color), &Colors[0], GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, Colors.size() * sizeof(Color), &Colors[0], GL_STREAM_DRAW);
 		glEnableVertexAttribArray(COLORS);
 		glVertexAttribPointer(COLORS, 4, GL_FLOAT, GL_FALSE, sizeof(Color), 0);
+
+		glGenBuffers(1, &vbo_psize_id);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_psize_id);
+		glBufferData(GL_ARRAY_BUFFER, Psize.size() * sizeof(float), &Psize[0], GL_STREAM_DRAW);
+		glEnableVertexAttribArray(PSIZES);
+		glVertexAttribPointer(PSIZES, 1, GL_FLOAT, GL_FALSE, sizeof(float), 0);
 	}
 
 	glBindVertexArray(0);
@@ -56,25 +62,9 @@ ParticleSystem::ParticleSystem(int nParticles) : SceneNode() {
 	model = new DynamicModel(nParticles);
 }
 
-SceneNode* ParticleSystem::getParticleNode() {
-	Mesh* m = ModelManager::instance().getObj("plane");
-	
-	ColoredNode* droplet = new ColoredNode(m, Vec4(0, 0, 0, 1));
-	droplet->parent = this;
-
-	float randomX = fRand(-2.0f, 2.0f);
-	float randomY = fRand(-5.0f, 5.0f);
-	float randomZ = fRand(-2.0f, 2.0f);
-	droplet->position = Vec3(randomX, randomY, randomZ);
-	
-	droplet->setShader(shader);
-
-	return droplet;
-}
-
 void ParticleSystem::update(float dt) {
 	Particle* p;
-	//cout << "\r" << "Particles: " << particles.size() << endl;
+	cout << "\r" << "Particles: " << particles.size() << endl;
 	while (true) {
 		p = createParticle(timeSinceLast);
 		if (p != NULL) {
@@ -84,30 +74,30 @@ void ParticleSystem::update(float dt) {
 			break;
 		}
 	}
+
+	Model* mesh = model;
+	DynamicModel* model = (DynamicModel*)mesh;
 	
-	for (size_t i = 0; i < particles.size(); i++){
+	int curSize = particles.size();
+	for (size_t i = 0; i < curSize; i++){
 		updateParticle(particles[i], dt);
 		particles[i]->age += dt;
 		if (particles[i]->age >= particles[i]->life) {
-			particles.erase(particles.begin() + i);
+			swap(particles[i], particles[curSize-- - 1]);
+			//particles.pop_back();
 			i--;
+		}else {
+			memcpy(&model->Vertices[i], particles[i]->position.data(), particles[i]->position.size());
+			memcpy(&model->Colors[i], particles[i]->color.data(), particles[i]->color.size());
 		}
 	}
+	if(curSize > 0)
+		particles._Pop_back_n(particles.size() - curSize);
+
 	Vec3 camPos = getModelMatrix() * getScene()->getCamera()->position;
-	//sort(children.begin(), children.end(), Less(camPos));
-	Model* mesh = model;
-	DynamicModel* model = (DynamicModel*) mesh;
-	float d = 0.01;
-	for (int i = 0; i < particles.size(); i++) {
-		Vec3 vert[6] = { Vec3(0.0f, 0.0f, 0.0f), Vec3(d, d, 0.0f), Vec3(0.0f, d, 0.0f),
-						 Vec3(0.0f, 0.0f, 0.0f), Vec3(d, 0.0f, 0.0f), Vec3(d, d, 0.0f) };
-		Vec4 color = particles[i]->color;
-		for (int v = 0; v < 6; v++) {
-			vert[v] += particles[i]->position;
-			memcpy(&model->Vertices[i * 6 + v], vert[v].data(), vert[v].size());
-			memcpy(&model->Colors[i * 6 + v], color.data(), color.size());
-		}
-	}
+	
+	//sort(particles.begin(), particles.end(), Less(camPos));
+	
 	glBindBuffer(GL_ARRAY_BUFFER, model->vbo_vertices_id);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, model->Vertices.size() * sizeof(Vertex), &model->Vertices[0]);
 	
@@ -115,17 +105,19 @@ void ParticleSystem::update(float dt) {
 	glBufferSubData(GL_ARRAY_BUFFER, 0, model->Colors.size() * sizeof(Color), &model->Colors[0]);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 }
 
 void ParticleSystem::render(Mat4 tr) {
 	Shader& s = *shader;
 	s.bind();
 	glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
+	glUniform1f(s["d"], particleSize);
 	
 	glBindVertexArray(model->vao_id);
 	if(particles.size() > 0)
-		glDrawArrays(GL_TRIANGLES, 0, particles.size() * 6);
+		glDrawArrays(GL_POINTS, 0, particles.size());
+		//glDrawArrays(GL_TRIANGLES, 0, particles.size());
+		//glDrawArrays(GL_TRIANGLES, 0, particles.size() * 6);
 	glBindVertexArray(0);
 
 	s.unbind();

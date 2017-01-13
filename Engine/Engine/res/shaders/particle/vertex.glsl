@@ -3,9 +3,7 @@
 in vec4 in_Position;
 in vec4 inColor;
 
-out vec2 ex_Texcoord;
-
-out vec4 ex_Color;
+out vec4 gColor;
 
 uniform CameraBlock{
 	mat4 ProjMatrix;
@@ -16,6 +14,6 @@ uniform CameraBlock{
 uniform mat4 Matrix;
 
 void main(void){
-	ex_Color = inColor;
+	gColor = inColor;
 	gl_Position = ProjMatrix * ViewMatrix * Matrix * in_Position;
 }

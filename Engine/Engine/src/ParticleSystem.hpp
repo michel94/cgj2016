@@ -12,8 +12,9 @@ public:
 	void createBuffers();
 
 	int maxVertices;
-	GLuint vbo_colors_id;
+	GLuint vbo_colors_id, vbo_psize_id;
 	vector<Color> Colors;
+	vector<float> Psize;
 };
 
 class ParticleSystem : public SceneNode {
@@ -24,15 +25,16 @@ public:
 	virtual void updateParticle(Particle* particle, float dt) = 0;
 	virtual void render(Mat4 tr);
 	virtual void renderChildren(Mat4 tr);
-private:
-	SceneNode* getParticleNode();
 
+	float particleSize = 0.004;
+private:
+	
 	float timeSinceLast=0;
 	vector<Particle*> particles;
 
 	struct Less {
 		Less(Vec3& r) : ref(r) {}
-		bool operator () (const SceneNode* a, const SceneNode* b) {
+		bool operator () (const Particle* a, const Particle* b) {
 			return (a->position - ref).norm() > (b->position - ref).norm();
 		}
 		Vec3& ref;

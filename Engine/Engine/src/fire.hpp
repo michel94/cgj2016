@@ -10,25 +10,14 @@ public:
 	Vec3 position, speed;
 	Vec3 dest;
 	float forceIntensity;
-	FireTarget(Vec3 position, Vec3 speed, Vec3 dest, float forceIntensity) {
-		this->position = position;
-		this->speed = speed;
-		this->dest = dest;
-		this->forceIntensity = forceIntensity;
-	}
-	void update(float dt) {
-		Vec3 force = dest - position;
-		force.normalized();
-		force *= forceIntensity;
-		speed += force * dt;
-		position += speed * dt;
-	}
+	FireTarget(Vec3 position, Vec3 speed, Vec3 dest, float forceIntensity);
+	void update(float dt);
 };
 
 class FireParticle : public Particle {
 public:
-	FireParticle(Vec3 position, Vec3 speed, Vec4 color, float life, FireTarget* target)
-		: Particle(position, speed, color, life) {
+	FireParticle(Vec3 position, Vec3 speed, Vec4 color, float life, float size, FireTarget* target)
+		: Particle(position, speed, color, life, size) {
 		this->target = target;
 	}
 
