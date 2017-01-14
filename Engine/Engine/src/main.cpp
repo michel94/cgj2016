@@ -82,7 +82,7 @@ void loadScene() {
 	fire->position.y = -3;
 	root->addChild(fire);
 
-	RainParticleSystem* rain = new RainParticleSystem(10000, -5, 5);
+	RainParticleSystem* rain = new RainParticleSystem(1000, -5, 5);
 	root->addChild(rain);
 	
 	PointLight* Pointlight = new PointLight(Vec3(0.0f, -1.2f, 0.0f), Vec4(0.5, 0.7, 1, 1));

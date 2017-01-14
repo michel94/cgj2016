@@ -96,7 +96,8 @@ void ParticleSystem::update(float dt) {
 
 	Vec3 camPos = getModelMatrix() * getScene()->getCamera()->position;
 	
-	//sort(particles.begin(), particles.end(), Less(camPos));
+	if(sortParticles)
+		sort(particles.begin(), particles.end(), Less(camPos));
 	
 	glBindBuffer(GL_ARRAY_BUFFER, model->vbo_vertices_id);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, model->Vertices.size() * sizeof(Vertex), &model->Vertices[0]);

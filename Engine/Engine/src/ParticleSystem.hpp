@@ -42,6 +42,6 @@ private:
 
 protected:
 	int MAX_PARTICLES;
-
+	bool sortParticles = false;
 };
 

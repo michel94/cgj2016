@@ -3,10 +3,11 @@
 #define GRAVITY 9.8
 
 RainParticleSystem::RainParticleSystem(int nParticles, float floor, float roof) : ParticleSystem(nParticles) {
-	//shader = ShaderManager::instance().getShader("rain");
-	particleSize = Vec2(0.005f, 0.02f);
+	particleSize = Vec2(0.005f, 0.1f);
 	this->floor = floor;
 	this->roof = roof;
+
+	sortParticles = true;
 }
 
 void RainParticleSystem::updateParticle(Particle* particle, float dt) {
@@ -31,8 +32,8 @@ Particle* RainParticleSystem::createParticle(float& timeSinceLast) {
 		float randomZ = fRand(-2.0f, 2.0f);
 		Particle* particle = new Particle(
 			Vec3(randomX, randomY, randomZ),
-			-0.5 * GRAVITY * Vec3(0.0f, 1.0f, 0.0f),
-			Vec4(0.0f, 0.0f, 1.0f, 0.6f),
+			-0.5 * GRAVITY * fRand(0.5, 2.0) * Vec3(0.0f, 1.0f, 0.0f),
+			Vec4(0.5f, 0.7f, 1.0f, 0.3f),
 			100000.0f,
 			particleSize
 		);
