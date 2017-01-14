@@ -29,7 +29,7 @@ public:
 	void addChildren(vector<SceneNode*>& nodes);
 	bool removeChild(SceneNode* node);
 	void removeChildren();
-	void setParent(SceneNode* parent);
+	Scene* getScene();
 	void switchParent(SceneNode* parent);
 
 	void setTexture(Texture* texture);
@@ -37,20 +37,20 @@ public:
 	virtual void update(float dt);
 	virtual void updateChildren(float dt) final;
 	virtual void render(Mat4 tr);
-	virtual void renderChildren(Mat4 tr) final;
+	virtual void renderChildren(Mat4 tr);
 
 	Vec3 position, scale = Vec3(1.0f, 1.0f, 1.0f);
 	Qtrn rotation;
     Shader* shader = ShaderManager::instance().getDefaultShader();
 	Mat4 mat;
-	vector<SceneNode*> children;
+	SceneNode* parent;
+	Scene* scene = NULL;
+
 protected:
-	Scene* scene;
 	Model *model;
 
-	
-	SceneNode* parent;
-	
+	vector<SceneNode*> children;
+		
 	Texture * texture = nullptr;
 };
 

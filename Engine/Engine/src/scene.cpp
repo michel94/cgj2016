@@ -2,6 +2,7 @@
 
 Scene::Scene() {
 	mRoot = new SceneNode();
+	mRoot->scene = this;
 }
 
 Scene::~Scene() {
@@ -57,5 +58,9 @@ void Scene::removeLight(Light * light){
 
 void Scene::attachCamera(Camera* camera) {
 	this->camera = camera;
+}
+
+Camera * Scene::getCamera(){
+	return camera;
 }
 
