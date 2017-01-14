@@ -4,14 +4,14 @@
 class Light{
 public:
 	static const Vec3 WHITE, RED, GREEN, YELLOW, BLUE, BLACK;
-	Vec3 position;
+	Vec4 position;
 	Vec3 color = Light::WHITE;
 	Light() {	
 	}
-	Light(Vec3 position) {
+	Light(Vec4 position) {
 		this->position = position;
 	}
-	Light(Vec3 position, Vec3 color) {
+	Light(Vec4 position, Vec3 color) {
 		this->position = position;
 		this->color = color;
 	}

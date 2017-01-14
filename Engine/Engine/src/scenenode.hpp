@@ -45,11 +45,12 @@ public:
 	Mat4 mat;
 	SceneNode* parent;
 	Scene* scene = NULL;
+
 protected:
 	Model *model;
 
 	vector<SceneNode*> children;
-	
+		
 	Texture * texture = nullptr;
 };
 

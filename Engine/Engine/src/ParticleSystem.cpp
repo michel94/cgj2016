@@ -42,12 +42,13 @@ void DynamicModel::createBuffers() {
 		glBufferData(GL_ARRAY_BUFFER, Colors.size() * sizeof(Color), &Colors[0], GL_STREAM_DRAW);
 		glEnableVertexAttribArray(COLORS);
 		glVertexAttribPointer(COLORS, 4, GL_FLOAT, GL_FALSE, sizeof(Color), 0);
-
+		/*
 		glGenBuffers(1, &vbo_psize_id);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_psize_id);
 		glBufferData(GL_ARRAY_BUFFER, Psize.size() * sizeof(float), &Psize[0], GL_STREAM_DRAW);
 		glEnableVertexAttribArray(PSIZES);
 		glVertexAttribPointer(PSIZES, 1, GL_FLOAT, GL_FALSE, sizeof(float), 0);
+		*/
 	}
 
 	glBindVertexArray(0);
@@ -84,7 +85,6 @@ void ParticleSystem::update(float dt) {
 		particles[i]->age += dt;
 		if (particles[i]->age >= particles[i]->life) {
 			swap(particles[i], particles[curSize-- - 1]);
-			//particles.pop_back();
 			i--;
 		}else {
 			memcpy(&model->Vertices[i], particles[i]->position.data(), particles[i]->position.size());
@@ -111,13 +111,12 @@ void ParticleSystem::render(Mat4 tr) {
 	Shader& s = *shader;
 	s.bind();
 	glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
-	glUniform1f(s["d"], particleSize);
+	glUniform1f(s["w"], particleSize.x);
+	glUniform1f(s["h"], particleSize.y);
 	
 	glBindVertexArray(model->vao_id);
 	if(particles.size() > 0)
 		glDrawArrays(GL_POINTS, 0, particles.size());
-		//glDrawArrays(GL_TRIANGLES, 0, particles.size());
-		//glDrawArrays(GL_TRIANGLES, 0, particles.size() * 6);
 	glBindVertexArray(0);
 
 	s.unbind();
@@ -126,4 +125,3 @@ void ParticleSystem::render(Mat4 tr) {
 void ParticleSystem::renderChildren(Mat4 tr) {
 	SceneNode::renderChildren(tr);
 }
-

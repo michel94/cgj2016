@@ -1,6 +1,5 @@
-#version 330
+#version 420
 
-in vec4 ex_Color;
 out vec4 out_Color;
 
 in vec3 ex_Normal;

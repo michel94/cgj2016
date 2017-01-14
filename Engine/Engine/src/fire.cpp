@@ -89,7 +89,7 @@ Particle* Fire::createParticle(float& timeSinceLast) {
 			speed,
 			Vec4(1, 0, 0, 1),
 			life + fRand(0, h / 5.0f),
-			particleSize * speed.y / maxSpeed,
+			particleSize * (speed.y / maxSpeed),
 			targets[rand() % targets.size()]
 		);
 	}

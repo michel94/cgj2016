@@ -18,6 +18,9 @@ out VS_OUT {
     flat int nLights;
 } vs_out;
 
+out vec3 FragPos;
+out vec4 LightPosition_out[MAX_LIGHTS];
+
 uniform CameraBlock{
 	mat4 ProjMatrix;
 	mat4 ViewMatrix;
@@ -25,7 +28,7 @@ uniform CameraBlock{
 };
 
 uniform LightBlock{
-	vec3 LightPosition[MAX_LIGHTS];
+	vec4 LightPosition[MAX_LIGHTS];
 	vec3 LightColor[MAX_LIGHTS];
 	int nLights;
 };
@@ -46,9 +49,11 @@ void main(void){
     mat3 TBN = transpose(mat3(T, B, N));
     vs_out.TangentViewPos  = TBN * CameraPosition;
     vs_out.TangentFragPos  = TBN * vs_out.FragPos;
+	FragPos  = vs_out.FragPos;
     for(int i=0; i<nLights; i++){
-        vs_out.TangentLightPos[i] = TBN * LightPosition[i];
+        vs_out.TangentLightPos[i] = TBN * LightPosition[i].xyz;
         vs_out.LightColor[i] = LightColor[i];
+		LightPosition_out[i] = LightPosition[i];
     }
 
 }

@@ -16,7 +16,10 @@
 #include "animation.hpp"
 #include "glutwrappers.h"
 #include "materialnode.h"
+
 #include "fire.hpp"
+#include "RainParticleSystem.hpp"
+
 
 #include "tests.hpp"
 
@@ -29,13 +32,16 @@ int windowWidth = 640, windowHeight = 480;
 int frameCount;
 Vec2 mouseDisp;
 bool controls[] = { false, false, false, false, false, false };
+bool controls2[] = { false, false, false, false };
 Scene* scene;
 SphericalCamera* camera;
 SceneNode* ground;
 SceneNode* cube;
+SceneNode* Lightcube;
 
 double lastTick;
 vector<SceneNode*> objects;
+SceneNode* root;
 
 double now() { // milliseconds
 	static LARGE_INTEGER s_frequency;
@@ -56,37 +62,37 @@ void loadScene() {
 
 	camera = new SphericalCamera(windowWidth, windowHeight);
 	scene->attachCamera(camera);
+	root = scene->root();
 	
-	SceneNode* root = scene->root();
 	cube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
 	cube->position.y = -5;
 	root->addChild(cube);
+
+	//lightcube
+	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
+	Lightcube->scale = Vec3(0.05f, 0.05f, 0.05f);
+	Lightcube->position = Vec3(0.0f, 0.0f, 1.2f);
+	root->addChild(Lightcube);
 	
 	//ParticleSystem* rain = new ParticleSystem(root, 300, 5);
 	//root->addChild(rain);
 
 	ParticleSystem* fire = new Fire(200000, 3, 1.1);
 	fire->scale *= 0.5;
-	root->addChild(fire);
 	fire->position.y = -3;
+	root->addChild(fire);
 
-	Light* light = new Light(Vec3(0.5f, 0.0f, 2.0f), Light::WHITE);
-	scene->addLight(light);
+	RainParticleSystem* rain = new RainParticleSystem(10000, -5, 5);
+	root->addChild(rain);
+	
+	PointLight* Pointlight = new PointLight(Vec3(0.0f, -1.2f, 0.0f), Vec4(0.5, 0.7, 1, 1));
+	scene->addLight(Pointlight);
 
-	light = new Light(Vec3(-2.0f, -4.0f, -2.0f), Light::BLUE);
-	scene->addLight(light);
+	//DirectionalLight* light = new DirectionalLight(Vec3(-1.0f, 0.0f, 0.0f), Light::WHITE);
+	//scene->addLight(light);
 
-	light = new Light(Vec3(2.0f, -3.5f, -2.0f), Light::RED);
-	scene->addLight(light);
-
-	ColoredNode* square = new ColoredNode(ModelManager::instance().getObj("cube"), Vec4(0, 1, 0, 0.3));
-	square->scale *= 0.25;
-	root->addChild(square);
-
-	square = new ColoredNode(ModelManager::instance().getObj("cube"), Vec4(0, 0, 1, 0.3));
-	square->scale *= 0.2;
-	square->position.x += 0.6;
-	root->addChild(square);
+	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
+	//scene->addLight(light);
 }
 
 void destroyScene(){
@@ -117,6 +123,22 @@ void update(float dt) {
 	}
 	if (controls[5]) { // down
 		camera->position += camera->rotation.toMat4() * Vec3(0, 3.0f, 0) * dt;
+	}
+	if (controls2[0]) { //u
+		Lightcube->position.y += 5 * dt;
+		scene->lights[0]->position.y += 5 * dt;
+	}
+	if (controls2[1]) {//h
+		Lightcube->position.x -= 5 * dt;
+		scene->lights[0]->position.x -= 5*dt;
+	}
+	if (controls2[2]) {//j
+		Lightcube->position.y -= 5 * dt;
+		scene->lights[0]->position.y -= 5*dt;
+	}
+	if (controls2[3]) {//k
+		Lightcube->position.x += 5 * dt;
+		scene->lights[0]->position.x += 5*dt;
 	}
 	
 	AnimManager::instance().update(dt);
@@ -199,6 +221,14 @@ void onKey(unsigned char key, int x, int y, Action action) {
 		controls[2] = action == KEYPRESS;
 	else if (key == 'd')
 		controls[3] = action == KEYPRESS;
+	else if (key == 'u')
+		controls2[0] = action == KEYPRESS;
+	else if(key == 'h')
+		controls2[1] = action == KEYPRESS;
+	else if(key == 'j')
+		controls2[2] = action == KEYPRESS;
+	else if(key == 'k')
+		controls2[3] = action == KEYPRESS;
 
 }
 
@@ -212,7 +242,7 @@ void onSpecialKey(int key, int x, int y, Action action) {
 void setupGLUT(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 
-	glutInitContextVersion(4, 3);
+	glutInitContextVersion(4, 2);
 	glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 

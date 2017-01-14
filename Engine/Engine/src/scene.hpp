@@ -2,6 +2,8 @@
 #include "scenenode.hpp"
 #include "camera.hpp"
 #include "light.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
 
 class SceneNode;
 class Camera;
@@ -16,11 +18,14 @@ public:
 	void addLight(Light* light);
 	void removeLight(Light* light);
 	void attachCamera(Camera* camera);
+	
 	Camera* getCamera();
+	vector<Light*> lights;
+
 private:
 	Camera* camera;
 	SceneNode* mRoot;
 	float* pos;
-	vector<Light*> lights;
+	
 };
 

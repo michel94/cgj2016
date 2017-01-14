@@ -16,7 +16,7 @@ public:
 
 class FireParticle : public Particle {
 public:
-	FireParticle(Vec3 position, Vec3 speed, Vec4 color, float life, float size, FireTarget* target)
+	FireParticle(Vec3 position, Vec3 speed, Vec4 color, float life, Vec2 size, FireTarget* target)
 		: Particle(position, speed, color, life, size) {
 		this->target = target;
 	}

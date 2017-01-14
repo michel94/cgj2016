@@ -19,6 +19,9 @@
     <Filter Include="Resource Files\shaders\colored">
       <UniqueIdentifier>{3e2485a4-90fa-4f0a-abc8-cfffa889670d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\shaders\rain">
+      <UniqueIdentifier>{ebfa5fc9-e18b-4246-9c45-54641c77ab3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -76,6 +79,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\fire.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RainParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,19 +143,25 @@
     <ClInclude Include="src\fire.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\RainParticleSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DirectionalLight.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PointLight.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\colored\frag.glsl">
-      <Filter>Resource Files\shaders\colored</Filter>
-    </None>
-    <None Include="res\shaders\colored\vertex.glsl">
-      <Filter>Resource Files\shaders\colored</Filter>
-    </None>
+    <None Include="res\shaders\colored\frag.glsl" />
+    <None Include="res\shaders\colored\vertex.glsl" />
     <None Include="res\shaders\normalmapping\frag.glsl" />
     <None Include="res\shaders\normalmapping\vertex.glsl" />
     <None Include="res\shaders\rain\frag.glsl" />
     <None Include="res\shaders\rain\vertex.glsl" />
     <None Include="res\shaders\particle\frag.glsl" />
     <None Include="res\shaders\particle\vertex.glsl" />
+    <None Include="res\shaders\rain\vertex.glsl" />
   </ItemGroup>
 </Project>
