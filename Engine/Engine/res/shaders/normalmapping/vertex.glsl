@@ -15,6 +15,7 @@ out VS_OUT {
     vec3 LightColor[MAX_LIGHTS];
     vec3 TangentViewPos;
     vec3 TangentFragPos;
+    vec3 worldNormal;
     flat int nLights;
 } vs_out;
 
@@ -45,6 +46,7 @@ void main(void){
     vec3 T = normalize(normalMatrix * inTangent);
     vec3 B = normalize(normalMatrix * inBitangent);
     vec3 N = normalize(normalMatrix * inNormal);
+    vs_out.worldNormal = N;
     
     mat3 TBN = transpose(mat3(T, B, N));
     vs_out.TangentViewPos  = TBN * CameraPosition;

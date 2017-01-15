@@ -77,7 +77,7 @@ void loadScene() {
 	//ParticleSystem* rain = new ParticleSystem(root, 300, 5);
 	//root->addChild(rain);
 
-	ParticleSystem* fire = new Fire(200000, 3, 1.1);
+	ParticleSystem* fire = new Fire(root, 200000, 3, 1.1);
 	fire->scale *= 0.5;
 	fire->position.y = -3;
 	root->addChild(fire);
@@ -85,7 +85,7 @@ void loadScene() {
 	RainParticleSystem* rain = new RainParticleSystem(1000, -5, 5);
 	root->addChild(rain);
 	
-	PointLight* Pointlight = new PointLight(Vec3(0.0f, -1.2f, 0.0f), Vec4(0.5, 0.7, 1, 1));
+	PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
 	scene->addLight(Pointlight);
 
 	//DirectionalLight* light = new DirectionalLight(Vec3(-1.0f, 0.0f, 0.0f), Light::WHITE);

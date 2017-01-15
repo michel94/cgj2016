@@ -72,7 +72,6 @@ Shader* loadShader(string path) {
 	GLuint ProgramId = glCreateProgram();
 	glAttachShader(ProgramId, VertexShaderId);
 	glAttachShader(ProgramId, FragmentShaderId);
-
 	
 	if(geometryShaderAvailable)
 		glAttachShader(ProgramId, GeometryShaderId);
@@ -86,7 +85,7 @@ Shader* loadShader(string path) {
 	glBindAttribLocation(ProgramId, Model::BITANGENTS, "inBitangent");
 
 	glBindAttribLocation(ProgramId, Model::COLORS, "inColor");
-	glBindAttribLocation(ProgramId, Model::PSIZES, "inPsizes");
+	glBindAttribLocation(ProgramId, Model::PSIZES, "inPsize");
 
 	glLinkProgram(ProgramId);
 

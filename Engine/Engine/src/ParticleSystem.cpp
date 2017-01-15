@@ -9,7 +9,7 @@ double fRand(double fMin, double fMax) {
 }
 
 DynamicModel::DynamicModel(int maxParticles) {
-	this->maxVertices = maxParticles * 6;
+	this->maxParticles = maxParticles;
 	createBuffers();
 }
 
@@ -17,16 +17,19 @@ DynamicModel::~DynamicModel() {
 	glBindVertexArray(vao_id);
 	glDisableVertexAttribArray(VERTICES);
 	glDisableVertexAttribArray(COLORS);
+	glDisableVertexAttribArray(PSIZES);
 	glDeleteBuffers(1, &vbo_vertices_id);
 	glDeleteBuffers(1, &vbo_colors_id);
+	glDeleteBuffers(1, &vbo_psize_id);
 	glDeleteVertexArrays(1, &vao_id);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 
 void DynamicModel::createBuffers() {
-	Vertices.resize(maxVertices);
-	Colors.resize(maxVertices);
+	Vertices.resize(maxParticles);
+	Colors.resize(maxParticles);
+	Psize.resize(maxParticles * 2);
 
 	glGenVertexArrays(1, &vao_id);
 	glBindVertexArray(vao_id);
@@ -42,13 +45,12 @@ void DynamicModel::createBuffers() {
 		glBufferData(GL_ARRAY_BUFFER, Colors.size() * sizeof(Color), &Colors[0], GL_STREAM_DRAW);
 		glEnableVertexAttribArray(COLORS);
 		glVertexAttribPointer(COLORS, 4, GL_FLOAT, GL_FALSE, sizeof(Color), 0);
-		/*
+		
 		glGenBuffers(1, &vbo_psize_id);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_psize_id);
 		glBufferData(GL_ARRAY_BUFFER, Psize.size() * sizeof(float), &Psize[0], GL_STREAM_DRAW);
 		glEnableVertexAttribArray(PSIZES);
-		glVertexAttribPointer(PSIZES, 1, GL_FLOAT, GL_FALSE, sizeof(float), 0);
-		*/
+		glVertexAttribPointer(PSIZES, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0);
 	}
 
 	glBindVertexArray(0);
@@ -66,7 +68,7 @@ ParticleSystem::ParticleSystem(int nParticles) : SceneNode() {
 void ParticleSystem::update(float dt) {
 	Particle* p;
 	cout << "\r" << "Particles: " << particles.size() << endl;
-	while (true) {
+	while (particles.size() < MAX_PARTICLES) {
 		p = createParticle(timeSinceLast);
 		if (p != NULL) {
 			particles.push_back(p);
@@ -78,7 +80,7 @@ void ParticleSystem::update(float dt) {
 
 	Model* mesh = model;
 	DynamicModel* model = (DynamicModel*)mesh;
-	
+	//cout << "Psize size: " << model->Psize.size() << " " << model->Psize.size() << endl;
 	int curSize = particles.size();
 	for (size_t i = 0; i < curSize; i++){
 		updateParticle(particles[i], dt);
@@ -89,6 +91,8 @@ void ParticleSystem::update(float dt) {
 		}else {
 			memcpy(&model->Vertices[i], particles[i]->position.data(), particles[i]->position.size());
 			memcpy(&model->Colors[i], particles[i]->color.data(), particles[i]->color.size());
+			model->Psize[2 * i] = particles[i]->size.x;
+			model->Psize[2 * i + 1] = particles[i]->size.y;
 		}
 	}
 	if(curSize > 0)
@@ -104,6 +108,9 @@ void ParticleSystem::update(float dt) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, model->vbo_colors_id);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, model->Colors.size() * sizeof(Color), &model->Colors[0]);
+
+	glBindBuffer(GL_ARRAY_BUFFER, model->vbo_psize_id);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, model->Psize.size() * sizeof(float), &model->Psize[0]);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -112,9 +119,10 @@ void ParticleSystem::render(Mat4 tr) {
 	Shader& s = *shader;
 	s.bind();
 	glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
-	glUniform1f(s["w"], particleSize.x);
-	glUniform1f(s["h"], particleSize.y);
+	//glUniform1f(s["w"], particleSize.x);
+	//glUniform1f(s["h"], particleSize.y);
 	
+
 	glBindVertexArray(model->vao_id);
 	if(particles.size() > 0)
 		glDrawArrays(GL_POINTS, 0, particles.size());

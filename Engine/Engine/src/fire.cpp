@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "fire.hpp"
+#include "scene.hpp"
 
 Vec2 randVec2(double radius) {
 	double angle = fRand(0, 2 * 3.14159);
@@ -56,7 +57,7 @@ void FireTarget::update(float dt) {
 
 }
 
-Fire::Fire(int nParticles, int nTargets, float height) : ParticleSystem(nParticles) {
+Fire::Fire(SceneNode* parent, int nParticles, int nTargets, float height) : ParticleSystem(nParticles) {
 	h = height;
 	dest = source + Vec3(0, h, 0);
 	for (int i = 0; i < nTargets; i++) {
@@ -64,13 +65,19 @@ Fire::Fire(int nParticles, int nTargets, float height) : ParticleSystem(nParticl
 		targets.push_back(new FireTarget(
 			dest + Vec3(randPos.x, fRand(-0.01, 0.01), randPos.y),
 			Vec3(0,0,0),
-			//Vec3(fRand(-h / 2, h / 2), 0, fRand(-h / 2, h / 2)),
 			dest,
 			1 + i / 5.0f
 			));
 		cout << targets[i]->position << endl;
 	}
 	life = h;
+	this->parent = parent;	
+
+
+	Scene* scene = getScene();
+	Vec4 color = Vec4(1.0f, 0.5f, 0.5f, 1.0f);
+	scene->addLight(new PointLight(position, color));
+
 }
 
 Particle* Fire::createParticle(float& timeSinceLast) {

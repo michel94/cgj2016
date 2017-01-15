@@ -33,9 +33,9 @@ Particle* RainParticleSystem::createParticle(float& timeSinceLast) {
 		Particle* particle = new Particle(
 			Vec3(randomX, randomY, randomZ),
 			-0.5 * GRAVITY * fRand(0.5, 2.0) * Vec3(0.0f, 1.0f, 0.0f),
-			Vec4(0.5f, 0.7f, 1.0f, 0.3f),
+			Vec4(0.5f, 0.7f, 1.0f, 0.2f),
 			100000.0f,
-			particleSize
+			Vec2(0.005f, (float)fRand(0.1f, 0.3f))
 		);
 		return particle;
 	}

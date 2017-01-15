@@ -11,7 +11,7 @@ public:
 	~DynamicModel();
 	void createBuffers();
 
-	int maxVertices;
+	int maxParticles;
 	GLuint vbo_colors_id, vbo_psize_id;
 	vector<Color> Colors;
 	vector<float> Psize;

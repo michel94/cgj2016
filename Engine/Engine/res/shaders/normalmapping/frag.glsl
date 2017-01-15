@@ -9,6 +9,7 @@ in VS_OUT {
     vec3 LightColor[MAX_LIGHTS];
     vec3 TangentViewPos;
     vec3 TangentFragPos;
+    vec3 worldNormal;
     flat int nLights;
 } fs_in;
 
