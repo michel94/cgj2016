@@ -3,6 +3,7 @@
 #define GRAVITY 9.8
 
 RainParticleSystem::RainParticleSystem(int nParticles, float floor, float roof) : ParticleSystem(nParticles) {
+	shader = ShaderManager::instance().getShader("rain");
 	particleSize = Vec2(0.005f, 0.1f);
 	this->floor = floor;
 	this->roof = roof;
