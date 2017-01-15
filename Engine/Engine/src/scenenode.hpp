@@ -44,17 +44,12 @@ public:
     Shader* shader = ShaderManager::instance().getDefaultShader();
 	Mat4 mat;
 	vector<SceneNode*> children;
-
-protected:
-	Scene* scene;
-	Model* model;
-	GLuint skyboxDayId, skyboxNightId;
-	
-	SceneNode* parent;
-	
-
 	SceneNode* parent;
 	Scene* scene = NULL;
+protected:
+	Model* model;
+	GLuint skyboxDayId, skyboxNightId;
+
 
 	Texture * texture = nullptr;
 

@@ -16,6 +16,6 @@ out vec4 out_Color;
 void main() {
 	vec4 texture1 = texture(cube_texture, ex_Texcoord);
 	vec4 texture2 = texture(cube_texture2, ex_Texcoord);
-
-	out_Color = mix(texture1, texture2, blendfactor);
+	out_Color = texture1;
+	//out_Color = mix(texture1, texture2, blendfactor);
 }
