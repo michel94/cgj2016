@@ -36,16 +36,17 @@ void main(void){
 	ex_Texcoord = inTexcoord;
 	mat4 matCopy = Matrix;
 
-	float posX = Matrix[0][3];
-	float posY = Matrix[1][3];
-	float posZ = Matrix[2][3];
+	vec4 worldSpace = Matrix * in_Position;
+
+	float posX = worldSpace[0];
+	float posY = worldSpace[1];
+	float posZ = worldSpace[2];
 
 	vec3 quadPosition = vec3(posX, posY, posZ);
 
 	vec3 objToCamProj = normalize(vec3(CameraPosition.x - posX, 0, CameraPosition.z - posZ));
 
 	vec3 lookAt = vec3(0,0,1);
-	//objToCamProj = (objToCamProj);
 
 	vec3 upAux = vec3(0, 1, 0);
 

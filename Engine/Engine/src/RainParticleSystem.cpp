@@ -1,7 +1,7 @@
 #include "RainParticleSystem.hpp"
 #include "utils.hpp"
 
-#define MAX_PARTICLES 200
+#define MAX_PARTICLES 100
 
 RainParticleSystem::RainParticleSystem(SceneNode* parent) : ParticleSystem(parent) {
 	createParticles();
@@ -23,8 +23,8 @@ void RainParticleSystem::createParticles() {
 
 		//Create scenenode
 		SceneNode* droplet = new SceneNode(m, this);
-		droplet->scale.x = 0.005;
-		droplet->scale.y = fRand(0.01, 0.03);
+		droplet->scale.x = 0.20;
+		droplet->scale.y = 0.20;
 		droplet->scale.z = 0;
 		droplet->setShader(shader);
 		addChild(droplet);
