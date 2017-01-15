@@ -177,6 +177,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\skyboxnode.cpp" />
+    <ClCompile Include="src\fire.cpp" />
     <ClCompile Include="src\light.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\camera.cpp" />
@@ -199,6 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\skyboxnode.hpp" />
+    <ClInclude Include="src\fire.hpp" />
     <ClInclude Include="src\RainParticleSystem.hpp" />
     <ClInclude Include="src\DirectionalLight.hpp" />
     <ClInclude Include="src\light.hpp" />
@@ -226,7 +228,10 @@
     <None Include="res\shaders\colored\vertex.glsl" />
     <None Include="res\shaders\normalmapping\frag.glsl" />
     <None Include="res\shaders\normalmapping\vertex.glsl" />
+    <None Include="res\shaders\particle\frag.glsl" />
+    <None Include="res\shaders\particle\vertex.glsl" />
     <None Include="res\shaders\rain\frag.glsl" />
+    <None Include="res\shaders\rain\geom.glsl" />
     <None Include="res\shaders\rain\vertex.glsl" />
     <None Include="res\shaders\skybox\frag.glsl" />
     <None Include="res\shaders\skybox\vertex.glsl" />

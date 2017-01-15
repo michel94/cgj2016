@@ -4,9 +4,15 @@
 
 class RainParticleSystem : public ParticleSystem {
 public:
-	RainParticleSystem(SceneNode* parent);
+	RainParticleSystem(int nParticles, float floor, float roof);
+
 protected:
-	void update(vector<Particle*>& particles, float dt);
+	virtual void updateParticle(Particle* particle, float dt);
+	virtual Particle* RainParticleSystem::createParticle(float& timeSinceLast);
+
 private:
-	void RainParticleSystem::createParticles();
+	float floor, roof;
+
+	bool initialized = false;
+	int particlesCount = 0;
 };

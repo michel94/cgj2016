@@ -18,5 +18,5 @@ uniform mat4 Matrix;
 void main(void){
 	gColor = inColor;
 	gPsize = inPsize;
-	gl_Position = in_Position;
+	gl_Position = ProjMatrix * ViewMatrix * Matrix * in_Position;
 }

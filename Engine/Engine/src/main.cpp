@@ -16,8 +16,11 @@
 #include "animation.hpp"
 #include "glutwrappers.h"
 #include "materialnode.h"
+
+#include "fire.hpp"
 #include "RainParticleSystem.hpp"
 #include "skyboxnode.hpp"
+
 
 #include "tests.hpp"
 
@@ -79,15 +82,22 @@ void loadScene() {
 	Lightcube->position = Vec3(0.0f, -5.0f, 1.2f);
 	root->addChild(Lightcube);
 	
-	RainParticleSystem* rain = new RainParticleSystem(root);
+	//ParticleSystem* rain = new ParticleSystem(root, 300, 5);
+	//root->addChild(rain);
+
+	ParticleSystem* fire = new Fire(root, 200000, 3, 0.8);
+	fire->scale *= 0.5;
+	fire->position.y = -3;
+	root->addChild(fire);
+
+	RainParticleSystem* rain = new RainParticleSystem(1000, -5, 5);
 	root->addChild(rain);
+	
+	PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
+	scene->addLight(Pointlight);
 
-	DirectionalLight* light = new DirectionalLight(Vec3(-1.0f, 0.0f, 0.0f), Light::WHITE);
-	scene->addLight(light);
-
-	/*PointLight* Pointlight = new PointLight(Vec3(0.0f, -1.2f, 0.0f), Light::BLUE);
-	scene->addLight(Pointlight);*/
-
+	//DirectionalLight* light = new DirectionalLight(Vec3(-1.0f, 0.0f, 0.0f), Light::WHITE);
+	//scene->addLight(light);
 
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);
@@ -129,19 +139,19 @@ void update(float dt) {
 		sb->position = camera->position;
 	}
 	if (controls2[0]) { //u
-		root->children[1]->position.y += 5 * dt;
+		Lightcube->position.y += 5 * dt;
 		scene->lights[0]->position.y += 5 * dt;
 	}
 	if (controls2[1]) {//h
-		root->children[1]->position.x -= 5 * dt;
+		Lightcube->position.x -= 5 * dt;
 		scene->lights[0]->position.x -= 5*dt;
 	}
 	if (controls2[2]) {//j
-		root->children[1]->position.y -= 5 * dt;
+		Lightcube->position.y -= 5 * dt;
 		scene->lights[0]->position.y -= 5*dt;
 	}
 	if (controls2[3]) {//k
-		root->children[1]->position.x += 5 * dt;
+		Lightcube->position.x += 5 * dt;
 		scene->lights[0]->position.x += 5*dt;
 	}
 	
@@ -191,7 +201,8 @@ void setupOpenGL() {
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
-	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void setupGLEW() {

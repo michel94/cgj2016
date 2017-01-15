@@ -39,7 +39,7 @@ public:
 	void bind() {
 		glBindBuffer(GL_UNIFORM_BUFFER,	buffer);
 	}
-	void putData(string name, GLubyte* data, int size) {
+	void putData(string name, GLubyte* data, int size) {	
 		bind();
 		assert(uniforms.find(name) != uniforms.end());
 		glBufferSubData(GL_UNIFORM_BUFFER, uniforms[name], size, data);
