@@ -1,4 +1,4 @@
-#version 430
+#version 420
 
 const int MAX_LIGHTS=8;
 
@@ -19,6 +19,8 @@ out VS_OUT {
 } vs_out;
 
 out vec3 FragPos;
+out vec3 ex_CameraPosition;
+out vec3 CorrectNormal;
 out vec4 LightPosition_out[MAX_LIGHTS];
 
 uniform CameraBlock{
@@ -36,6 +38,7 @@ uniform LightBlock{
 uniform mat4 Matrix;
 
 void main(void){
+	ex_CameraPosition = CameraPosition;
 	vs_out.nLights = nLights;
 	gl_Position = ProjMatrix * ViewMatrix * Matrix * inPosition;
 	vs_out.FragPos = vec3(Matrix * inPosition);
@@ -46,6 +49,7 @@ void main(void){
     vec3 B = normalize(normalMatrix * inBitangent);
     vec3 N = normalize(normalMatrix * inNormal);
     
+	CorrectNormal = N;
     mat3 TBN = transpose(mat3(T, B, N));
     vs_out.TangentViewPos  = TBN * CameraPosition;
     vs_out.TangentFragPos  = TBN * vs_out.FragPos;

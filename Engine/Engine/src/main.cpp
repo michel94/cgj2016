@@ -17,6 +17,7 @@
 #include "glutwrappers.h"
 #include "materialnode.h"
 #include "RainParticleSystem.hpp"
+#include "skyboxnode.hpp"
 
 #include "tests.hpp"
 
@@ -35,7 +36,7 @@ SphericalCamera* camera;
 SceneNode* ground;
 SceneNode* cube;
 SceneNode* Lightcube;
-
+SkyBoxNode *sb;
 double lastTick;
 vector<SceneNode*> objects;
 SceneNode* root;
@@ -58,17 +59,24 @@ void loadScene() {
 	scene = new Scene();
 
 	camera = new SphericalCamera(windowWidth, windowHeight);
+	//camera->position = Vec3(0.0, 0.0f, 0.0f);
 	scene->attachCamera(camera);
 	root = scene->root();
+
+	sb = new SkyBoxNode(ModelManager::instance().getObj("SkyBoxCube"), root);
+	sb->position = camera->position;
+	sb->scale = Vec3(5.0f, 5.0f, 5.0f);
+	root->addChild(sb);
 	
 	cube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
-	cube->position.y = 0;
+	cube->scale = Vec3(10.0f, 0.2f, 10.0f);
+	cube->position.y = -2;
 	root->addChild(cube);
 
 	//lightcube
 	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
 	Lightcube->scale = Vec3(0.05f, 0.05f, 0.05f);
-	Lightcube->position = Vec3(0.0f, 0.0f, 1.2f);
+	Lightcube->position = Vec3(0.0f, -5.0f, 1.2f);
 	root->addChild(Lightcube);
 	
 	RainParticleSystem* rain = new RainParticleSystem(root);
@@ -77,8 +85,9 @@ void loadScene() {
 	DirectionalLight* light = new DirectionalLight(Vec3(-1.0f, 0.0f, 0.0f), Light::WHITE);
 	scene->addLight(light);
 
-	PointLight* Pointlight = new PointLight(Vec3(0.0f, -1.2f, 0.0f), Light::BLUE);
-	scene->addLight(Pointlight);
+	/*PointLight* Pointlight = new PointLight(Vec3(0.0f, -1.2f, 0.0f), Light::BLUE);
+	scene->addLight(Pointlight);*/
+
 
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);
@@ -97,21 +106,27 @@ void update(float dt) {
 	
 	if (controls[0]) { // back
 		camera->position -= camera->rotation.toMat4() * Vec3(0.0f, 0.0f, 3.0f) * dt;
+		sb->position = camera->position;
 	}
 	if (controls[1]) { // forward
 		camera->position += camera->rotation.toMat4() * Vec3(0.0f, 0.0f, 3.0f) * dt;
+		sb->position = camera->position;
 	}
 	if (controls[2]) { // right
 		camera->position += camera->rotation.toMat4() * Vec3(3.0f, 0, 0) * dt;
+		sb->position = camera->position;
 	}
 	if (controls[3]) { // left
 		camera->position -= camera->rotation.toMat4() * Vec3(3.0f, 0, 0) * dt;
+		sb->position = camera->position;
 	}
 	if (controls[4]) { // up
 		camera->position -= camera->rotation.toMat4() * Vec3(0, 3.0f, 0) * dt;
+		sb->position = camera->position;
 	}
 	if (controls[5]) { // down
 		camera->position += camera->rotation.toMat4() * Vec3(0, 3.0f, 0) * dt;
+		sb->position = camera->position;
 	}
 	if (controls2[0]) { //u
 		root->children[1]->position.y += 5 * dt;
@@ -302,7 +317,6 @@ void init(int argc, char* argv[]) {
 	lastTick = now();
 	loadScene();
 	camera->rotation = Qtrn::fromAngleAxis(180, Vec3(0, 1, 0));
-	camera->position = Vec3(0, -2, 2);
 	
 	setupCallbacks();
 }

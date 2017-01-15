@@ -26,6 +26,7 @@ void MaterialNode::render(Mat4 tr) {
 			normalTexture->bind();
 			glUniform1i(s["normalTex"], 1);
 		}
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxDayId);
 		glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
 		model->draw();
 

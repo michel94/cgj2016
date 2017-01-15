@@ -1,4 +1,4 @@
-#version 430
+#version 420
 
 const int MAX_LIGHTS=8;
 
@@ -13,11 +13,14 @@ in VS_OUT {
 } fs_in;
 
 in vec3 FragPos;
+in vec3 ex_CameraPosition;
+in vec3 CorrectNormal;
 in vec4 LightPosition_out[MAX_LIGHTS];
 
 uniform vec4 Color;
 uniform sampler2D tex;
 uniform sampler2D normalTex;
+uniform samplerCube cube_texture;
 
 out vec4 out_Color;
 
@@ -62,12 +65,19 @@ void main(void){
 		// Specular
 	    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
 	    vec3 reflectDir = reflect(-lightDir, normal);
-	    vec3 halfwayDir = normalize(lightDir + viewDir);
+		vec3 halfwayDir = normalize(lightDir + viewDir);
 	    float spec = pow(max(dot(normal, halfwayDir), 0.0), 4.0);
 		specular += vec3(0.6) * spec * fs_in.LightColor[i];
+
+		//out_Color = texture(cube_texture, reflectDir);
     }
-    
-    out_Color = vec4( (ambient*0 + diffuse) * color + specular, 1.0f);
+    vec3 I = normalize(FragPos - ex_CameraPosition);
+    vec3 R = reflect(I, normalize(CorrectNormal));
+	//R.x*=-1;
+	//R.y*=-1;
+	//R.z*=-1;
+    out_Color = texture(cube_texture, R);
+    //out_Color = vec4( (ambient*0 + diffuse) * color + specular, 1.0f);
 	
 }
 
