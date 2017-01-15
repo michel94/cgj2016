@@ -7,13 +7,12 @@ in vec2 gPsize[];
 layout(triangle_strip, max_vertices = 6) out;
 out vec4 fColor;
 
-//uniform float w, h;
-
 void main()
 {
     float w = gPsize[0].x;
     float h = gPsize[0].y;
     fColor = gColor[0];
+    
     gl_Position = gl_in[0].gl_Position + vec4(-w, -h, 0.0, 0.0);
     EmitVertex();
     gl_Position = gl_in[0].gl_Position + vec4(w, -h, 0.0, 0.0);
