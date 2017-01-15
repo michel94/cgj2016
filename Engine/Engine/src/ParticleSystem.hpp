@@ -26,7 +26,7 @@ public:
 	virtual void render(Mat4 tr);
 	virtual void renderChildren(Mat4 tr);
 
-	Vec2 particleSize = Vec2(0.004, 0.004);
+	Vec2 particleSize = Vec2(0.003, 0.003);
 private:
 	
 	float timeSinceLast=0;

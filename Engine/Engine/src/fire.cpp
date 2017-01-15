@@ -8,35 +8,12 @@
 
 Vec2 randVec2(double radius) {
 	double angle = fRand(0, 2 * 3.14159);
-	//return fRand(0, radius) * Vec2(cos(angle), sin(angle));
 	return gaussianRandom(0, radius) * Vec2(cos(angle), sin(angle));
 }
 
 Vec2 uniformVec2(double radius) {
 	double angle = fRand(0, 2 * 3.14159);
 	return fRand(0, radius) * Vec2(cos(angle), sin(angle));
-}
-
-double gaussianRandom(double mu, double sigma){
-	const double epsilon = std::numeric_limits<double>::min();
-	const double two_pi = 2.0 * atan(1.0);
-
-	static double z0, z1;
-	static bool generate;
-	generate = !generate;
-
-	if (!generate)
-		return z1 * sigma + mu;
-
-	double u1, u2;
-	do{
-		u1 = rand() * (1.0 / RAND_MAX);
-		u2 = rand() * (1.0 / RAND_MAX);
-	} while (u1 <= epsilon);
-
-	z0 = sqrt(-2.0 * log(u1)) * cos(two_pi * u2);
-	z1 = sqrt(-2.0 * log(u1)) * sin(two_pi * u2);
-	return z0 * sigma + mu;
 }
 
 FireTarget::FireTarget(Vec3 position, Vec3 speed, Vec3 dest, float forceIntensity) {
@@ -66,11 +43,11 @@ Fire::Fire(SceneNode* parent, int nParticles, int nTargets, float height) : Part
 			dest + Vec3(randPos.x, fRand(-0.01, 0.01), randPos.y),
 			Vec3(0,0,0),
 			dest,
-			1 + i / 5.0f
+			1/h + i / 5.0f
 			));
 		cout << targets[i]->position << endl;
 	}
-	life = h;
+	life = h + h / 5;
 	this->parent = parent;	
 
 
@@ -81,22 +58,22 @@ Fire::Fire(SceneNode* parent, int nParticles, int nTargets, float height) : Part
 }
 
 Particle* Fire::createParticle(float& timeSinceLast) {
-	float step = 0.00005;
+	float step = 0.00001;
 	if (timeSinceLast > step) {
 		timeSinceLast -= step;
 		Vec2 randPos = randVec2(0.02);
-		Vec2 randVel = randVec2(0.5);
-		while(randVel.norm() > 0.5)
-			randVel = randVec2(0.5);
+		Vec2 randVel = randVec2(0.6);
+		while(randVel.norm() > 0.6)
+			randVel = randVec2(0.6);
 		
 		float maxSpeed = 0.8;
 		Vec3 speed = Vec3(randVel.x, fRand(0, maxSpeed), randVel.y);
 		return new FireParticle(
-			source + Vec3(randPos.x, fRand(0, 0.05), randPos.y),
+			source + Vec3(randPos.x, fRand(0, 0.1), randPos.y),
 			speed,
 			Vec4(1, 0, 0, 1),
 			life + fRand(0, h / 5.0f),
-			particleSize * (speed.y / maxSpeed),
+			particleSize,
 			targets[rand() % targets.size()]
 		);
 	}
@@ -108,7 +85,7 @@ void Fire::updateParticle(Particle * p, float dt) {
 	FireParticle* particle = (FireParticle*)p;
 	Vec3 force = particle->target->position - particle->position;
 	force.normalized();
-	force *= 6;
+	force *= 7;
 	Vec3 sp = particle->speed.normalize(), f = force.normalize();
 	if (particle->position.y < particle->target->position.y) {
 		if (sp.dot(f) < 0.8) {
@@ -122,7 +99,7 @@ void Fire::updateParticle(Particle * p, float dt) {
 	particle->position += particle->speed * dt;
 
 	float age = particle->age / particle->life;
-	float fireLimit = 0.9;
+	float fireLimit = 0.8;
 	if (age < fireLimit) {
 		float intens = 1 - (age / fireLimit);
 		float y = particle->position.y / (10 * h);
@@ -133,6 +110,7 @@ void Fire::updateParticle(Particle * p, float dt) {
 		particle->color = Vec4(1, intens, 0, 0.6f) + centerColor;
 
 	}else {
+		particle->size = particleSize * 0.5f;
 		float v = (age - fireLimit) / (1 - fireLimit) + 0.5;
 		particle->color = Vec4(0.5, 0.5, 0.5, 0.4f);
 	}

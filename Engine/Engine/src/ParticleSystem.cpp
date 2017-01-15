@@ -8,6 +8,28 @@ double fRand(double fMin, double fMax) {
 	return fMin + f * (fMax - fMin);
 }
 
+double gaussianRandom(double mu, double sigma) {
+	const double epsilon = std::numeric_limits<double>::min();
+	const double two_pi = 2.0 * atan(1.0);
+
+	static double z0, z1;
+	static bool generate;
+	generate = !generate;
+
+	if (!generate)
+		return z1 * sigma + mu;
+
+	double u1, u2;
+	do {
+		u1 = rand() * (1.0 / RAND_MAX);
+		u2 = rand() * (1.0 / RAND_MAX);
+	} while (u1 <= epsilon);
+
+	z0 = sqrt(-2.0 * log(u1)) * cos(two_pi * u2);
+	z1 = sqrt(-2.0 * log(u1)) * sin(two_pi * u2);
+	return z0 * sigma + mu;
+}
+
 DynamicModel::DynamicModel(int maxParticles) {
 	this->maxParticles = maxParticles;
 	createBuffers();
@@ -69,6 +91,7 @@ void ParticleSystem::update(float dt) {
 	Particle* p;
 	cout << "\r" << "Particles: " << particles.size() << endl;
 	while (particles.size() < MAX_PARTICLES) {
+		
 		p = createParticle(timeSinceLast);
 		if (p != NULL) {
 			particles.push_back(p);
@@ -119,9 +142,6 @@ void ParticleSystem::render(Mat4 tr) {
 	Shader& s = *shader;
 	s.bind();
 	glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
-	//glUniform1f(s["w"], particleSize.x);
-	//glUniform1f(s["h"], particleSize.y);
-	
 
 	glBindVertexArray(model->vao_id);
 	if(particles.size() > 0)

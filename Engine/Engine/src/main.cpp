@@ -77,7 +77,7 @@ void loadScene() {
 	//ParticleSystem* rain = new ParticleSystem(root, 300, 5);
 	//root->addChild(rain);
 
-	ParticleSystem* fire = new Fire(root, 200000, 3, 1.1);
+	ParticleSystem* fire = new Fire(root, 200000, 3, 0.8);
 	fire->scale *= 0.5;
 	fire->position.y = -3;
 	root->addChild(fire);

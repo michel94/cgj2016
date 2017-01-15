@@ -19,9 +19,11 @@ public:
 	FireParticle(Vec3 position, Vec3 speed, Vec4 color, float life, Vec2 size, FireTarget* target)
 		: Particle(position, speed, color, life, size) {
 		this->target = target;
+		this->initialSize = size;
 	}
 
 	FireTarget* target;
+	Vec2 initialSize;
 
 	static const float LIFE;
 };
@@ -36,7 +38,6 @@ public:
 	Vec3 source, dest;
 	float h, life;
 private:
-	//vector<Vec3> targets, targetSpeed;
 	vector<FireTarget*> targets;
 
 };
