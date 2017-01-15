@@ -12,6 +12,21 @@ uniform CameraBlock{
 	vec3 CameraPosition;
 };
 
+
+mat4 rotationMatrix(vec3 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
+}
+
+
 uniform mat4 Matrix;
 uniform vec4 Color;
 
@@ -19,6 +34,7 @@ void main(void){
 	float threshold = 0.9999;
 
 	ex_Texcoord = inTexcoord;
+	mat4 matCopy = Matrix;
 
 	float posX = Matrix[0][3];
 	float posY = Matrix[1][3];
@@ -38,9 +54,8 @@ void main(void){
 	float angleCosine = dot(lookAt, objToCamProj);
 	
 	if(angleCosine < threshold && angleCosine > -threshold){
-			
+		matCopy *= rotationMatrix(upAux, acos(angleCosine) * 180 / 3.14);
 	}
 
-	gl_Position = ProjMatrix * ViewMatrix * Matrix * in_Position;
+	gl_Position = ProjMatrix * ViewMatrix * matCopy * in_Position;
 }
-
