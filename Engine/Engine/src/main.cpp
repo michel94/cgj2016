@@ -60,6 +60,8 @@ double now() { // milliseconds
 
 /////////////////////////////////////////////////////////////////////// SCENE SETUP
 
+#define FLOOR_SIZE 5.0f
+
 void loadScene() {
 	scene = new Scene();
 
@@ -70,11 +72,11 @@ void loadScene() {
 
 	sb = new SkyBoxNode(ModelManager::instance().getObj("SkyBoxCube"), root);
 	sb->position = camera->position;
-	sb->scale = Vec3(5.0f, 5.0f, 5.0f);
+	sb->scale *= FLOOR_SIZE;
 	root->addChild(sb);
 	
 	terrain = new MaterialNode(ModelManager::instance().getObj("terrain"), root, "stone");
-	terrain->scale *= 5;
+	terrain->scale *= FLOOR_SIZE;
 	terrain->position.y = -5;
 	root->addChild(terrain);
 
@@ -82,7 +84,7 @@ void loadScene() {
 	water->shader = ShaderManager::instance().getShader("water");
 	water->reflectionBlend = 0.1;
 	water->rotation *= Qtrn::fromAngleAxis(90, Vec3(1, 0, 0));
-	water->scale *= 5;
+	water->scale *= FLOOR_SIZE;
 	water->position.y = -5;
 	root->addChild(water);
 
@@ -109,7 +111,7 @@ void loadScene() {
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);
 
-	dayNightCycle = new DayNightCycle(rain, NULL, sb, 100);
+	dayNightCycle = new DayNightCycle(rain, NULL, sb, water, 100);
 }
 
 void destroyScene(){
@@ -168,7 +170,7 @@ void update(float dt) {
 
 	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(-mouseDisp.y * 100, Vec3(1, 0, 0));
 	mouseDisp = Vec2(0, 0);
-	//dayNightCycle->update(dt);
+	dayNightCycle->update(dt);
 	scene->update(dt);
 	
 	if(ShaderManager::instance().shadersLoaded())
