@@ -8,6 +8,8 @@ public:
 	SkyBoxNode(Model * model, SceneNode * parent);
 	void render(Mat4 tr);
 	virtual void update(float dt);
+
+	float dayDuration = 50;
 private:
 	const float ROTATE_SPEED = 1.0f;
 	GLuint loadCubemap(string folder, vector<string> faces);

@@ -75,7 +75,7 @@ void SkyBoxNode::update(float dt) {
 		daynight = 1.0f;
 		
 	}
-	blendfactor += 0.02f * daynight*dt;
+	blendfactor += 1 / dayDuration * daynight*dt;
 }
 
 void SkyBoxNode::bindTextures(Shader& s) {

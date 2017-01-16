@@ -109,7 +109,7 @@ void loadScene() {
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);
 
-	dayNightCycle = new DayNightCycle(rain, NULL, sb);
+	dayNightCycle = new DayNightCycle(rain, NULL, sb, 100);
 }
 
 void destroyScene(){

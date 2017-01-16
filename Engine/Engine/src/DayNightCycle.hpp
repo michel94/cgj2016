@@ -6,7 +6,7 @@
 
 class DayNightCycle {
 public:
-	DayNightCycle(RainParticleSystem*, Fire*, SkyBoxNode*);
+	DayNightCycle(RainParticleSystem*, Fire*, SkyBoxNode*, float);
 	void update(float dt);
 
 private:
@@ -14,19 +14,22 @@ private:
 	Fire* fire;
 	SkyBoxNode* skybox;
 
-	void updateRain(float);
-
+	float dayDuration;
+	/*
 	float rainTimer;
 	float dayNightTimer;
 	const float dayNightCycleTime = 30; //secs
 	unsigned int rainStepIdx;
 	const float rainSteps[9] = { 0.0f, 0.1f, 0.01f, 0.001f, 0.0005f, 0.001f, 0.01f, 0.1f, 0.0f };
-	const int rainStepSize = 9;
+	const int rainStepSize = 9;*/
 
+	void startRain();
+	void updateRain(float);
 
+	float rainProb = 2.0;
 	float particlesPerSecond = 0;
-	float duration = 10;
-	float finalPPS = 100;
+	float duration = 20;
+	float finalPPS = 1000;
 	float elapsedTime = 0.0f;
-	bool rainActive = true;
+	bool rainActive = false;
 };
