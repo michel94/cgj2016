@@ -32,6 +32,7 @@ void MaterialNode::render(Mat4 tr) {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, getScene()->getSkybox("day"));
 		glUniform1i(s["cube_texture"], 2);
 		
+		glUniform1f(s["reflectionBlend"], reflectionBlend);
 		glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
 		model->draw();
 

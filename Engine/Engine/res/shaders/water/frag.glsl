@@ -39,9 +39,10 @@ void main(void){
 	int nLights = fs_in.nLights;
 	
 	vec2 TexCoords = fs_in.TexCoords * 4;
-	vec3 normal = texture(normalTex, TexCoords).rgb;
+	//vec3 normal = texture(normalTex, TexCoords).rgb;
+	vec3 normal = CorrectNormal;
     // Transform normal vector to range [-1,1]
-    normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
+    //normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
     // Get texture color
     vec3 color = texture(tex, TexCoords).rgb;
     vec3 ambient;
@@ -89,7 +90,10 @@ void main(void){
     }
 	vec3 I = normalize(FragPos - ex_CameraPosition);
     vec3 R = reflect(I, normalize(CorrectNormal));
-    out_Color = vec4( (ambient + diffuse) * color + specular, 1.0);
+
+    vec4 skyColor = texture(cube_texture, R);
+    //out_Color = mix(skyColor, vec4(color, 1), reflectionBlend) + spec;
+    out_Color = vec4(  + specular, 0.7);
     
 }
 
