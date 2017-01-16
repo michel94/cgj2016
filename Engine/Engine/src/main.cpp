@@ -168,7 +168,7 @@ void update(float dt) {
 
 	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(-mouseDisp.y * 100, Vec3(1, 0, 0));
 	mouseDisp = Vec2(0, 0);
-	dayNightCycle->update(dt);
+	//dayNightCycle->update(dt);
 	scene->update(dt);
 	
 	if(ShaderManager::instance().shadersLoaded())
