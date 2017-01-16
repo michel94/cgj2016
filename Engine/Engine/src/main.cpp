@@ -74,13 +74,13 @@ void loadScene() {
 	cube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
 	cube->scale = Vec3(10.0f, 0.2f, 10.0f);
 	cube->position.y = -5;
-	root->addChild(cube);
+	//root->addChild(cube);
 
 	//lightcube
 	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
 	Lightcube->scale = Vec3(0.05f, 0.05f, 0.05f);
 	Lightcube->position = Vec3(0.0f, -5.0f, 1.2f);
-	root->addChild(Lightcube);
+	//root->addChild(Lightcube);
 	
 	//ParticleSystem* rain = new ParticleSystem(root, 300, 5);
 	//root->addChild(rain);
