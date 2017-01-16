@@ -52,7 +52,7 @@ Fire::Fire(SceneNode* parent, int nParticles, int nTargets, float height) : Part
 
 
 	Scene* scene = getScene();
-	Vec4 color = Vec4(1.0f, 0.5f, 0.5f, 1.0f);
+	Vec4 color = Vec4(1.0f, 0.5f, 0.0f, 1.0f);
 	scene->addLight(new PointLight(position, color));
 
 }

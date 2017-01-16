@@ -73,7 +73,6 @@ void loadScene() {
 	root->addChild(sb);
 	
 	terrain = new MaterialNode(ModelManager::instance().getObj("terrain"), root, "stone");
-	//terrain->rotation *= Qtrn::fromAngleAxis(90, Vec3(1, 0, 0));
 	terrain->scale *= 5;
 	terrain->position.y = -5;
 	root->addChild(terrain);
@@ -92,10 +91,10 @@ void loadScene() {
 	Lightcube->position = Vec3(0.0f, -5.0f, 1.2f);
 	//root->addChild(Lightcube);
 
-	//ParticleSystem* fire = new Fire(root, 200000, 3, 0.8);
-	//fire->scale *= 0.5;
-	//fire->position.y = -3;
-	//root->addChild(fire);
+	ParticleSystem* fire = new Fire(root, 200000, 3, 0.8);
+	fire->scale *= 0.5;
+	fire->position.y = -4;
+	root->addChild(fire);
 
 	rain = new RainParticleSystem(1000, -5, 5);
 	root->addChild(rain);

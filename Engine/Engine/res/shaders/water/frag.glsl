@@ -63,7 +63,7 @@ void main(void){
 			lightDir  = normalize(fs_in.TangentLightPos[i] - fs_in.TangentFragPos);
 			vec3 L = normalize(LightPosition_out[i].xyz - FragPos);
 			float dist = length(L);
-			att=1.0/(1.0+0.1*dist+0.01*dist*dist);
+			att=0.1/(1.0+0.1*dist+0.01*dist*dist);
 			lightColor *= att;
 		}
 		// Ambient
@@ -71,13 +71,13 @@ void main(void){
 		
 		// Diffuse
 		float diff = max(dot(lightDir, normal), 0.0);
-		diffuse += diff * lightColor * 0.8;
+		diffuse += diff * lightColor * 0.8 * att;
 		
 		// Specular
 	    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
 	    vec3 reflectDir = reflect(-lightDir, normal);
 		vec3 halfwayDir = normalize(lightDir + viewDir);
-	    float spec = pow(max(dot(normal, halfwayDir), 0.0), 8.0);
+	    float spec = pow(max(dot(normal, halfwayDir), 0.0), 8.0 * att);
 
 	    vec3 I = normalize(FragPos - ex_CameraPosition);
     	vec3 R = reflect(I, normalize(CorrectNormal));
@@ -85,7 +85,7 @@ void main(void){
 	    //vec4 skyColor = texture(cube_texture, R);
 	    //vec4 lightColor = vec4(fs_in.LightColor[i], 1)
 	    vec3 specColor = mix(skyColor.xyz, lightColor, reflectionBlend);
-		specular += spec * specColor;
+		specular += spec * specColor * att;
 		//out_Color = texture(cube_texture, reflectDir);
     }
 	vec3 I = normalize(FragPos - ex_CameraPosition);
