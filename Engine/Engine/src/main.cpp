@@ -40,7 +40,9 @@ SceneNode* ground;
 SceneNode* cube;
 SceneNode* Lightcube;
 SkyBoxNode *sb;
+RainParticleSystem* rain;
 double lastTick;
+double rainTimer;
 vector<SceneNode*> objects;
 SceneNode* root;
 
@@ -90,7 +92,7 @@ void loadScene() {
 	fire->position.y = -3;
 	root->addChild(fire);
 
-	RainParticleSystem* rain = new RainParticleSystem(1000, -5, 5);
+	rain = new RainParticleSystem(1000, -5, 5);
 	root->addChild(rain);
 	
 	PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
@@ -108,7 +110,7 @@ void destroyScene(){
 	checkOpenGLError("ERROR: Could not destroy scene.");
 }
 
-/////////////////////////////////////////////////////////////////////// SCENE
+////////////////////////////////// SCENE //////////////////////////////////
 
 void update(float dt) {
 	
@@ -154,7 +156,15 @@ void update(float dt) {
 		Lightcube->position.x += 5 * dt;
 		scene->lights[0]->position.x += 5*dt;
 	}
-	
+
+	rainTimer += dt;
+	if (rainTimer > 10) {
+		rainTimer = 0;
+		float rand = fRand(0, 1);
+		cout << "Rain intensity " << rand << endl;
+		rain->setIntensity(rand);
+	}
+		
 	AnimManager::instance().update(dt);
 
 	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(-mouseDisp.y * 100, Vec3(1, 0, 0));

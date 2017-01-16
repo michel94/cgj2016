@@ -8,20 +8,21 @@ RainParticleSystem::RainParticleSystem(int nParticles, float floor, float roof) 
 	this->floor = floor;
 	this->roof = roof;
 
-	sortParticles = true;
+	sortParticles = false;
 }
 
 void RainParticleSystem::updateParticle(Particle* particle, float dt) {
-	if (particle->position.y <= floor) {
-		particle->position.y += (roof - floor);
-	}
 	particle->position += particle->speed * dt;
 }
 
 Particle* RainParticleSystem::createParticle(float& timeSinceLast) {
 
-	timeSinceLast -= 0.1;
-
+	//float step = 0.0005;
+	//float step = 0.05;
+	if (timeSinceLast < step) {
+		return NULL;
+	}
+	timeSinceLast -= step;
 	//Create particle
 	float randomX = fRand(-2.0f, 2.0f);
 	float randomZ = fRand(-2.0f, 2.0f);
@@ -36,4 +37,8 @@ Particle* RainParticleSystem::createParticle(float& timeSinceLast) {
 	);
 	return particle;
 
+}
+
+void RainParticleSystem::setIntensity(float i) {
+	step = (stepMax - stepMin) * i + stepMin;
 }
