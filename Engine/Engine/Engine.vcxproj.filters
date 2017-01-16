@@ -21,6 +21,8 @@
     <ClCompile Include="src\vec4.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\skyboxnode.cpp" />
+    <ClCompile Include="src\fire.cpp" />
+    <ClCompile Include="src\DayNightCycle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\RainParticleSystem.hpp" />
@@ -45,6 +47,8 @@
     <ClInclude Include="src\vec.hpp" />
     <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\skyboxnode.hpp" />
+    <ClInclude Include="src\fire.hpp" />
+    <ClInclude Include="src\DayNightCycle.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -99,9 +103,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fire.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\RainParticleSystem.cpp">
@@ -161,9 +162,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\light.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fire.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\RainParticleSystem.hpp">

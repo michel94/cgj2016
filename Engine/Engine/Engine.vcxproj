@@ -176,6 +176,7 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\DayNightCycle.cpp" />
     <ClCompile Include="src\skyboxnode.cpp" />
     <ClCompile Include="src\fire.cpp" />
     <ClCompile Include="src\light.cpp" />
@@ -199,6 +200,7 @@
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\DayNightCycle.hpp" />
     <ClInclude Include="src\skyboxnode.hpp" />
     <ClInclude Include="src\fire.hpp" />
     <ClInclude Include="src\RainParticleSystem.hpp" />

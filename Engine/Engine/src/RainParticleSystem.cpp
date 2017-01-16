@@ -8,7 +8,7 @@ RainParticleSystem::RainParticleSystem(int nParticles, float floor, float roof) 
 	this->floor = floor;
 	this->roof = roof;
 
-	sortParticles = false;
+	sortParticles = true;
 }
 
 void RainParticleSystem::updateParticle(Particle* particle, float dt) {
@@ -16,10 +16,7 @@ void RainParticleSystem::updateParticle(Particle* particle, float dt) {
 }
 
 Particle* RainParticleSystem::createParticle(float& timeSinceLast) {
-
-	//float step = 0.0005;
-	//float step = 0.05;
-	if (timeSinceLast < step) {
+	if (step == 0 || timeSinceLast < step) {
 		return NULL;
 	}
 	timeSinceLast -= step;
@@ -41,4 +38,5 @@ Particle* RainParticleSystem::createParticle(float& timeSinceLast) {
 
 void RainParticleSystem::setIntensity(float i) {
 	step = (stepMax - stepMin) * i + stepMin;
+	cout << "Step " << step << endl;
 }

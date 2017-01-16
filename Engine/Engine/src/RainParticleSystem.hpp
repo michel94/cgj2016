@@ -4,11 +4,12 @@
 
 class RainParticleSystem : public ParticleSystem {
 	const float stepMax = 0.0005;
-	const float stepMin = 0.05;
+	const float stepMin = 0;
 
 public:
 	RainParticleSystem(int nParticles, float floor, float roof);
 
+	float step = 0;
 	void setIntensity(float i);
 
 protected:
@@ -20,6 +21,6 @@ private:
 
 	bool initialized = false;
 	int particlesCount = 0;
-	float step = (stepMax + stepMin) / 2;
+	
 
 };
