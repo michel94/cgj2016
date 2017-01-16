@@ -4,6 +4,9 @@
 *.o
 *.ilk
 *.pdb
+*.obj
+
+!Engine/Engine/res/meshes/*
 
 # Precompiled Headers
 *.gch
@@ -91,3 +94,5 @@ Engine/.vs
 Engine/Engine/Debug/vc140.idb
 Engine/Engine.sdf
 Engine/Engine.opensdf
+*.iobj
+*.ipdb
