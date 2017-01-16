@@ -23,4 +23,10 @@ private:
 	const float rainSteps[9] = { 0.0f, 0.1f, 0.01f, 0.001f, 0.0005f, 0.001f, 0.01f, 0.1f, 0.0f };
 	const int rainStepSize = 9;
 
+
+	float particlesPerSecond = 0;
+	float duration = 10;
+	float finalPPS = 100;
+	float elapsedTime = 0.0f;
+	bool rainActive = true;
 };

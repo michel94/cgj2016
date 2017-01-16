@@ -19,8 +19,4 @@ protected:
 private:
 	float floor, roof;
 
-	bool initialized = false;
-	int particlesCount = 0;
-	
-
 };

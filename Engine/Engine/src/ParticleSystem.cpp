@@ -89,7 +89,7 @@ ParticleSystem::ParticleSystem(int nParticles) : SceneNode() {
 
 void ParticleSystem::update(float dt) {
 	Particle* p;
-	cout << "\r" << "Particles: " << particles.size();
+	//cout << "\r" << "Particles: " << particles.size();
 	while (particles.size() < MAX_PARTICLES) {
 		
 		p = createParticle(timeSinceLast);
@@ -104,14 +104,14 @@ void ParticleSystem::update(float dt) {
 	Model* mesh = model;
 	DynamicModel* model = (DynamicModel*)mesh;
 	//cout << "Psize size: " << model->Psize.size() << " " << model->Psize.size() << endl;
-	int curSize = particles.size();
-	for (size_t i = 0; i < curSize; i++){
+	for (int i = 0; i < (int)particles.size(); i++){
 		updateParticle(particles[i], dt);
 		particles[i]->age += dt;
 		if (particles[i]->age >= particles[i]->life) {
-			//delete particles[i];
-			if(curSize - 1 != i)
-				swap(particles[i], particles[curSize-- - 1]);
+			delete particles[i];
+			if(i != (int)particles.size() - 1)
+				swap(particles[i], particles[particles.size() - 1]);
+			particles.pop_back();
 			i--;
 		}else {
 			memcpy(&model->Vertices[i], particles[i]->position.data(), particles[i]->position.size());
@@ -120,8 +120,6 @@ void ParticleSystem::update(float dt) {
 			model->Psize[2 * i + 1] = particles[i]->size.y;
 		}
 	}
-	if(curSize > 0)
-		particles._Pop_back_n(particles.size() - curSize);
 
 	Vec3 camPos = getModelMatrix() * getScene()->getCamera()->position;
 	
