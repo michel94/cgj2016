@@ -74,7 +74,7 @@ void loadScene() {
 	cube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
 	cube->scale = Vec3(10.0f, 0.2f, 10.0f);
 	cube->position.y = -5;
-	//root->addChild(cube);
+	root->addChild(cube);
 
 	//lightcube
 	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
