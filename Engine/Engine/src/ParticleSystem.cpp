@@ -109,6 +109,7 @@ void ParticleSystem::update(float dt) {
 		updateParticle(particles[i], dt);
 		particles[i]->age += dt;
 		if (particles[i]->age >= particles[i]->life) {
+			delete particles[i];
 			swap(particles[i], particles[curSize-- - 1]);
 			i--;
 		}else {

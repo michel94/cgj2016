@@ -1,4 +1,5 @@
 #include "skyboxnode.hpp"
+#include "scene.hpp"
 
 SkyBoxNode::SkyBoxNode(Model * model, SceneNode * parent) : SceneNode(model, parent) {
 	shader = ShaderManager::instance().getShader("skybox");
@@ -11,8 +12,11 @@ SkyBoxNode::SkyBoxNode(Model * model, SceneNode * parent) : SceneNode(model, par
 	Faces.push_back("posz.png");
 	Faces.push_back("negz.png");
 	
-	skyboxDayId = loadCubemap("res/images/", Faces);
-	skyboxNightId = loadCubemap("res/images/night_", Faces);
+	skyboxDayId = loadCubemap("res/images/skybox/day/", Faces);
+	skyboxNightId = loadCubemap("res/images/skybox/night/", Faces);
+
+	getScene()->putSkybox("day", skyboxDayId);
+	getScene()->putSkybox("night", skyboxNightId);
 }
 
 GLuint SkyBoxNode::loadCubemap(string folder, vector<string> faces)
@@ -29,6 +33,7 @@ GLuint SkyBoxNode::loadCubemap(string folder, vector<string> faces)
 		cout << folder + faces[i] << endl;
 		image = SOIL_load_image((folder + faces[i]).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+		SOIL_free_image_data(image);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -51,6 +56,7 @@ void SkyBoxNode::render(Mat4 tr) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxNightId);
 		glUniform1i(s["cube_texture2"], 1);
+
 		glUniform1f(s["blendfactor"], blendfactor);
 		glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
 		model->draw();
