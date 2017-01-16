@@ -48,8 +48,6 @@ public:
 	Scene* scene = NULL;
 protected:
 	Model* model;
-	GLuint skyboxDayId, skyboxNightId;
-
 
 	Texture * texture = nullptr;
 

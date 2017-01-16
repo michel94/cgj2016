@@ -64,3 +64,10 @@ Camera * Scene::getCamera(){
 	return camera;
 }
 
+void Scene::putSkybox(string name, GLuint id) {
+	skybox[name] = id;
+}
+
+GLuint Scene::getSkybox(string name) {
+	return skybox[name];
+}

@@ -1,4 +1,5 @@
 #include "materialnode.h"
+#include "scene.hpp"
 
 MaterialNode::MaterialNode(Model* model, string name) : SceneNode(model) {
 	texture = TextureManager::instance().getTexture(name + ".png");
@@ -16,6 +17,7 @@ void MaterialNode::render(Mat4 tr) {
 	if (model && shader) {
 		Shader& s = *shader;
 		s.bind();
+		
 		if (texture) {
 			glActiveTexture(GL_TEXTURE0);
 			texture->bind();
@@ -26,7 +28,10 @@ void MaterialNode::render(Mat4 tr) {
 			normalTexture->bind();
 			glUniform1i(s["normalTex"], 1);
 		}
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxDayId);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, getScene()->getSkybox("day"));
+		glUniform1i(s["cube_texture"], 2);
+		
 		glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
 		model->draw();
 

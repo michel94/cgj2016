@@ -4,6 +4,7 @@
 #include "light.hpp"
 #include "DirectionalLight.hpp"
 #include "PointLight.hpp"
+#include <unordered_map>
 
 class SceneNode;
 class Camera;
@@ -18,14 +19,18 @@ public:
 	void addLight(Light* light);
 	void removeLight(Light* light);
 	void attachCamera(Camera* camera);
+	void putSkybox(string name, GLuint id);
+	GLuint getSkybox(string name);
 	
 	Camera* getCamera();
 	vector<Light*> lights;
+
 
 private:
 	Camera* camera;
 	SceneNode* mRoot;
 	float* pos;
-	
+	unordered_map<string, GLuint> skybox;
+
 };
 

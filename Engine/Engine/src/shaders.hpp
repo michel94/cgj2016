@@ -53,7 +53,6 @@ public:
 	void putFloat(string name, float f) {
 		putData(name, (GLubyte*)&f, sizeof(float));
 	}
-	
 	void putMat4(string name, const Mat4& m) {
 		putData(name, (GLubyte*) m.data, m.byteSize());
 	}

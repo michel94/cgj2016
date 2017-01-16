@@ -80,24 +80,21 @@ void loadScene() {
 	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
 	Lightcube->scale = Vec3(0.05f, 0.05f, 0.05f);
 	Lightcube->position = Vec3(0.0f, -5.0f, 1.2f);
-	root->addChild(Lightcube);
-	
-	//ParticleSystem* rain = new ParticleSystem(root, 300, 5);
-	//root->addChild(rain);
+	//root->addChild(Lightcube);
 
-	ParticleSystem* fire = new Fire(root, 200000, 3, 0.8);
-	fire->scale *= 0.5;
-	fire->position.y = -3;
-	root->addChild(fire);
+	//ParticleSystem* fire = new Fire(root, 200000, 3, 0.8);
+	//fire->scale *= 0.5;
+	//fire->position.y = -3;
+	//root->addChild(fire);
 
 	RainParticleSystem* rain = new RainParticleSystem(1000, -5, 5);
 	root->addChild(rain);
 	
-	PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
-	scene->addLight(Pointlight);
+	//PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
+	//scene->addLight(Pointlight);
 
-	//DirectionalLight* light = new DirectionalLight(Vec3(-1.0f, 0.0f, 0.0f), Light::WHITE);
-	//scene->addLight(light);
+	DirectionalLight* light = new DirectionalLight(Vec3(0.0f, -1.0f, 0.0f), Light::WHITE);
+	scene->addLight(light);
 
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);

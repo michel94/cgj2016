@@ -13,4 +13,5 @@ private:
 	float time;
 	float blendfactor = 0;
 	float daynight = 1.0f;  //true = dia para a noite
+	GLuint skyboxDayId, skyboxNightId;
 };

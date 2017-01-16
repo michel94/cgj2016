@@ -21,5 +21,5 @@ Mat4 SphericalCamera::getProjection(){
 	if (!perspective)
 		return Mat4::ortho(-2, 2, -2, 2, -5, 5);
 	else
-		return Mat4::perspective(30, windowWidth / (float)windowHeight, 0.5f, 10.0f);
+		return Mat4::perspective(30, windowWidth / (float)windowHeight, 0.5f, 40.0f);
 }
