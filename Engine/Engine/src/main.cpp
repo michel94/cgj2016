@@ -20,7 +20,7 @@
 #include "fire.hpp"
 #include "RainParticleSystem.hpp"
 #include "skyboxnode.hpp"
-
+#include "DayNightCycle.hpp"
 
 #include "tests.hpp"
 
@@ -41,9 +41,10 @@ SceneNode* terrain, *Lightcube;
 SkyBoxNode *sb;
 RainParticleSystem* rain;
 double lastTick;
-double rainTimer;
 vector<SceneNode*> objects;
 SceneNode* root;
+DayNightCycle* dayNightCycle;
+
 
 double now() { // milliseconds
 	static LARGE_INTEGER s_frequency;
@@ -107,6 +108,8 @@ void loadScene() {
 
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);
+
+	dayNightCycle = new DayNightCycle(rain, NULL, sb);
 }
 
 void destroyScene(){
@@ -160,19 +163,12 @@ void update(float dt) {
 		Lightcube->position.x += 5 * dt;
 		scene->lights[0]->position.x += 5*dt;
 	}
-
-	rainTimer += dt;
-	if (rainTimer > 10) {
-		rainTimer = 0;
-		float rand = fRand(0, 1);
-		cout << "Rain intensity " << rand << endl;
-		rain->setIntensity(rand);
-	}
 		
 	AnimManager::instance().update(dt);
 
 	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(-mouseDisp.y * 100, Vec3(1, 0, 0));
 	mouseDisp = Vec2(0, 0);
+	dayNightCycle->update(dt);
 	scene->update(dt);
 	
 	if(ShaderManager::instance().shadersLoaded())

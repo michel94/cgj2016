@@ -109,8 +109,9 @@ void ParticleSystem::update(float dt) {
 		updateParticle(particles[i], dt);
 		particles[i]->age += dt;
 		if (particles[i]->age >= particles[i]->life) {
-			delete particles[i];
-			swap(particles[i], particles[curSize-- - 1]);
+			//delete particles[i];
+			if(curSize - 1 != i)
+				swap(particles[i], particles[curSize-- - 1]);
 			i--;
 		}else {
 			memcpy(&model->Vertices[i], particles[i]->position.data(), particles[i]->position.size());

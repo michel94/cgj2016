@@ -1,3 +1,5 @@
+#pragma once
+
 #include "scenenode.hpp"
 #include "SOIL.h"
 
