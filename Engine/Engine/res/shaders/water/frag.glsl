@@ -1,13 +1,5 @@
 #version 420
 
-float max3(float a, float b, float c){
-	return max(a, max(b, c));
-}
-
-float maxv3(vec3 v){
-	return max(v.x, max(v.y, v.z));
-}
-
 const int MAX_LIGHTS=8;
 
 in VS_OUT {
@@ -39,10 +31,7 @@ void main(void){
 	int nLights = fs_in.nLights;
 	
 	vec2 TexCoords = fs_in.TexCoords * 4;
-	//vec3 normal = texture(normalTex, TexCoords).rgb;
 	vec3 normal = CorrectNormal;
-    // Transform normal vector to range [-1,1]
-    //normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
     // Get texture color
     vec3 color = texture(tex, TexCoords).rgb;
     vec3 ambient;
@@ -82,18 +71,14 @@ void main(void){
 	    vec3 I = normalize(FragPos - ex_CameraPosition);
     	vec3 R = reflect(I, normalize(CorrectNormal));
     	vec4 skyColor = texture(cube_texture, R);
-	    //vec4 skyColor = texture(cube_texture, R);
-	    //vec4 lightColor = vec4(fs_in.LightColor[i], 1)
 	    vec3 specColor = mix(skyColor.xyz, lightColor, reflectionBlend);
 		specular += spec * specColor * att;
-		//out_Color = texture(cube_texture, reflectDir);
+		
     }
 	vec3 I = normalize(FragPos - ex_CameraPosition);
     vec3 R = reflect(I, normalize(CorrectNormal));
 
-    vec4 skyColor = texture(cube_texture, R);
-    //out_Color = mix(skyColor, vec4(color, 1), reflectionBlend) + spec;
-    out_Color = vec4(  + specular, 0.7);
+    out_Color = vec4(specular, 0.7);
     
 }
 
