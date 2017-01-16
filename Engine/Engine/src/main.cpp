@@ -73,11 +73,19 @@ void loadScene() {
 	sb->scale = Vec3(5.0f, 5.0f, 5.0f);
 	root->addChild(sb);
 	
-	terrain = new MaterialNode(ModelManager::instance().getObj("plane"), root, "stone");
-	terrain->rotation *= Qtrn::fromAngleAxis(90, Vec3(1, 0, 0));
-	terrain->scale = Vec3(10.0f, 0.2f, 10.0f);
+	terrain = new MaterialNode(ModelManager::instance().getObj("terrain"), root, "stone");
+	//terrain->rotation *= Qtrn::fromAngleAxis(90, Vec3(1, 0, 0));
+	terrain->scale *= 5;
 	terrain->position.y = -5;
 	root->addChild(terrain);
+
+	MaterialNode* water = new MaterialNode(ModelManager::instance().getObj("plane"), root, "water");
+	water->shader = ShaderManager::instance().getShader("water");
+	water->reflectionBlend = 0.1;
+	water->rotation *= Qtrn::fromAngleAxis(90, Vec3(1, 0, 0));
+	water->scale *= 5;
+	water->position.y = -5;
+	root->addChild(water);
 
 	//lightcube
 	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
