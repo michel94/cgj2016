@@ -37,8 +37,7 @@ bool controls2[] = { false, false, false, false };
 Scene* scene;
 SphericalCamera* camera;
 SceneNode* ground;
-SceneNode* cube;
-SceneNode* Lightcube;
+SceneNode* terrain, *Lightcube;
 SkyBoxNode *sb;
 double lastTick;
 vector<SceneNode*> objects;
@@ -71,10 +70,11 @@ void loadScene() {
 	sb->scale = Vec3(5.0f, 5.0f, 5.0f);
 	root->addChild(sb);
 	
-	cube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
-	cube->scale = Vec3(10.0f, 0.2f, 10.0f);
-	cube->position.y = -5;
-	root->addChild(cube);
+	terrain = new MaterialNode(ModelManager::instance().getObj("plane"), root, "stone");
+	terrain->rotation *= Qtrn::fromAngleAxis(90, Vec3(1, 0, 0));
+	terrain->scale = Vec3(10.0f, 0.2f, 10.0f);
+	terrain->position.y = -5;
+	root->addChild(terrain);
 
 	//lightcube
 	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
