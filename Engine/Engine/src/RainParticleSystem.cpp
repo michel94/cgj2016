@@ -19,26 +19,21 @@ void RainParticleSystem::updateParticle(Particle* particle, float dt) {
 }
 
 Particle* RainParticleSystem::createParticle(float& timeSinceLast) {
-	if (!initialized) {
-		timeSinceLast -= 0;
-		if (particlesCount >= MAX_PARTICLES) {
-			initialized = true;
-			return NULL;
-		}
-		particlesCount++;
 
-		//Create particle
-		float randomX = fRand(-2.0f, 2.0f);
-		float randomY = fRand(floor, roof);
-		float randomZ = fRand(-2.0f, 2.0f);
-		Particle* particle = new Particle(
-			Vec3(randomX, randomY, randomZ),
-			-0.5 * GRAVITY * fRand(0.5, 2.0) * Vec3(0.0f, 1.0f, 0.0f),
-			Vec4(0.5f, 0.7f, 1.0f, 0.2f),
-			100000.0f,
-			Vec2(0.005f, (float)fRand(0.1f, 0.3f))
-		);
-		return particle;
-	}
-	return NULL;
+	timeSinceLast -= 0.1;
+
+	//Create particle
+	float randomX = fRand(-2.0f, 2.0f);
+	float randomZ = fRand(-2.0f, 2.0f);
+	float speed = -0.5 * GRAVITY * fRand(0.5, 2.0);
+	
+	Particle* particle = new Particle(
+		Vec3(randomX, this->roof, randomZ),
+		speed * Vec3(0.0f, 1.0f, 0.0f),
+		Vec4(0.5f, 0.7f, 1.0f, 0.2f),
+		(roof - floor) / -speed,
+		Vec2(0.005f, (float)fRand(0.1f, 0.5f))
+	);
+	return particle;
+
 }
