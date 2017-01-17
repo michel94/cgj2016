@@ -21,13 +21,11 @@ void DayNightCycle::startRain() {
 
 void DayNightCycle::updateWater(float dt) {
 	if (rainActive) {
-		water->position.y +=  0.003 * dt * particlesPerSecond / finalPPS;
+		water->position.y +=  0.005 * dt * particlesPerSecond / finalPPS;
 	}
 	else {
-		if(water->position.y < -4){
-			float step = 0.003;
-			//float step = 0.03;
-			water->position.y -= dt * step;
+		if(water->position.y > -5.4){ //The water is visible
+			water->position.y -= dt * 0.005;
 		}
 	}
 }
