@@ -9,6 +9,13 @@
 class SceneNode;
 class Camera;
 
+struct SkyboxData
+{
+	float blendfactor;
+	float rotation;
+	GLuint dayTex, nightTex;
+};
+
 class Scene {
 public:
 	Scene();
@@ -19,8 +26,8 @@ public:
 	void addLight(Light* light);
 	void removeLight(Light* light);
 	void attachCamera(Camera* camera);
-	void putSkybox(string name, GLuint id);
-	GLuint getSkybox(string name);
+	void setSkybox(SkyboxData* data);
+	SkyboxData* getSkybox();
 	
 	Camera* getCamera();
 	vector<Light*> lights;
@@ -30,7 +37,7 @@ private:
 	Camera* camera;
 	SceneNode* mRoot;
 	float* pos;
-	unordered_map<string, GLuint> skybox;
+	SkyboxData* skybox = NULL;
 
 };
 

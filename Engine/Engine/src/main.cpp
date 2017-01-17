@@ -24,6 +24,8 @@
 
 #include "tests.hpp"
 
+#define FOLLOW_MOUSE 1
+
 using namespace std;
 
 const char CAPTION[] = "Hello Blank World";
@@ -61,6 +63,8 @@ double now() { // milliseconds
 
 /////////////////////////////////////////////////////////////////////// SCENE SETUP
 
+#define FLOOR_SIZE 5.0f
+
 void loadScene() {
 	scene = new Scene();
 
@@ -70,12 +74,12 @@ void loadScene() {
 	root = scene->root();
 
 	sb = new SkyBoxNode(ModelManager::instance().getObj("SkyBoxCube"), root);
+	sb->scale *= FLOOR_SIZE;
 	sb->position = camera->position;
-	sb->scale = Vec3(5.0f, 5.0f, 5.0f);
 	root->addChild(sb);
 	
 	terrain = new MaterialNode(ModelManager::instance().getObj("terrain"), root, "stone");
-	terrain->scale *= 5;
+	terrain->scale *= FLOOR_SIZE;
 	terrain->position.y = -5;
 	root->addChild(terrain);
 
@@ -83,8 +87,8 @@ void loadScene() {
 	water->shader = ShaderManager::instance().getShader("water");
 	water->reflectionBlend = 0.0;
 	water->rotation *= Qtrn::fromAngleAxis(90, Vec3(1, 0, 0));
-	water->scale *= 5;
-	water->position.y = -5;
+	water->scale *= FLOOR_SIZE;
+	water->position.y = -5.15;
 	root->addChild(water);
 
 	//lightcube
@@ -94,11 +98,11 @@ void loadScene() {
 	//root->addChild(Lightcube);
 	
 	ParticleSystem* fire = new Fire(root, 200000, 1, 0.8);
-	//fire->scale *= 0.5;
-	fire->position.y = -5;
+	//fire->scale *= 2.0f;
+	fire->position.y = -4.5;
 	root->addChild(fire);
-	
-	rain = new RainParticleSystem(100000, -5, 5);
+
+	rain = new RainParticleSystem(100000, -5, 6);
 	root->addChild(rain);
 	
 	//PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
@@ -110,7 +114,7 @@ void loadScene() {
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);
 
-	dayNightCycle = new DayNightCycle(rain, NULL, sb, 100);
+	dayNightCycle = new DayNightCycle(rain, NULL, sb, water, sun, 50);
 }
 
 void destroyScene(){
@@ -121,9 +125,9 @@ void destroyScene(){
 ////////////////////////////////// SCENE //////////////////////////////////
 
 void update(float dt) {
-	
+#ifdef FOLLOW_MOUSE
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
-	
+#endif
 	if (controls[0]) { // back
 		camera->position -= camera->rotation.toMat4() * Vec3(0.0f, 0.0f, 3.0f) * dt;
 		sb->position = camera->position;
@@ -169,7 +173,7 @@ void update(float dt) {
 
 	camera->rotation *= Qtrn::fromAngleAxis(mouseDisp.x * 100, Vec3(0, 1, 0)) * Qtrn::fromAngleAxis(-mouseDisp.y * 100, Vec3(1, 0, 0));
 	mouseDisp = Vec2(0, 0);
-	//dayNightCycle->update(dt);
+	dayNightCycle->update(dt);
 	scene->update(dt);
 	
 	if(ShaderManager::instance().shadersLoaded())
@@ -293,8 +297,10 @@ void setupGLUT(int argc, char* argv[]) {
 	}
 	keyFunc(onKey);
 	specialKeyFunc(onSpecialKey);
+#ifdef FOLLOW_MOUSE
 	glutPassiveMotionFunc(onMouseMoved);
 	glutSetCursor(GLUT_CURSOR_NONE);
+#endif
 }
 
 void display() {
@@ -346,8 +352,9 @@ void init(int argc, char* argv[]) {
 	setupGLUT(argc, argv);
 	setupGLEW();
 	setupOpenGL();
-
+#ifdef FOLLOW_MOUSE
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
+#endif
 	lastTick = now();
 	loadScene();
 	camera->rotation = Qtrn::fromAngleAxis(180, Vec3(0, 1, 0));

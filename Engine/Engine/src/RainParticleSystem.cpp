@@ -21,8 +21,8 @@ Particle* RainParticleSystem::createParticle(float& timeSinceLast) {
 	}
 	timeSinceLast -= step;
 	//Create particle
-	float randomX = fRand(-2.0f, 2.0f);
-	float randomZ = fRand(-2.0f, 2.0f);
+	float randomX = fRand(-6.0f, 6.0f);
+	float randomZ = fRand(-6.0f, 6.0f);
 	float speed = -0.5 * GRAVITY * fRand(0.5, 2.0);
 	
 	Particle* particle = new Particle(

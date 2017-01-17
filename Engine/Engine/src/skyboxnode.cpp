@@ -14,9 +14,10 @@ SkyBoxNode::SkyBoxNode(Model * model, SceneNode * parent) : SceneNode(model, par
 	
 	skyboxDayId = loadCubemap("res/images/skybox/day/", Faces);
 	skyboxNightId = loadCubemap("res/images/skybox/night/", Faces);
-
-	getScene()->putSkybox("day", skyboxDayId);
-	getScene()->putSkybox("night", skyboxNightId);
+	data = new SkyboxData;
+	data->dayTex = skyboxDayId;
+	data->nightTex = skyboxNightId;
+	getScene()->setSkybox(data);
 }
 
 GLuint SkyBoxNode::loadCubemap(string folder, vector<string> faces)
@@ -58,6 +59,8 @@ void SkyBoxNode::render(Mat4 tr) {
 		glUniform1i(s["cube_texture2"], 1);
 
 		glUniform1f(s["blendfactor"], blendfactor);
+		glUniform1f(s["rotation"], angle);
+		//printf("blenderfactor skyboxnode = %f\n", blendfactor);
 		glUniformMatrix4fv(s["Matrix"], 1, GL_TRUE, tr.data);
 		model->draw();
 		s.unbind();
@@ -66,8 +69,8 @@ void SkyBoxNode::render(Mat4 tr) {
 }
 
 void SkyBoxNode::update(float dt) {
-	SceneNode::rotation *= Qtrn::fromAngleAxis(dt * ROTATE_SPEED, Vec3(0, 1, 0));
-	time += dt;
+	angle += dt / dayDuration * 180;
+	SceneNode::rotation = Qtrn::fromAngleAxis(angle, Vec3(0, 1, 0));
 	if(blendfactor >= 1.0f){
 		daynight = -1.0f;
 	}
@@ -75,7 +78,9 @@ void SkyBoxNode::update(float dt) {
 		daynight = 1.0f;
 		
 	}
-	blendfactor += 1 / dayDuration * daynight*dt;
+	blendfactor += 1 / dayDuration * daynight * dt;
+	data->blendfactor = blendfactor;
+	data->rotation = angle / 180*3.14159f;
 }
 
 void SkyBoxNode::bindTextures(Shader& s) {

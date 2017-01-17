@@ -61,7 +61,7 @@ Fire::Fire(SceneNode* parent, int nParticles, int nTargets, float height) : Part
 		cout << Vec3((i / 2) * 0.5f - 0.25f, 0, (i % 2) * 0.5f - 0.25f) << endl;
 		scene->addLight(lights[i]);
 	}
-		
+	
 
 }
 
@@ -69,7 +69,7 @@ Particle* Fire::createParticle(float& timeSinceLast) {
 	float step = 0.00001;
 	if (timeSinceLast > step) {
 		timeSinceLast -= step;
-		Vec2 randPos = randVec2(0.02);
+		Vec2 randPos = randVec2(0.05);
 		Vec2 randVel = randVec2(0.6);
 		while(randVel.norm() > 0.6)
 			randVel = randVec2(0.6);
@@ -116,12 +116,12 @@ void Fire::updateParticle(Particle * p, float dt) {
 		radius = sqrt(radius);
 		float v = max(0.0f, 0.5f - radius);
 		Vec4 centerColor = Vec4(0, v, 0, 0);
-		particle->color = Vec4(1, intens, 0, 0.6f) + centerColor;
+		particle->color = Vec4(0.8f, intens, 0.05f, 0.6f) + centerColor;
 
 	}else {
 		particle->size = particleSize * 0.5f;
 		float v = (age - fireLimit) / (1 - fireLimit) + 0.5;
-		particle->color = Vec4(0.5, 0.5, 0.5, 0.4f);
+		particle->color = Vec4(0.5f, 0.5f, 0.5f, 0.4f);
 	}
 
 }
@@ -135,9 +135,7 @@ void Fire::update(float dt) {
 	}
 	for (int i = 0; i < particlesCount.size(); i++) {
 		if (particles.size() > 0) {
-
 			lights[i]->color = Vec4(1.0f, 0.5f, 0.0f, 1.0f) * ((float)particlesCount[i] / particles.size());
-			cout << (float)particlesCount[i] << endl;
 		}
 		
 	}

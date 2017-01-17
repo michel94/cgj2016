@@ -11,6 +11,7 @@ in mat4 ex_ViewMatrix;
 uniform samplerCube cube_texture;
 uniform samplerCube cube_texture2;
 uniform float blendfactor;
+uniform float rotation;
 out vec4 out_Color;
 
 void main() {
