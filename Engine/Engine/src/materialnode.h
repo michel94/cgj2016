@@ -6,7 +6,7 @@ public:
 	MaterialNode(Model * model, string name);
 	MaterialNode(Model * model, SceneNode * parent, string name);
 	void render(Mat4 tr);
-	float reflectionBlend = 0.3;
+	float reflectionBlend = 0.8;
 protected:
 	Texture* normalTexture;
 };

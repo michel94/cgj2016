@@ -44,7 +44,8 @@ double lastTick;
 vector<SceneNode*> objects;
 SceneNode* root;
 DayNightCycle* dayNightCycle;
-
+DirectionalLight* sun;
+bool sunOn = true;
 
 double now() { // milliseconds
 	static LARGE_INTEGER s_frequency;
@@ -80,7 +81,7 @@ void loadScene() {
 
 	MaterialNode* water = new MaterialNode(ModelManager::instance().getObj("plane"), root, "water");
 	water->shader = ShaderManager::instance().getShader("water");
-	water->reflectionBlend = 0.1;
+	water->reflectionBlend = 0.0;
 	water->rotation *= Qtrn::fromAngleAxis(90, Vec3(1, 0, 0));
 	water->scale *= 5;
 	water->position.y = -5;
@@ -91,20 +92,20 @@ void loadScene() {
 	Lightcube->scale = Vec3(0.05f, 0.05f, 0.05f);
 	Lightcube->position = Vec3(0.0f, -5.0f, 1.2f);
 	//root->addChild(Lightcube);
-	/*
-	ParticleSystem* fire = new Fire(root, 200000, 3, 0.8);
-	fire->scale *= 0.5;
-	fire->position.y = -4;
+	
+	ParticleSystem* fire = new Fire(root, 200000, 1, 0.8);
+	//fire->scale *= 0.5;
+	fire->position.y = -5;
 	root->addChild(fire);
-	*/
+	
 	rain = new RainParticleSystem(100000, -5, 5);
 	root->addChild(rain);
 	
 	//PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
 	//scene->addLight(Pointlight);
 
-	DirectionalLight* light = new DirectionalLight(Vec3(0.0f, -1.0f, 0.0f), Light::WHITE);
-	scene->addLight(light);
+	sun = new DirectionalLight(Vec3(0.0f, -1.0f, 0.0f), Light::WHITE * 0.5);
+	scene->addLight(sun);
 
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);
@@ -251,8 +252,20 @@ void onKey(unsigned char key, int x, int y, Action action) {
 		controls2[1] = action == KEYPRESS;
 	else if(key == 'j')
 		controls2[2] = action == KEYPRESS;
-	else if(key == 'k')
+	else if (key == 'k')
 		controls2[3] = action == KEYPRESS;
+	else if (key == 'l') {
+		if (action == KEYPRESS) {
+			if (sunOn) {
+				scene->removeLight(sun);
+			}else {
+				scene->addLight(sun);
+			}
+			sunOn = !sunOn;
+		}
+	}
+		
+			
 
 }
 

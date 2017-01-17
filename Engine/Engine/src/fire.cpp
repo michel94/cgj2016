@@ -29,7 +29,7 @@ void FireTarget::update(float dt) {
 	force *= forceIntensity;
 	speed += force * dt;
 	Vec3 npos = position + speed * dt;
-	if ((npos - dest).norm() < 0.2)
+	if ((npos - dest).norm() < 0.25)
 		position = npos;
 
 }
@@ -53,7 +53,15 @@ Fire::Fire(SceneNode* parent, int nParticles, int nTargets, float height) : Part
 
 	Scene* scene = getScene();
 	Vec4 color = Vec4(1.0f, 0.5f, 0.0f, 1.0f);
-	scene->addLight(new PointLight(position, color));
+
+	lights.resize(LIGHT_SPOTS);
+	particlesCount.resize(LIGHT_SPOTS);
+	for (int i = 0; i < lights.size(); i++) {
+		lights[i] = new PointLight(position + Vec3( (i / 2) * 0.5f - 0.25f, 0, (i % 2) * 0.5f - 0.25f), color);
+		cout << Vec3((i / 2) * 0.5f - 0.25f, 0, (i % 2) * 0.5f - 0.25f) << endl;
+		scene->addLight(lights[i]);
+	}
+		
 
 }
 
@@ -97,6 +105,7 @@ void Fire::updateParticle(Particle * p, float dt) {
 		}
 	}
 	particle->position += particle->speed * dt;
+	particlesCount[ (int)(particle->position.x < 0) * 2 + (int)(particle->position.z < 0) ]++;
 
 	float age = particle->age / particle->life;
 	float fireLimit = 0.8;
@@ -118,9 +127,19 @@ void Fire::updateParticle(Particle * p, float dt) {
 }
 
 void Fire::update(float dt) {
+	std::fill(particlesCount.begin(), particlesCount.end(), 0);
 	ParticleSystem::update(dt);
+
 	for (int i = 0; i < targets.size(); i++) {
 		targets[i]->update(dt);
 	}
+	for (int i = 0; i < particlesCount.size(); i++) {
+		if (particles.size() > 0) {
 
+			lights[i]->color = Vec4(1.0f, 0.5f, 0.0f, 1.0f) * ((float)particlesCount[i] / particles.size());
+			cout << (float)particlesCount[i] << endl;
+		}
+		
+	}
+	
 }

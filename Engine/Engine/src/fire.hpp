@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ParticleSystem.hpp"
+#include "light.hpp"
 
 Vec2 randVec2(double radius);
 double gaussianRandom(double mu, double sigma);
@@ -39,5 +40,8 @@ public:
 	float h, life;
 private:
 	vector<FireTarget*> targets;
-
+	
+	const int LIGHT_SPOTS = 4;
+	vector<Light *> lights;
+	vector<float> particlesCount;
 };

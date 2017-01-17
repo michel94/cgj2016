@@ -8,6 +8,10 @@ float maxv3(vec3 v){
 	return max(v.x, max(v.y, v.z));
 }
 
+vec3 clampv3(vec3 v){
+	return vec3(min(v.x, 1), min(v.y, 1), min(v.z, 1));
+}
+
 const int MAX_LIGHTS=8;
 
 in VS_OUT {
@@ -60,17 +64,20 @@ void main(void){
 			att = 1;
 		}else { //point light
 			lightDir  = normalize(fs_in.TangentLightPos[i] - fs_in.TangentFragPos);
-			vec3 L = normalize(LightPosition_out[i].xyz - FragPos);
+			vec3 L = LightPosition_out[i].xyz - FragPos;
 			float dist = length(L);
-			att=1.0/(1.0+0.1*dist+0.01*dist*dist);
+			float power = length(lightColor) * 5;
+			att=(8.0 + power * power) /(1.0+0.3*dist+0.4*dist*dist);
 			lightColor *= att;
 		}
 		// Ambient
 		ambient = vec3(0.1);
+		//ambient = vec3(length(lightColor), length(lightColor), length(lightColor));
 		
 		// Diffuse
 		float diff = max(dot(lightDir, normal), 0.0);
-		diffuse += diff * lightColor * 0.8 * att;
+		diffuse += diff * lightColor * 1.8 * att;
+		//diffuse += vec3(att, att, att);
 		
 		// Specular
 	    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
@@ -85,11 +92,13 @@ void main(void){
 	    //vec4 lightColor = vec4(fs_in.LightColor[i], 1)
 	    vec3 specColor = mix(skyColor.xyz, lightColor, reflectionBlend);
 		specular += spec * specColor * att;
+
 		//out_Color = texture(cube_texture, reflectDir);
     }
 	vec3 I = normalize(FragPos - ex_CameraPosition);
     vec3 R = reflect(I, normalize(CorrectNormal));
-    out_Color = vec4( (ambient + diffuse) * color + specular*0, 1.0);
-    
+    out_Color = vec4( (ambient + diffuse) * color + specular, 1.0);
+    //out_Color = vec4(ambient, 1);
+    //out_Color = vec4(diffuse, 1);
 }
 

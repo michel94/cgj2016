@@ -30,6 +30,7 @@ void DayNightCycle::updateRain(float dt) {
 		double prob = ((double)dt / dayDuration) * rainProb;
 		if (fRand(0.0, 1.0) < prob)
 			startRain();
+
 	}
 
 	if (rainActive) {

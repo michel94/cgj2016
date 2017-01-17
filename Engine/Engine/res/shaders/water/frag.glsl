@@ -50,9 +50,10 @@ void main(void){
 			att = 1;
 		}else { //point light
 			lightDir  = normalize(fs_in.TangentLightPos[i] - fs_in.TangentFragPos);
-			vec3 L = normalize(LightPosition_out[i].xyz - FragPos);
+			vec3 L = LightPosition_out[i].xyz - FragPos;
 			float dist = length(L);
-			att=0.1/(1.0+0.1*dist+0.01*dist*dist);
+			float power = length(lightColor) * 5;
+			att=(8.0 + power * power) /(1.0+0.3*dist+0.4*dist*dist);
 			lightColor *= att;
 		}
 		// Ambient
@@ -60,25 +61,28 @@ void main(void){
 		
 		// Diffuse
 		float diff = max(dot(lightDir, normal), 0.0);
-		diffuse += diff * lightColor * 0.8 * att;
+		diffuse += diff * lightColor * 0.6 * att;
 		
 		// Specular
 	    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
 	    vec3 reflectDir = reflect(-lightDir, normal);
 		vec3 halfwayDir = normalize(lightDir + viewDir);
-	    float spec = pow(max(dot(normal, halfwayDir), 0.0), 8.0 * att);
+	    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
 
 	    vec3 I = normalize(FragPos - ex_CameraPosition);
     	vec3 R = reflect(I, normalize(CorrectNormal));
     	vec4 skyColor = texture(cube_texture, R);
-	    vec3 specColor = mix(skyColor.xyz, lightColor, reflectionBlend);
-		specular += spec * specColor * att;
+	    vec3 specColor = mix(skyColor.xyz, lightColor, 1.0);
+		specular += spec * specColor;
 		
     }
-	vec3 I = normalize(FragPos - ex_CameraPosition);
-    vec3 R = reflect(I, normalize(CorrectNormal));
 
-    out_Color = vec4(specular, 0.7);
-    
+    vec3 I = normalize(FragPos - ex_CameraPosition);
+	vec3 R = reflect(I, normalize(CorrectNormal));
+	vec4 skyColor = texture(cube_texture, R);
+	color = skyColor.rgb;
+
+    //out_Color = vec4(specular, 0.7);
+    out_Color = vec4( (ambient + diffuse) * color + specular, 1.0);
 }
 

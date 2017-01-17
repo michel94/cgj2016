@@ -30,7 +30,6 @@ public:
 private:
 	
 	float timeSinceLast=0;
-	vector<Particle*> particles;
 
 	struct Less {
 		Less(Vec3& r) : ref(r) {}
@@ -43,5 +42,7 @@ private:
 protected:
 	int MAX_PARTICLES;
 	bool sortParticles = false;
+
+	vector<Particle*> particles;
 };
 
