@@ -6,7 +6,7 @@
 
 class DayNightCycle {
 public:
-	DayNightCycle(RainParticleSystem*, Fire*, SkyBoxNode*, SceneNode*, float);
+	DayNightCycle(RainParticleSystem*, Fire*, SkyBoxNode*, SceneNode*, Light*, float);
 	void update(float dt);
 
 private:
@@ -14,12 +14,15 @@ private:
 	Fire* fire;
 	SkyBoxNode* skybox;
 	SceneNode* water;
+	Light* light;
+	Vec4 sunColor;
 
 	float dayDuration;
 
 	void startRain();
 	void updateRain(float);
 	void updateWater(float);
+	void updateLight(float);
 
 	float rainProb = 2.0;
 	float particlesPerSecond = 0;

@@ -105,13 +105,13 @@ void loadScene() {
 	//PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
 	//scene->addLight(Pointlight);
 
-	DirectionalLight* light = new DirectionalLight(Vec3(0.0f, -1.0f, 0.0f), Light::WHITE);
+	DirectionalLight* light = new DirectionalLight(Vec3(0.0f, -1.0f, 1.0f), Light::WHITE);
 	scene->addLight(light);
 
 	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
 	//scene->addLight(light);
 
-	dayNightCycle = new DayNightCycle(rain, NULL, sb, water, 100);
+	dayNightCycle = new DayNightCycle(rain, NULL, sb, water, light, 5);
 }
 
 void destroyScene(){

@@ -89,7 +89,7 @@ void main(void){
     }
 	vec3 I = normalize(FragPos - ex_CameraPosition);
     vec3 R = reflect(I, normalize(CorrectNormal));
-    out_Color = vec4( (ambient + diffuse) * color + specular*0, 1.0);
+    out_Color = vec4( (ambient + diffuse) * color + specular, 1.0);
     
 }
 

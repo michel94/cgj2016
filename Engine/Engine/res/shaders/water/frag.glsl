@@ -22,6 +22,9 @@ uniform vec4 Color;
 uniform sampler2D tex;
 uniform sampler2D normalTex;
 uniform samplerCube cube_texture;
+uniform samplerCube cube_texture2;
+uniform float rotation;
+uniform float blendfactor;
 
 out vec4 out_Color;
 
@@ -70,13 +73,20 @@ void main(void){
 
 	    vec3 I = normalize(FragPos - ex_CameraPosition);
     	vec3 R = reflect(I, normalize(CorrectNormal));
-    	vec4 skyColor = texture(cube_texture, R);
+		//rotate R 
+		vec2 t = vec2(R.x, R.z);
+		float angle = atan(R.z, R.x);
+		angle -= rotation;
+		R.x = cos(angle)*length(t);
+		R.z = sin(angle)*length(t);
+
+		vec4 texture1 = texture(cube_texture, R);
+		vec4 texture2 = texture(cube_texture2, R);
+    	vec4 skyColor =  mix(texture1, texture2, blendfactor);
 	    vec3 specColor = mix(skyColor.xyz, lightColor, reflectionBlend);
 		specular += spec * specColor * att;
 		
     }
-	vec3 I = normalize(FragPos - ex_CameraPosition);
-    vec3 R = reflect(I, normalize(CorrectNormal));
 
     out_Color = vec4(specular, 0.7);
     
