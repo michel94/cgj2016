@@ -79,7 +79,7 @@ void loadScene() {
 	root->addChild(sb);
 	
 	terrain = new MaterialNode(ModelManager::instance().getObj("terrain"), root, "stone");
-	terrain->scale *= FLOOR_SIZE;
+	terrain->scale *= FLOOR_SIZE * 1.06;
 	terrain->position.y = -5;
 	root->addChild(terrain);
 
@@ -90,31 +90,19 @@ void loadScene() {
 	water->scale *= FLOOR_SIZE;
 	water->position.y = -5.15;
 	root->addChild(water);
-
-	//lightcube
-	Lightcube = new MaterialNode(ModelManager::instance().getObj("cube"), root, "stone");
-	Lightcube->scale = Vec3(0.05f, 0.05f, 0.05f);
-	Lightcube->position = Vec3(0.0f, -5.0f, 1.2f);
-	//root->addChild(Lightcube);
 	
 	ParticleSystem* fire = new Fire(root, 200000, 1, 0.8);
-	//fire->scale *= 2.0f;
+	fire->scale *= 2.0f;
 	fire->position.y = -4.5;
 	root->addChild(fire);
-
+	
 	rain = new RainParticleSystem(100000, -5, 6);
 	root->addChild(rain);
 	
-	//PointLight* Pointlight = new PointLight(Vec3(0.0f, 0.0f, 0.0f), Vec4(0.5, 0.7, 1, 1));
-	//scene->addLight(Pointlight);
-
-	sun = new DirectionalLight(Vec3(0.0f, -1.0f, 0.0f), Light::WHITE * 0.5);
+	sun = new DirectionalLight(Vec3(0.0f, -1.0f, 1.0f), Light::WHITE);
 	scene->addLight(sun);
-
-	//light = new Light(Vec4(2.0f, -30.5f, -2.0f, 1.0f), Light::RED);
-	//scene->addLight(light);
-
-	dayNightCycle = new DayNightCycle(rain, NULL, sb, water, sun, 50);
+	
+	dayNightCycle = new DayNightCycle(rain, NULL, sb, water, sun, 100);
 }
 
 void destroyScene(){

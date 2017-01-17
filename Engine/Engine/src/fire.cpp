@@ -41,11 +41,10 @@ Fire::Fire(SceneNode* parent, int nParticles, int nTargets, float height) : Part
 		Vec2 randPos = uniformVec2(0.01);
 		targets.push_back(new FireTarget(
 			dest + Vec3(randPos.x, fRand(-0.01, 0.01), randPos.y),
-			Vec3(0,0,0),
+			Vec3(0, 0, 0),
 			dest,
-			1/h + i / 5.0f
+			1 / h + i / 5.0f
 			));
-		cout << targets[i]->position << endl;
 	}
 	life = h + h / 5;
 	this->parent = parent;	
@@ -57,11 +56,9 @@ Fire::Fire(SceneNode* parent, int nParticles, int nTargets, float height) : Part
 	lights.resize(LIGHT_SPOTS);
 	particlesCount.resize(LIGHT_SPOTS);
 	for (int i = 0; i < lights.size(); i++) {
-		lights[i] = new PointLight(position + Vec3( (i / 2) * 0.5f - 0.25f, 0, (i % 2) * 0.5f - 0.25f), color);
-		cout << Vec3((i / 2) * 0.5f - 0.25f, 0, (i % 2) * 0.5f - 0.25f) << endl;
+		lights[i] = new PointLight(position + Vec3( (i / 2) * 0.5f - 0.25f, 0.4, (i % 2) * 0.5f - 0.25f), color);
 		scene->addLight(lights[i]);
 	}
-	
 
 }
 
@@ -136,8 +133,13 @@ void Fire::update(float dt) {
 	for (int i = 0; i < particlesCount.size(); i++) {
 		if (particles.size() > 0) {
 			lights[i]->color = Vec4(1.0f, 0.5f, 0.0f, 1.0f) * ((float)particlesCount[i] / particles.size());
-		}
-		
+		}	
+	}	
+}
+
+void Fire::setPosition(Vec3 pos) {
+	position = pos;
+	for (int i = 0; i < lights.size(); i++) {
+		lights[i]->position = position + Vec3((i / 2) * 0.5f - 0.25f, 0.4, (i % 2) * 0.5f - 0.25f);
 	}
-	
 }

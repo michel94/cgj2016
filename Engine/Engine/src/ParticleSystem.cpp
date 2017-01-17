@@ -89,7 +89,7 @@ ParticleSystem::ParticleSystem(int nParticles) : SceneNode() {
 
 void ParticleSystem::update(float dt) {
 	Particle* p;
-	//cout << "\r" << "Particles: " << particles.size();
+	cout << "\r" << "Particles: " << particles.size();
 	while (particles.size() < MAX_PARTICLES) {
 		
 		p = createParticle(timeSinceLast);

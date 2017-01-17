@@ -78,8 +78,8 @@ Vec4 mix(Vec4 a, Vec4 b, float d){
 }
 
 void DayNightCycle::updateLight(float dt){
-	float angle = dt / dayDuration * 180;
-	light->position = light->position*Mat4::rotateAround(Vec3(0.0f, 1.0f, 0.0f), angle);
+	float angle = (dt / dayDuration) * 180.0f;
+	light->position = light->position * Mat4::rotateAround(Vec3(0.0f, 1.0f, 0.0f), angle);
 	if (skybox->daynight==1.0f)
 	{
 		light->color = mix(sunColor, sunColor*0.7f, skybox->blendfactor);

@@ -35,6 +35,7 @@ public:
 	virtual Particle* createParticle(float& timeSinceLast);
 	virtual void updateParticle(Particle* particle, float dt);
 	virtual void update(float dt);
+	void setPosition(Vec3 pos);
 
 	Vec3 source, dest;
 	float h, life;

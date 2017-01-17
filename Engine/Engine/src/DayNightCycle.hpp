@@ -27,7 +27,7 @@ private:
 	float rainProb = 2.7;
 	float particlesPerSecond = 0;
 	float duration = 20;
-	float finalPPS = 4000;
+	float finalPPS = 10000;
 	float elapsedTime = 0.0f;
 	bool rainActive = false;
 };
