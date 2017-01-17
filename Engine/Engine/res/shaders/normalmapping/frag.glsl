@@ -76,8 +76,7 @@ void main(void){
 		
 		// Diffuse
 		float diff = max(dot(lightDir, normal), 0.0);
-		diffuse += diff * lightColor * 1.8;
-		//diffuse += vec3(att, att, att);
+		diffuse += diff * lightColor * 1.8 * att;
 		
 		// Specular
 	    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
@@ -88,12 +87,9 @@ void main(void){
 	    vec3 I = normalize(FragPos - ex_CameraPosition);
     	vec3 R = reflect(I, normalize(CorrectNormal));
     	vec4 skyColor = texture(cube_texture, R);
-	    //vec4 skyColor = texture(cube_texture, R);
-	    //vec4 lightColor = vec4(fs_in.LightColor[i], 1)
 	    vec3 specColor = mix(skyColor.xyz, lightColor, reflectionBlend);
 		specular += spec * specColor;
 
-		//out_Color = texture(cube_texture, reflectDir);
     }
     out_Color = vec4( (ambient + diffuse) * color + specular, 1.0);
 }

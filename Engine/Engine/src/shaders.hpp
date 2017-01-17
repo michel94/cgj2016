@@ -69,7 +69,7 @@ private:
 struct Shader {
 public:
 	GLuint vsId, fsId, programId;
-	bool loaded = false;
+	bool loaded = true;
 	GLuint& operator[](string name) {
 		return variables[name];
 	}
@@ -97,16 +97,12 @@ public:
 	void destroyShaders();
 	bool shadersLoaded();
 	Block* bindBlock(Shader* shader, string name);
-	//GLubyte* getBlockData(string name);
-	//GLuint getBlockBuffer(string name);
 
 	Block* getUniformBlock(string name);
 private:
 	map<string, Shader*> shaders;
 	bool mShadersLoaded = true;
 	map<string, GLuint> blocks;
-	//vector<GLubyte*> blockData;
-	//vector<GLuint> blockBuffers;
 
 	vector<Block*> blockData;
 };

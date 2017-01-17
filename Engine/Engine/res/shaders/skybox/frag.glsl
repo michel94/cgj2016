@@ -1,17 +1,10 @@
-#version 420
+#version 330
 
 in vec3 ex_Texcoord;
-in vec3 ex_CameraPosition;
-in vec3 Normal;
-in vec3 ex_inPosition;
-in vec3 pos_eye;
-in vec3 n_eye;
-in mat4 ex_ViewMatrix;
 
 uniform samplerCube cube_texture;
 uniform samplerCube cube_texture2;
 uniform float blendfactor;
-uniform float rotation;
 out vec4 out_Color;
 
 void main() {

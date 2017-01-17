@@ -87,6 +87,12 @@ ParticleSystem::ParticleSystem(int nParticles) : SceneNode() {
 	model = new DynamicModel(nParticles);
 }
 
+ParticleSystem::~ParticleSystem() {
+	for (int i = 0; i < particles.size(); i++) {
+		delete particles[i];
+	}
+}
+
 void ParticleSystem::update(float dt) {
 	Particle* p;
 	cout << "\r" << "Particles: " << particles.size();

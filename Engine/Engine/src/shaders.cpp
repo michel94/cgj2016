@@ -11,6 +11,7 @@ void Shader::unbind() {
 
 Shader* loadShader(string path) {
 	Shader *s = new Shader();
+	s->loaded = true;
 
 	string VertexShaderCode;
 	ifstream VertexShaderStream(path + "/vertex.glsl", std::ios::in);
@@ -61,10 +62,8 @@ Shader* loadShader(string path) {
 		glShaderSource(GeometryShaderId, 1, &GeometrySourcePointer, 0);
 		glCompileShader(GeometryShaderId);
 
-		s->loaded = checkGLSLError(path, "geometry shader", GeometryShaderId);
-
-		cout << "Geometry Shader: " << path << endl;
-		cout << "Ok: " << s->loaded << endl;
+		s->loaded &= checkGLSLError(path, "geometry shader", GeometryShaderId);
+		
 	}
 
 	s->loaded &= checkGLSLError(path, "vertex shader", VertexShaderId) && checkGLSLError(path, "fragment shader", FragmentShaderId);

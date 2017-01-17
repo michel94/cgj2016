@@ -20,6 +20,7 @@ public:
 class ParticleSystem : public SceneNode {
 public:
 	ParticleSystem(int nParticles);
+	~ParticleSystem();
 	virtual void update(float dt);
 	virtual Particle* createParticle(float& timeSinceLast) = 0;
 	virtual void updateParticle(Particle* particle, float dt) = 0;

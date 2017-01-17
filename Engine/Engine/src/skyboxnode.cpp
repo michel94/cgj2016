@@ -31,7 +31,6 @@ GLuint SkyBoxNode::loadCubemap(string folder, vector<string> faces)
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 	for (GLuint i = 0; i < faces.size(); i++){
-		cout << folder + faces[i] << endl;
 		image = SOIL_load_image((folder + faces[i]).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 		SOIL_free_image_data(image);
@@ -83,7 +82,4 @@ void SkyBoxNode::update(float dt) {
 	data->rotation = angle / 180*3.14159f;
 }
 
-void SkyBoxNode::bindTextures(Shader& s) {
-	
-}
 	

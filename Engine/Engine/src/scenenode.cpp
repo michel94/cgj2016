@@ -24,6 +24,7 @@ SceneNode::SceneNode(Model* model, SceneNode * parent){
 SceneNode::~SceneNode(){
 	for (auto n : children)
 		delete n;
+	checkOpenGLError("ERROR: Could not destroy scenenode.");
 }
 
 void SceneNode::setShader(Shader* s) {

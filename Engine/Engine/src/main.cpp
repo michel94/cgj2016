@@ -69,7 +69,6 @@ void loadScene() {
 	scene = new Scene();
 
 	camera = new SphericalCamera(windowWidth, windowHeight);
-	//camera->position = Vec3(0.0, 0.0f, 0.0f);
 	scene->attachCamera(camera);
 	root = scene->root();
 
@@ -107,7 +106,7 @@ void loadScene() {
 
 void destroyScene(){
 	delete scene;
-	checkOpenGLError("ERROR: Could not destroy scene.");
+	//checkOpenGLError("ERROR: Could not destroy scene.");
 }
 
 ////////////////////////////////// SCENE //////////////////////////////////
@@ -164,8 +163,8 @@ void update(float dt) {
 	dayNightCycle->update(dt);
 	scene->update(dt);
 	
-	if(ShaderManager::instance().shadersLoaded())
-		checkOpenGLError("ERROR: Could not draw scene.");
+	//if(ShaderManager::instance().shadersLoaded())
+		//checkOpenGLError("ERROR: Could not draw scene.");
 }
 
 void render() {
