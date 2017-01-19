@@ -31,7 +31,7 @@ using namespace std;
 const char CAPTION[] = "Hello Blank World";
 
 int window;
-int windowWidth = 640, windowHeight = 480;
+int windowWidth = 1150, windowHeight = 650;
 int frameCount;
 Vec2 mouseDisp;
 bool controls[] = { false, false, false, false, false, false };
@@ -101,7 +101,7 @@ void loadScene() {
 	sun = new DirectionalLight(Vec3(0.0f, -1.0f, 1.0f), Light::WHITE);
 	scene->addLight(sun);
 	
-	dayNightCycle = new DayNightCycle(rain, NULL, sb, water, sun, 100);
+	dayNightCycle = new DayNightCycle(rain, NULL, sb, water, sun, 30);
 }
 
 void destroyScene(){

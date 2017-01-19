@@ -24,7 +24,7 @@ private:
 	void updateWater(float);
 	void updateLight(float);
 
-	float rainProb = 2.7;
+	float rainProb = 4.7;
 	float particlesPerSecond = 0;
 	float duration = 20;
 	float finalPPS = 10000;
